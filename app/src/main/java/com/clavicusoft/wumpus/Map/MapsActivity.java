@@ -13,7 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.clavicusoft.wumpus.AR.Game_World;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
+import com.clavicusoft.wumpus.Maze.CaveContent;
+import com.clavicusoft.wumpus.Maze.Graph;
 import com.clavicusoft.wumpus.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -54,7 +57,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     boolean creado;
 
-
+    Graph graph;
+    CaveContent[] caveContents;
     /**
      * Obtain the SupportMapFragment and get notified when the map is ready to be used. Further,
      * gets the number of caves and the relationships according to the id of the graph in the database.
@@ -243,6 +247,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             db.close();
         }
         cell.close();
+        graph = new Graph(numberCaves);
+        //TODO posible cambio
+        caveContents = graph.randomEntitiesGen(0);
 
     }
 
@@ -749,6 +756,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         addMetersToLongitude(longitudeGPS, distance, 2, false));
                 break;
         }
+        startGame();
+    }
+
+    public void startGame()
+    {
+        Intent i = new Intent(this, Game_World.class);
+        i.putExtra("game_ID",game_id);
+        i.putExtra("number_of_caves",numberCaves);
+        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                R.anim.fade_out);
+        startActivity(i, options.toBundle());
     }
 
     /**
@@ -768,15 +786,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         data.put("cave_number", cave_number);
         data.put("latitude", String.valueOf(coordX));
         data.put("longitude", String.valueOf(coordY));
+        data.put("content", caveContents[cave_number-1].getValue());
         db.insert("GAME", null, data);
 
         LatLng newCave = new LatLng(coordX, coordY);
 
         if (cave_number==1)
-        {        mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva "+cave_number).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        {        mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva "+cave_number)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         }
         else {
-            mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva " + cave_number).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva " + cave_number)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         }
 
     }
