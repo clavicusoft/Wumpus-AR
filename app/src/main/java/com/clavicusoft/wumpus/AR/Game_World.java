@@ -4,6 +4,7 @@ package com.clavicusoft.wumpus.AR;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
@@ -71,6 +72,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
 
         //Assign onClick listener
         currentBeyondARFragment.setOnClickBeyondarObjectListener(this);
+
     }
 
     /**
@@ -187,6 +189,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      */
     public void checkCaveContent (int cave_Number){
         Toast toast;
+        AlertDialog.Builder newDialog;
         CaveContent content = data.getCaveContent(cave_Number);
         switch (content) {
             case WUMPUS:
@@ -200,7 +203,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 int newCave;
                 newCave = data.chooseRandomCave(cave_Number,number_of_caves);
                 worldHelper.createBat(this, cave_Number, newCave, data);
-                AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+                newDialog = new AlertDialog.Builder(this);
                 newDialog.setTitle("Un murciélago salvaje ha aparecido");
                 newDialog.setMessage("El murciélago te ha llevado a la cueva "
                 + newCave + ". Para continuar debes desplazarte a esa cueva.");
@@ -212,9 +215,29 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 newDialog.show();
                 break;
             case PIT:
+                MediaPlayer mediaPlayer;
                 toast = Toast.makeText(this, "Has caido en un pozo.", Toast.LENGTH_SHORT);
                 toast.show();
                 worldHelper.updateObjects(this, cave_Number, data);
+                mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
+                mediaPlayer.start();
+                //stop();           //Stop the current game
+                //data.showScore();       //Show the game score
+                newDialog = new AlertDialog.Builder(this);
+                newDialog.setTitle("Ha caído en un pozo.");
+                newDialog.setMessage("Está fuera del juego. ¿Desea volver a jugar?");
+                newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        //Restart the game
+                    }
+                });
+                newDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        //Close app
+                        dialog.dismiss();
+                    }
+                });
+                newDialog.show();
                 break;
             case EMPTY:
                 toast = Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT);
