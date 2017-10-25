@@ -204,7 +204,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             case BAT:
                 toast = Toast.makeText(this, "Has caido en la cueva de un murcielago.", Toast.LENGTH_SHORT);
                 toast.show();
-                int newCave;
+                final int newCave;
+                final Context context = this;
                 newCave = data.chooseRandomCave(cave_Number,number_of_caves);
                 worldHelper.createBat(this, cave_Number, newCave, data);
                 AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
@@ -214,6 +215,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int which){
                         dialog.dismiss();
+                        worldHelper.moveToCave(context, newCave, data);
                     }
                 });
                 newDialog.show();
