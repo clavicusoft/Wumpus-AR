@@ -9,6 +9,8 @@ import com.clavicusoft.wumpus.Database.AdminSQLite;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.Maze.Graph;
 
+import java.util.Random;
+
 public class Game_Data {
 
     private int game_ID;
@@ -151,5 +153,26 @@ public class Game_Data {
                 break;
         }
         return result;
+    }
+
+    public int chooseRandomCave(int cave, int totalCaves){
+        Random rand = new Random();
+        int newCave;
+        boolean validCave;
+        do {
+            newCave = rand.nextInt(totalCaves) + 1;
+            validCave = isValid(newCave);
+        }while((newCave != cave) && (validCave));
+        return newCave;
+    }
+
+    public boolean isValid(int checkCave){
+        boolean valid = false;
+        CaveContent caveContent;
+        caveContent = getCaveContent(checkCave);
+        if(caveContent == CaveContent.EMPTY){
+            valid = true;
+        }
+        return valid;
     }
 }
