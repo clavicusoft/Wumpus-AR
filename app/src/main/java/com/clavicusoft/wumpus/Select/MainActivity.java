@@ -20,6 +20,7 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     AlertDialog.Builder alert; //Alert
+    int whichActivity=0; //1 Single, 2 Multiplayer
 
     private boolean checkAndRequestPermissions() {
         int permissionCAMERA = ContextCompat.checkSelfPermission(this,
