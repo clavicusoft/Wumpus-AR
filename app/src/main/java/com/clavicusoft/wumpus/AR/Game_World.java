@@ -101,21 +101,27 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void onClickBeyondarObject(ArrayList<BeyondarObject> arrayList) {
         // The first element in the array belongs to the closest BeyondarObject
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
-        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-        newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
-        newDialog.setMessage("¿Desea entrar a esta cueva?");
-        newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-                updateGame(cave_Number);
-            }
-        });
-        newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-            }
-        });
-        newDialog.show();
+        if (data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number)) {
+            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+            newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
+            newDialog.setMessage("¿Desea entrar a esta cueva?");
+            newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.dismiss();
+                    updateGame(cave_Number);
+                }
+            });
+            newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.dismiss();
+                }
+            });
+            newDialog.show();
+        }
+        else {
+            Toast.makeText(this,"Debes acercarte a la cueva para poder entrar en ella.",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     /**
@@ -126,7 +132,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         currentBeyondARFragment.setMaxDistanceToRender(3000);
         // Set the distance factor for rendering all the objects. As bigger the factor the
         // closer the objects
-        currentBeyondARFragment.setDistanceFactor(4);
+        currentBeyondARFragment.setDistanceFactor(5);
         /*
          * When a GeoObject is rendered
          * according to its position it could look very big if it is too close. Use
@@ -135,7 +141,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
          * everything at to look like if they where at least at 10 meters, we could
          * use this method for that purpose.
          */
-        currentBeyondARFragment.setPushAwayDistance(0);
+        currentBeyondARFragment.setPushAwayDistance(4);
         /*
          * When a GeoObject is rendered
          * according to its position it could look very small if it is far away. Use
@@ -223,5 +229,4 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 break;
         }
     }
-
 }
