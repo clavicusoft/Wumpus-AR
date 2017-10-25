@@ -179,7 +179,7 @@ public class Game_Data {
         return valid;
     }
 
-    public Boolean checkDistance(double current_Latitude, double current_Longitude, int cave_Number) {
+    public double checkDistance(double current_Latitude, double current_Longitude, int cave_Number) {
         Boolean close_enough = false;
 
         Location loc1 = new Location("");
@@ -190,12 +190,7 @@ public class Game_Data {
         loc2.setLatitude(getLatitudeFromCave(cave_Number));
         loc2.setLongitude(getLongitudeFromCave(cave_Number));
 
-        float distanceInMeters = loc1.distanceTo(loc2);
-
-        if (distanceInMeters < 4) {
-            close_enough = true;
-        }
-        return close_enough;
+        return loc1.distanceTo(loc2);
     }
 
     public double getLatitudeFromCave (int cave_Number){
