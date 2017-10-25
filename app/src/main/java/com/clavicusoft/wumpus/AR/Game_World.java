@@ -17,8 +17,10 @@ import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Game_World extends FragmentActivity implements OnClickBeyondarObjectListener {
 
@@ -166,7 +168,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void updateGame (int cave_Number) {
         currentCave.setText(String.valueOf(cave_Number));
         checkCaveContent(cave_Number);
-        worldHelper.updateObjects(this, cave_Number, data);
     }
 
     /**
@@ -185,14 +186,42 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * @param cave_Number Current cave number.
      */
     public void checkCaveContent (int cave_Number){
+        Toast toast;
         CaveContent content = data.getCaveContent(cave_Number);
         switch (content) {
             case WUMPUS:
+                toast = Toast.makeText(this, "Has caido en la cueva del Wumpus.", Toast.LENGTH_SHORT);
+                toast.show();
+                worldHelper.updateObjects(this, cave_Number, data);
                 break;
             case BAT:
+                toast = Toast.makeText(this, "Has caido en la cueva de un murcielago.", Toast.LENGTH_SHORT);
+                toast.show();
+                int newCave;
+                newCave = data.chooseRandomCave(cave_Number,number_of_caves);
+                worldHelper.createBat(this, cave_Number, newCave, data);
+                AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+                newDialog.setTitle("Un murciélago salvaje ha aparecido");
+                newDialog.setMessage("El murciélago te ha llevado a la cueva "
+                + newCave + ". Para continuar debes desplazarte a esa cueva.");
+                newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        dialog.dismiss();
+                    }
+                });
+                newDialog.show();
                 break;
             case PIT:
+                toast = Toast.makeText(this, "Has caido en un pozo.", Toast.LENGTH_SHORT);
+                toast.show();
+                worldHelper.updateObjects(this, cave_Number, data);
+                break;
+            case EMPTY:
+                toast = Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT);
+                toast.show();
+                worldHelper.updateObjects(this, cave_Number, data);
                 break;
         }
     }
+
 }
