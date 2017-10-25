@@ -101,7 +101,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void onClickBeyondarObject(ArrayList<BeyondarObject> arrayList) {
         // The first element in the array belongs to the closest BeyondarObject
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
-        if (data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number)) {
+        double distance = data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number);
+        if (distance <= 4) {
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
             newDialog.setMessage("¿Desea entrar a esta cueva?");
@@ -119,7 +120,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             newDialog.show();
         }
         else {
-            Toast.makeText(this,"Debes acercarte a la cueva para poder entrar en ella.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Debes acercarte a la cueva para poder entrar en ella. Estás a " + String.valueOf(distance) + " metros de ella." ,Toast.LENGTH_SHORT).show();
         }
 
     }
