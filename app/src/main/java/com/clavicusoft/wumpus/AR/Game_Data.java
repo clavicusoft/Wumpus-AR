@@ -4,10 +4,13 @@ package com.clavicusoft.wumpus.AR;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 
+import com.beyondar.android.world.GeoObject;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.Maze.Graph;
+import com.clavicusoft.wumpus.R;
 
 import java.util.Random;
 
@@ -174,5 +177,58 @@ public class Game_Data {
             valid = true;
         }
         return valid;
+    }
+
+    public Boolean checkDistance(double current_Latitude, double current_Longitude, int cave_Number) {
+        Boolean close_enough = false;
+
+        Location loc1 = new Location("");
+        loc1.setLatitude(current_Latitude);
+        loc1.setLongitude(current_Longitude);
+
+        Location loc2 = new Location("");
+        loc2.setLatitude(getLatitudeFromCave(cave_Number));
+        loc2.setLongitude(getLongitudeFromCave(cave_Number));
+
+        float distanceInMeters = loc1.distanceTo(loc2);
+
+        if (distanceInMeters < 4) {
+            close_enough = true;
+        }
+        return close_enough;
+    }
+
+    public double getLatitudeFromCave (int cave_Number){
+        AdminSQLite admin = new AdminSQLite(game_Context, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT latitude FROM GAME WHERE id = " +
+                game_ID + " AND cave_number = " + String.valueOf(cave_Number) + ";", null);
+
+        double result = 0;
+
+        if (cursor.moveToFirst()) {
+            result = Double.valueOf(cursor.getString(0));
+        }
+
+        cursor.close();
+        return result;
+    }
+
+    public double getLongitudeFromCave (int cave_Number) {
+        AdminSQLite admin = new AdminSQLite(game_Context, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT longitude FROM GAME WHERE id = " +
+                game_ID + " AND cave_number = " + String.valueOf(cave_Number) + ";", null);
+
+        double result = 0;
+
+        if (cursor.moveToFirst()) {
+            result = Double.valueOf(cursor.getString(0));
+        }
+
+        cursor.close();
+        return result;
     }
 }
