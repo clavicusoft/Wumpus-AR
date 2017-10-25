@@ -4,9 +4,9 @@ package com.clavicusoft.wumpus.AR;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.ArraySet;
 import android.support.v7.app.AlertDialog;
 
 import com.beyondar.android.fragment.BeyondarFragmentSupport;
@@ -14,17 +14,14 @@ import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.beyondar.android.view.OnClickBeyondarObjectListener;
 import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
-import com.clavicusoft.wumpus.Maze.Cave;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
 
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.Random;
 
 public class Game_World extends FragmentActivity implements OnClickBeyondarObjectListener {
 
@@ -76,18 +73,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         //Assign onClick listener
         currentBeyondARFragment.setOnClickBeyondarObjectListener(this);
 
-
-        AlertDialog.Builder alert;
-        CaveContent[] caveContents = this.data.getCaveContents();
-        alert = new AlertDialog.Builder(this);
-        alert.setTitle("Cuevas");
-        alert.setMessage(Arrays.toString(caveContents));
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-            }
-        });
-        alert.show();
     }
 
     /**
@@ -143,7 +128,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         currentBeyondARFragment.setMaxDistanceToRender(3000);
         // Set the distance factor for rendering all the objects. As bigger the factor the
         // closer the objects
-        currentBeyondARFragment.setDistanceFactor(5);
+        currentBeyondARFragment.setDistanceFactor(4);
         /*
          * When a GeoObject is rendered
          * according to its position it could look very big if it is too close. Use
@@ -152,7 +137,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
          * everything at to look like if they where at least at 10 meters, we could
          * use this method for that purpose.
          */
-        currentBeyondARFragment.setPushAwayDistance(4);
+        currentBeyondARFragment.setPushAwayDistance(0);
         /*
          * When a GeoObject is rendered
          * according to its position it could look very small if it is far away. Use
@@ -185,7 +170,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void updateGame (int cave_Number) {
         currentCave.setText(String.valueOf(cave_Number));
         checkCaveContent(cave_Number);
-        worldHelper.updateObjects(this, cave_Number, data);
     }
 
     /**
@@ -204,43 +188,63 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * @param cave_Number Current cave number.
      */
     public void checkCaveContent (int cave_Number){
+        Toast toast;
+        AlertDialog.Builder newDialog;
         CaveContent content = data.getCaveContent(cave_Number);
         switch (content) {
             case WUMPUS:
+                toast = Toast.makeText(this, "Has caido en la cueva del Wumpus.", Toast.LENGTH_SHORT);
+                toast.show();
+                worldHelper.updateObjects(this, cave_Number, data);
                 break;
             case BAT:
+                toast = Toast.makeText(this, "Has caido en la cueva de un murcielago.", Toast.LENGTH_SHORT);
+                toast.show();
+                int newCave;
+                newCave = data.chooseRandomCave(cave_Number,number_of_caves);
+                worldHelper.createBat(this, cave_Number, newCave, data);
+                newDialog = new AlertDialog.Builder(this);
+                newDialog.setTitle("Un murciélago salvaje ha aparecido");
+                newDialog.setMessage("El murciélago te ha llevado a la cueva "
+                + newCave + ". Para continuar debes desplazarte a esa cueva.");
+                newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        dialog.dismiss();
+                    }
+                });
+                newDialog.show();
                 break;
             case PIT:
+                MediaPlayer mediaPlayer;
+                toast = Toast.makeText(this, "Has caido en un pozo.", Toast.LENGTH_SHORT);
+                toast.show();
+                worldHelper.updateObjects(this, cave_Number, data);
+                mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
+                mediaPlayer.start();
+                //stop();           //Stop the current game
+                //data.showScore();       //Show the game score
+                newDialog = new AlertDialog.Builder(this);
+                newDialog.setTitle("Ha caído en un pozo.");
+                newDialog.setMessage("Está fuera del juego. ¿Desea volver a jugar?");
+                newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        //Restart the game
+                    }
+                });
+                newDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        //Close app
+                        dialog.dismiss();
+                    }
+                });
+                newDialog.show();
                 break;
             case EMPTY:
-                this.showHints(cave_Number);
+                toast = Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT);
+                toast.show();
+                worldHelper.updateObjects(this, cave_Number, data);
                 break;
         }
     }
 
-    private void showHints(int cave_Number) {
-        CaveContent[] allCaves = this.data.getCaveContents();
-        ArraySet<CaveContent> adjacentHints = new ArraySet<>();
-
-
-        for (int i = 0 ; i< allCaves.length ;i++) {
-            if(this.data.getGraph().areConnected(cave_Number,i)) {
-                adjacentHints.add(allCaves[i]);
-            }
-        }
-
-
-        if(adjacentHints.contains(CaveContent.BAT)) {
-            Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_LONG).show();
-        }
-
-        if(adjacentHints.contains(CaveContent.PIT)) {
-            Toast.makeText(this, "Acabas de percibir una brisa fría", Toast.LENGTH_LONG).show();
-        }
-
-        if(adjacentHints.contains(CaveContent.WUMPUS)) {
-            Toast.makeText(this, "Acabas de percibir un olor repugnante a Wumpus", Toast.LENGTH_LONG).show();
-        }
-
-    }
 }
