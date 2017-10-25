@@ -172,7 +172,7 @@ public class Game_Data {
     public boolean isValid(int checkCave){
         boolean valid = false;
         CaveContent caveContent;
-        caveContent = getCaveContent(checkCave);
+        caveContent = getCaveContent(checkCave-1);
         if(caveContent == CaveContent.EMPTY){
             valid = true;
         }
