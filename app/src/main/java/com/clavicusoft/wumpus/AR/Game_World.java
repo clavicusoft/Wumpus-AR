@@ -1,8 +1,11 @@
 package com.clavicusoft.wumpus.AR;
 
 
+import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -16,11 +19,22 @@ import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
+import com.clavicusoft.wumpus.Select.MainActivity;
+import com.clavicusoft.wumpus.Select.SelectPolyActivity;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Game_World extends FragmentActivity implements OnClickBeyondarObjectListener {
@@ -32,6 +46,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     private int game_ID;
     private int number_of_caves;
     private TextView currentCave;
+    private Map<String, Integer> score;
 
     /**
      * Sets the view once this activity starts.
@@ -72,6 +87,11 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
 
         //Assign onClick listener
         currentBeyondARFragment.setOnClickBeyondarObjectListener(this);
+
+        score = new HashMap<>();
+        score.put("visitedCaves",0);
+        score.put("visitedBatCaves",0);
+        score.put("usedArrows",0);
 
     }
 
@@ -207,6 +227,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             case BAT:
                 toast = Toast.makeText(this, "Has caido en la cueva de un murcielago.", Toast.LENGTH_SHORT);
                 toast.show();
+                score.put("visitedBatCaves",score.get("visitedBatCaves")+1);
                 final int newCave;
                 final Context context = this;
                 newCave = data.chooseRandomCave(cave_Number,number_of_caves);
@@ -225,32 +246,48 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 break;
             case PIT:
                 MediaPlayer mediaPlayer;
-                toast = Toast.makeText(this, "Has caido en un pozo.", Toast.LENGTH_SHORT);
+                toast = Toast.makeText(this, "Has caído en un pozo.", Toast.LENGTH_SHORT);
                 toast.show();
                 worldHelper.updateObjects(this, cave_Number, data);
                 mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
                 mediaPlayer.start();
-                //stop();           //Stop the current game
-                //data.showScore();       //Show the game score
-                newDialog = new AlertDialog.Builder(this);
-                newDialog.setTitle("Ha caído en un pozo.");
-                newDialog.setMessage("Está fuera del juego. ¿Desea volver a jugar?");
-                newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int which){
-                        //Restart the game
-                    }
-                });
-                newDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int which){
-                        //Close app
+                final Dialog dialog = new Dialog(this);
+                //Animation anim = AnimationUtils.loadAnimation(this, R.anim.slow_fade_out);
+                //anim.reset();
+                //dialog.startAnimation(anim);
+                dialog.setContentView(R.layout.layout_gameover);
+                TextView txtV1 = dialog.findViewById(R.id.txtViewNumVisitedC);
+                TextView txtV2 = dialog.findViewById(R.id.txtViewNumVisitedBatC);
+                TextView txtV3 = dialog.findViewById(R.id.txtViewNumUsedA);
+                txtV1.setText(score.get("visitedCaves").toString());
+                txtV2.setText(score.get("visitedBatCaves").toString());
+                txtV3.setText(score.get("usedArrows").toString());
+                Button btn1 = dialog.findViewById(R.id.btnRestartGame);
+                Button btn2 = dialog.findViewById(R.id.btnExitGame);
+                btn1.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
                         dialog.dismiss();
+                        Intent i = new Intent(v.getContext(),MainActivity.class);
+                        ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.slow_fade_out,R.anim.fade_out);
+                        startActivity(i, options.toBundle());
                     }
                 });
-                newDialog.show();
+                btn2.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        BeyondarLocationManager.disable();
+                        finish();
+                        dialog.cancel();
+                    }
+                });
+                mediaPlayer.stop();
+                dialog.show();
                 break;
             case EMPTY:
                 toast = Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT);
                 toast.show();
+                score.put("visitedCaves",score.get("visitedCaves")+1);
                 worldHelper.updateObjects(this, cave_Number, data);
                 break;
         }
