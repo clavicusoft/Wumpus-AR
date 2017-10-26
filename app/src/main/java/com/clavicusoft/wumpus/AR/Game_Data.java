@@ -4,10 +4,17 @@ package com.clavicusoft.wumpus.AR;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 
+import com.beyondar.android.world.GeoObject;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.Maze.Graph;
+import com.clavicusoft.wumpus.R;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Random;
 
 public class Game_Data {
 
@@ -160,5 +167,105 @@ public class Game_Data {
 
     public void setCaveContents(CaveContent[] caveContents) {
         this.caveContents = caveContents;
+    }
+
+    public int chooseRandomCave(int cave, int totalCaves){
+        Random rand = new Random();
+        int newCave;
+        boolean validCave;
+        do {
+            newCave = rand.nextInt(totalCaves) + 1;
+            validCave = isValid(newCave);
+        }while((newCave != cave) && (validCave));
+        return newCave;
+    }
+
+    public boolean isValid(int checkCave){
+        boolean valid = false;
+        CaveContent caveContent;
+        caveContent = getCaveContent(checkCave-1);
+        if(caveContent == CaveContent.EMPTY){
+            valid = true;
+        }
+        return valid;
+    }
+
+    /**
+     * Gets the distance between the user and a cave.
+     * @param current_Latitude Current user latitude.
+     * @param current_Longitude Current user longitude.
+     * @param cave_Number Cave number.
+     * @return Distance in meters between the user and the cave.
+     */
+    public double checkDistance(double current_Latitude, double current_Longitude, int cave_Number) {
+        Location loc1 = new Location("");
+        loc1.setLatitude(current_Latitude);
+        loc1.setLongitude(current_Longitude);
+
+        Location loc2 = new Location("");
+        loc2.setLatitude(getLatitudeFromCave(cave_Number));
+        loc2.setLongitude(getLongitudeFromCave(cave_Number));
+
+        return round(loc1.distanceTo(loc2), 1);
+    }
+
+    /**
+     * Gets the latitude of a cave.
+     *
+     * @param cave_Number Number of the cave.
+     * @return Latitude of the cave.
+     */
+    public double getLatitudeFromCave (int cave_Number){
+        AdminSQLite admin = new AdminSQLite(game_Context, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT latitude FROM GAME WHERE id = " +
+                game_ID + " AND cave_number = " + String.valueOf(cave_Number) + ";", null);
+
+        double result = 0;
+
+        if (cursor.moveToFirst()) {
+            result = Double.valueOf(cursor.getString(0));
+        }
+
+        cursor.close();
+        return result;
+    }
+
+    /**
+     * Gets the longitude of a cave.
+     *
+     * @param cave_Number Number of the cave.
+     * @return Longitude of the cave.
+     */
+    public double getLongitudeFromCave (int cave_Number) {
+        AdminSQLite admin = new AdminSQLite(game_Context, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT longitude FROM GAME WHERE id = " +
+                game_ID + " AND cave_number = " + String.valueOf(cave_Number) + ";", null);
+
+        double result = 0;
+
+        if (cursor.moveToFirst()) {
+            result = Double.valueOf(cursor.getString(0));
+        }
+
+        cursor.close();
+        return result;
+    }
+
+    /**
+     * Rounds a value to a certain number of decimals.
+     * @param value Value to round.
+     * @param places Number of decimals.
+     * @return Rounded value.
+     */
+    public double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }
