@@ -1,8 +1,10 @@
 package com.clavicusoft.wumpus.AR;
 
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -102,7 +104,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         // The first element in the array belongs to the closest BeyondarObject
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
         double distance = data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number);
-        if (distance <= 4) {
+        if (distance <= 10) {
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
             newDialog.setMessage("¿Desea entrar a esta cueva?");
@@ -199,6 +201,12 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             case WUMPUS:
                 toast = Toast.makeText(this, "Has caido en la cueva del Wumpus.", Toast.LENGTH_SHORT);
                 toast.show();
+
+                Intent intent = new Intent(Game_World.this, WumpusAnimation.class);
+                ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                        R.anim.fade_out);
+                startActivity(intent,options.toBundle());
+
                 worldHelper.updateObjects(this, cave_Number, data);
                 break;
             case BAT:

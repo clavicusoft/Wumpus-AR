@@ -66,6 +66,14 @@
             android:name=".AR.Game_World"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".AR.Splash_screen"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".AR.WumpusAnimation"
+            android:screenOrientation="portrait" />
+
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
