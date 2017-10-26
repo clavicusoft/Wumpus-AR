@@ -124,14 +124,14 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         // The first element in the array belongs to the closest BeyondarObject
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
         double distance = data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number);
-        if (distance <= 4) {
+        if (distance <= 10) {
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
             newDialog.setMessage("¿Desea entrar a esta cueva?");
             newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
-                    dialog.dismiss();
                     updateGame(cave_Number);
+                    dialog.dismiss();
                 }
             });
             newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
@@ -216,7 +216,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      */
     public void checkCaveContent (int cave_Number){
         Toast toast;
-        AlertDialog.Builder newDialog;
         CaveContent content = data.getCaveContent(cave_Number);
         switch (content) {
             case WUMPUS:
@@ -232,20 +231,20 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 final Context context = this;
                 newCave = data.chooseRandomCave(cave_Number,number_of_caves);
                 worldHelper.createBat(this, cave_Number, newCave, data);
-                newDialog = new AlertDialog.Builder(this);
+                AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
                 newDialog.setTitle("Un murciélago salvaje ha aparecido");
                 newDialog.setMessage("El murciélago te ha llevado a la cueva "
                 + newCave + ". Para continuar debes desplazarte a esa cueva.");
                 newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int which){
-                        dialog.dismiss();
                         worldHelper.moveToCave(context, newCave, data);
+                        dialog.dismiss();
                     }
                 });
                 newDialog.show();
                 break;
             case PIT:
-                MediaPlayer mediaPlayer;
+                final MediaPlayer mediaPlayer;
                 toast = Toast.makeText(this, "Has caído en un pozo.", Toast.LENGTH_SHORT);
                 toast.show();
                 worldHelper.updateObjects(this, cave_Number, data);
@@ -269,7 +268,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                     public void onClick(View v) {
                         dialog.dismiss();
                         Intent i = new Intent(v.getContext(),MainActivity.class);
-                        ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.slow_fade_out,R.anim.fade_out);
+                        ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fade_out,R.anim.fade_out);
+                        mediaPlayer.release();
                         startActivity(i, options.toBundle());
                     }
                 });
@@ -277,11 +277,11 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                     @Override
                     public void onClick(View v) {
                         BeyondarLocationManager.disable();
-                        finish();
+                        mediaPlayer.release();
                         dialog.cancel();
+                        finish();
                     }
                 });
-                mediaPlayer.stop();
                 dialog.show();
                 break;
             case EMPTY:
