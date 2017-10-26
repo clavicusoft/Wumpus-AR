@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,9 +21,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
+import com.clavicusoft.wumpus.Map.Coordinates;
+import com.clavicusoft.wumpus.Map.MapsActivity;
 import com.clavicusoft.wumpus.Select.MainActivity;
 import com.clavicusoft.wumpus.Select.Multiplayer;
 import com.clavicusoft.wumpus.R;
+import com.clavicusoft.wumpus.Select.SelectFromLibActivity;
 
 public class BluetoothChat extends Activity {
 
@@ -36,6 +40,10 @@ public class BluetoothChat extends Activity {
     private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
     public String laberinto = "";
+    private double latitud=0.0;
+    private double longitud=0.0;
+    private int graph_ID = 0;
+    double distance = 0.0;
     public String nombreLaberinto = "";
     public String funcion = "";
     private Button mSendButton;
@@ -58,6 +66,14 @@ public class BluetoothChat extends Activity {
             setContentView(R.layout.send_labs);
             laberinto = getIntent().getStringExtra("laberinto");
             nombreLaberinto = getIntent().getStringExtra("nombreLaberinto");
+        }else if(funcion.equals("enviarEmplazamiento")){
+            setContentView(R.layout.send_emplacement);
+            laberinto = getIntent().getStringExtra("laberinto");
+            latitud = getIntent().getDoubleExtra("Latitud", 0);
+            longitud = getIntent().getDoubleExtra("Longitud", 0);
+            distance = getIntent().getDoubleExtra("Distancia", 0);
+        }else if(funcion.equals("buscarEmplazamiento")){
+            setContentView(R.layout.searching_emplacements);
         }else{
             setContentView(R.layout.searching_labs);
         }
@@ -105,6 +121,15 @@ public class BluetoothChat extends Activity {
             mSendButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     String message = laberinto;
+                    sendMessage(message);
+                }
+            });
+        }
+        if(funcion.equals("enviarEmplazamiento")){
+            mSendButton = (Button) findViewById(R.id.button_send);
+            mSendButton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    String message = laberinto+"%"+latitud+"%"+longitud+"%"+distance;
                     sendMessage(message);
                 }
             });
@@ -210,51 +235,87 @@ public class BluetoothChat extends Activity {
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    final String [] splitMessage = tokenizer(readMessage);
-                    AlertDialog.Builder alert = new AlertDialog.Builder(BluetoothChat.this);
-                    alert.setTitle("Invitación para compartir laberinto");
-                    alert.setMessage("¿Quiere aceptar el laberinto recibido?\nNombre: "+ splitMessage[2] + "\nRelaciones: " + splitMessage[0]+"\nNúmero de cuevas: "+ splitMessage[1]);
-                    alert.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            AdminSQLite admin = new AdminSQLite(BluetoothChat.this, "WumpusDB", null, 6);
-                            SQLiteDatabase db = admin.getWritableDatabase();
-                            ContentValues data = new ContentValues();
-                            data.put("name", splitMessage[2]);
-                            data.put("relations", splitMessage[0]);
-                            data.put("number_of_caves", splitMessage[1]);
-                            db.insert("GRAPH", null, data);
-                            db.close();
-                            AlertDialog.Builder newDialog = new AlertDialog.Builder(BluetoothChat.this);
-                            newDialog.setTitle("Se ha guardado el laberinto");
-                            newDialog.setMessage("¿Desea continuar intercambiando laberintos?");
-                            newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
-                                public void onClick(DialogInterface dialog, int which){
-                                    dialog.dismiss();
-                                    Intent i = new Intent(BluetoothChat.this, Multiplayer.class);
-                                    ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.fade_in, R.anim.fade_out);
-                                    startActivity(i, options.toBundle());
-                                }
-                            });
-                            newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
-                                public void onClick(DialogInterface dialog, int which){
-                                    dialog.dismiss();
-                                    Intent i = new Intent(BluetoothChat.this, MainActivity.class);
-                                    ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.slide_in_up, R.anim.slide_out_up);
-                                    startActivity(i, options.toBundle());
-                                }
-                            });
-                            newDialog.show();
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.show();
+                    final String[] splitMessage = tokenizer(readMessage);
+                    if (splitMessage.length == 3) {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(BluetoothChat.this);
+                        alert.setTitle("Invitación para compartir laberinto");
+                        alert.setMessage("¿Quiere aceptar el laberinto recibido?\nNombre: " + splitMessage[2] + "\nRelaciones: " + splitMessage[0] + "\nNúmero de cuevas: " + splitMessage[1]);
+                        alert.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                AdminSQLite admin = new AdminSQLite(BluetoothChat.this, "WumpusDB", null, 6);
+                                SQLiteDatabase db = admin.getWritableDatabase();
+                                ContentValues data = new ContentValues();
+                                data.put("name", splitMessage[2]);
+                                data.put("relations", splitMessage[0]);
+                                data.put("number_of_caves", splitMessage[1]);
+                                db.insert("GRAPH", null, data);
+                                db.close();
+                                AlertDialog.Builder newDialog = new AlertDialog.Builder(BluetoothChat.this);
+                                newDialog.setTitle("Se ha guardado el laberinto");
+                                newDialog.setMessage("¿Desea continuar intercambiando laberintos?");
+                                newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        Intent i = new Intent(BluetoothChat.this, Multiplayer.class);
+                                        ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.fade_in, R.anim.fade_out);
+                                        startActivity(i, options.toBundle());
+                                    }
+                                });
+                                newDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        Intent i = new Intent(BluetoothChat.this, MainActivity.class);
+                                        ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.slide_in_up, R.anim.slide_out_up);
+                                        startActivity(i, options.toBundle());
+                                    }
+                                });
+                                newDialog.show();
+                                dialog.dismiss();
+                            }
+                        });
+                        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alert.show();
+                    }else{
+                        AlertDialog.Builder alert = new AlertDialog.Builder(BluetoothChat.this);
+                        alert.setTitle("Invitación para compartir emplazamiento");
+                        alert.setMessage("¿Quiere aceptar el emplazamiento recibido?");
+                        alert.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                AdminSQLite admin = new AdminSQLite(BluetoothChat.this, "WumpusDB", null, 6);
+                                SQLiteDatabase db = admin.getWritableDatabase();
+                                ContentValues data = new ContentValues();
+                                data.put("name", splitMessage[2]);
+                                data.put("relations", splitMessage[0]);
+                                data.put("number_of_caves", splitMessage[1]);
+                                db.insert("GRAPH", null, data);
+                                db.close();
+                                dialog.dismiss();
+                                SelectFromLibActivity selectFromLibActivity = new SelectFromLibActivity();
+                                Intent i = new Intent(BluetoothChat.this, MapsActivity.class);
+                                i.putExtra("Latitud", splitMessage[3]);
+                                i.putExtra("Longitud", splitMessage[4]);
+                                i.putExtra("graphID",selectFromLibActivity.getGraphID(splitMessage[2]));
+                                i.putExtra("Distancia",splitMessage[5]);
+                                i.putExtra("funcion","multijugador");
+                                ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.fade_in, R.anim.fade_out);
+                                startActivity(i, options.toBundle());
+                            }
+                        });
+                        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alert.show();
+                    }
                     break;
                 case MESSAGE_DEVICE_NAME:
                     mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);

@@ -291,6 +291,7 @@ public class Coordinates extends Activity {
                 i.putExtra("Longitud", getLongitudeGPS());
                 i.putExtra("graphID",graph_id);
                 i.putExtra("Distancia",distance);
+                i.putExtra("funcion","individual");
                 //Starts the map activity with the given parameters.
                 ActivityOptions options = ActivityOptions.makeCustomAnimation(Coordinates.this, R.anim.fade_in, R.anim.fade_out);
                 startActivity(i, options.toBundle());

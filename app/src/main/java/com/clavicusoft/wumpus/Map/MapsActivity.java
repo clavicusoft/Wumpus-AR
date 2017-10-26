@@ -2,8 +2,10 @@ package com.clavicusoft.wumpus.Map;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.clavicusoft.wumpus.AR.Game_World;
+import com.clavicusoft.wumpus.Bluetooth.BluetoothChat;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.Maze.Graph;
@@ -59,53 +62,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     Graph graph;
     CaveContent[] caveContents;
+
     /**
      * Obtain the SupportMapFragment and get notified when the map is ready to be used. Further,
      * gets the number of caves and the relationships according to the id of the graph in the database.
+     *
      * @param savedInstanceState State of the instance saved
      */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-
         Bundle b;
         b = getIntent().getExtras();
+
+        if (getIntent().getStringExtra("funcion").toString() == "multijugador") {
+            setContentView(R.layout.activity_multiplayer_maps);
+            btnListo = (Button) findViewById(R.id.bListo);
+            btnListo.setOnClickListener(this);
+        } else {
+            setContentView(R.layout.activity_maps);
+            btnContinue = (Button) findViewById(R.id.bcontinuar);
+            btnHybrid = (Button) findViewById(R.id.bhibrido);
+            btnTerrain = (Button) findViewById(R.id.bterreno);
+            btnListo = (Button) findViewById(R.id.bListo);
+            btnContinue.setOnClickListener(this);
+            btnTerrain.setOnClickListener(this);
+            btnHybrid.setOnClickListener(this);
+            btnListo.setOnClickListener(this);
+        }
+
+        longitude = b.getDouble("Longitud");
         latitude = b.getDouble("Latitud");
-        longitude =b.getDouble("Longitud");
-        graph_ID=b.getInt("graphID");
-        distance=b.getDouble("Distancia");
+        graph_ID = b.getInt("graphID");
+        distance = b.getDouble("Distancia");
 
-        btnContinue =(Button) findViewById(R.id.bcontinuar);
-        btnHybrid =(Button) findViewById(R.id.bhibrido);
-        btnTerrain =(Button) findViewById(R.id.bterreno);
-        btnListo=(Button) findViewById(R.id.bListo);
-
-        btnContinue.setOnClickListener(this);
-        btnTerrain.setOnClickListener(this);
-        btnHybrid.setOnClickListener(this);
-        btnListo.setOnClickListener(this);
-
-        selectedLatitude =0.0;
-        selectedLongitude =0.0;
+        selectedLatitude = 0.0;
+        selectedLongitude = 0.0;
 
         meterToCoordinates = 0.0000095;
 
-        creado=false;
+        creado = false;
 
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
 
-        int status= GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-
-        if (status== ConnectionResult.SUCCESS)
-        {
+        if (status == ConnectionResult.SUCCESS) {
 
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);}
-
-        else {
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status,(Activity)getApplicationContext(),10);
+            mapFragment.getMapAsync(this);
+        } else {
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity) getApplicationContext(), 10);
             dialog.show();
         }
 
@@ -117,13 +123,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Button Functions, change the terrain map type to hybrid. On the other hand, you can start creating the
      * labyrinth from the point the user chooses and displays it on the map.
-     * @param view  Used view
+     *
+     * @param view Used view
      */
-
     @Override
     public void onClick(View view) {
-        switch (view.getId())
-        {
+        switch (view.getId()) {
             case R.id.bterreno:
                 mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                 break;
@@ -131,40 +136,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 break;
             case R.id.bcontinuar: {
-
-
-                if (selectedLatitude !=0.0 && selectedLongitude !=0.0)
-                {
-
+                if (selectedLatitude != 0.0 && selectedLongitude != 0.0) {
                     //Create caves
-
                     putCave(numberCaves, selectedLatitude, selectedLongitude);
-
-                }
-                else {//Create caves
+                } else {//Create caves
                     putCave(numberCaves, latitude, longitude);
                 }
-                creado=true;
+                creado = true;
             }
             break;
-
             case R.id.bListo:
-                if(creado) {
-                    startGame();
+                if (creado) {
+                    if (getIntent().getStringExtra("funcion").toString() == "multijugador") {
+                        startGame();
+                    } else {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+                        alert.setTitle("Compartir emplazamiento");
+                        alert.setMessage("¿Quiere compartir el emplazamiento con otros dispositivos?");
+                        alert.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                Intent i = new Intent(MapsActivity.this, BluetoothChat.class);
+                                i.putExtra("Latitud", latitude);
+                                i.putExtra("Longitud", longitude);
+                                i.putExtra("laberinto", getLaberinto(graph_ID));
+                                i.putExtra("Distancia", distance);
+                                i.putExtra("funcion", "enviarEmplazamiento");
+                                ActivityOptions options = ActivityOptions.makeCustomAnimation(MapsActivity.this, R.anim.fade_in, R.anim.fade_out);
+                                startActivity(i, options.toBundle());
+                            }
+                        });
+                        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                startGame();
+                            }
+                        });
+                        alert.show();
+                    }
+                } else {
+                    Toast.makeText(MapsActivity.this, "Debe crear un mapa de juego", Toast.LENGTH_LONG).show();
                 }
-                    else
-                    {
-                    Toast.makeText(MapsActivity.this,"Debe crear un mapa de juego",Toast.LENGTH_LONG).show();
-                }
-                break;
-            default:
-                break;
-
-
-        }
-
-
+        break;
+        default:
+        break;
     }
+
+}
 
     /**
      * Manipulates the map once available.
@@ -177,23 +197,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Also, with a long click, it displays a new marker.
      *
      * @param googleMap google Map that is shown
-
      */
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        UiSettings uiSettings=mMap.getUiSettings();
+        UiSettings uiSettings = mMap.getUiSettings();
         uiSettings.setZoomControlsEnabled(true);
 
         // Add a marker in the current point and move the camera
         LatLng current = new LatLng(latitude, longitude);
         mMap.addMarker(new MarkerOptions().position(current).title("Ubicación Actual").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-        float zoomLevel=16;
+        float zoomLevel = 16;
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, zoomLevel));
-
 
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -203,8 +221,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 LatLng actual = new LatLng(latitude, longitude);
                 mMap.addMarker(new MarkerOptions().position(actual).title("Ubicación Actual").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
                 mMap.addMarker(new MarkerOptions().title("Posicion Deseada").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).position(latLngChosen));
-                selectedLatitude =latLngChosen.latitude;
-                selectedLongitude =latLngChosen.longitude;
+                selectedLatitude = latLngChosen.latitude;
+                selectedLongitude = latLngChosen.longitude;
 
 
             }
@@ -212,13 +230,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     /**
-     *Gets the number of caves and the relationships according to the id of the graph in the database.
-     * @param graph_id id of the selected graph.
+     * Gets the number of caves and the relationships according to the id of the graph in the database.
      *
+     * @param graph_id id of the selected graph.
      */
 
-    public void accessBD(int graph_id)
-    {
+    public void accessBD(int graph_id) {
 
         AdminSQLite admin = new AdminSQLite(this, "WumpusDB", null, 7);
         SQLiteDatabase db = admin.getWritableDatabase();
@@ -244,7 +261,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         cell.close();
     }
 
-    public void generateCaveContent(){
+    public void generateCaveContent() {
         graph = new Graph(numberCaves);
         //TODO posible cambio
         caveContents = graph.randomEntitiesGen(0);
@@ -253,11 +270,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Generates the location for the Maze's caves.
      *
-     * @param cave Number of caves in the Graph.
-     * @param latitudeGPS Player's latitude.
+     * @param cave         Number of caves in the Graph.
+     * @param latitudeGPS  Player's latitude.
      * @param longitudeGPS Player's longitude.
      */
-    public void putCave (int cave,double latitudeGPS, double longitudeGPS) {
+    public void putCave(int cave, double latitudeGPS, double longitudeGPS) {
         mMap.clear();
         clearDB();
         switch (numberCaves) {
@@ -756,11 +773,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void startGame()
-    {
+    public void startGame() {
         Intent i = new Intent(this, Game_World.class);
-        i.putExtra("game_ID",game_id);
-        i.putExtra("number_of_caves",numberCaves);
+        i.putExtra("game_ID", game_id);
+        i.putExtra("number_of_caves", numberCaves);
         ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
                 R.anim.fade_out);
         startActivity(i, options.toBundle());
@@ -770,10 +786,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Stores the cave in the DB.
      *
      * @param cave_number The number of the cave inside the graph.
-     * @param coordX The latitude of the cave.
-     * @param coordY The longitude of the cave.
+     * @param coordX      The latitude of the cave.
+     * @param coordY      The longitude of the cave.
      */
-    public void createCave (int cave_number, double coordX, double coordY) {
+    public void createCave(int cave_number, double coordX, double coordY) {
         AdminSQLite admin = new AdminSQLite(this, "WumpusDB", null, 7);
         SQLiteDatabase db = admin.getWritableDatabase();
 
@@ -783,16 +799,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         data.put("cave_number", cave_number);
         data.put("latitude", String.valueOf(coordX));
         data.put("longitude", String.valueOf(coordY));
-        data.put("content", caveContents[cave_number-1].getValue());
+        data.put("content", caveContents[cave_number - 1].getValue());
         db.insert("GAME", null, data);
 
         LatLng newCave = new LatLng(coordX, coordY);
 
-        if (cave_number==1)
-        {        mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva "+cave_number)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        }
-        else {
+        if (cave_number == 1) {
+            mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva " + cave_number)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        } else {
             mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva " + cave_number)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         }
@@ -804,18 +819,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Adds meters to the latitude of a location.
      *
      * @param latitude Actual latitude.
-     * @param meters Amount of meters to add.
-     * @param times Number of times you want to add those meters.
-     * @param sum Checks if you want to add or subtract the meters.
+     * @param meters   Amount of meters to add.
+     * @param times    Number of times you want to add those meters.
+     * @param sum      Checks if you want to add or subtract the meters.
      * @return The new latitude.
      */
-    public double addMetersToLatitude (double latitude, double meters, double times, boolean sum) {
+    public double addMetersToLatitude(double latitude, double meters, double times, boolean sum) {
         double result;
         if (sum) {
-            result = latitude + (times * (180/Math.PI) * (meters/6378137));
-        }
-        else {
-            result = latitude - (times * (180/Math.PI) * (meters/6378137));
+            result = latitude + (times * (180 / Math.PI) * (meters / 6378137));
+        } else {
+            result = latitude - (times * (180 / Math.PI) * (meters / 6378137));
         }
         return result;
     }
@@ -824,20 +838,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Adds meters to the longitude of a location.
      *
      * @param longitude Actual longitude.
-     * @param meters Amount of meters to add.
-     * @param times Number of times you want to add those meters.
-     * @param sum Checks if you want to add or subtract the meters.
+     * @param meters    Amount of meters to add.
+     * @param times     Number of times you want to add those meters.
+     * @param sum       Checks if you want to add or subtract the meters.
      * @return The new longitude.
      */
-    public double addMetersToLongitude (double longitude, double meters, double times, boolean sum) {
+    public double addMetersToLongitude(double longitude, double meters, double times, boolean sum) {
         double result;
         if (sum) {
             //result = longitude + (times * (180/Math.PI) * (meters/6378137) / Math.cos(Math.PI/180.0 * longitude));
-            result = longitude + (times * (180/Math.PI) * (meters/6378137));
-        }
-        else {
+            result = longitude + (times * (180 / Math.PI) * (meters / 6378137));
+        } else {
             //result = longitude - (times * (180/Math.PI) * (meters/6378137) / Math.cos(Math.PI/180.0 * longitude));
-            result = longitude - (times * (180/Math.PI) * (meters/6378137));
+            result = longitude - (times * (180 / Math.PI) * (meters / 6378137));
         }
         return result;
     }
@@ -852,4 +865,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         db.execSQL("DELETE FROM GAME WHERE id = " + String.valueOf(game_id));
     }
 
+    /**
+     * Prepare the message to send using the lab selected.
+     *
+     * @param id labs id
+     * @return msg ready to send
+     */
+    public String getLaberinto(int id) {
+        AdminSQLite admin = new AdminSQLite(this, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+        Cursor cell = db.rawQuery("SELECT * FROM GRAPH WHERE GRAPH.id = \"" + id + "\";", null);
+        String name = "";
+        String relations = "";
+        String number_of_caves = "";
+        if (cell.moveToFirst()) {
+            relations = cell.getString(1);
+            number_of_caves = cell.getString(2);
+            name = cell.getString(3);
+            cell.close();
+        } else {
+            Toast.makeText(this, "The Wumpus isn't around this caves. Try another one!", Toast.LENGTH_LONG).show();
+            db.close();
+        }
+        return relations + "%" + number_of_caves + "%" + name;
+    }
 }
+
+
+
+
