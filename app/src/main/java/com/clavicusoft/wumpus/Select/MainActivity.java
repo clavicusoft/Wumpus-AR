@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
                 //if both permissions are granted, does nothing since checkAndResquestPermissions returns true and button opens activity
             }
             else {
-                //Permission denied
+                //Permissions denied
                 alert.setTitle("Error");
                 alert.setMessage("Para poder continuar con el juego debe permitir a Wumpus acceder a la cámara y a su ubicación");
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
