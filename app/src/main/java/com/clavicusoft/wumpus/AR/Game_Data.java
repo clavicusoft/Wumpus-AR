@@ -12,6 +12,8 @@ import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.Maze.Graph;
 import com.clavicusoft.wumpus.R;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Random;
 
 public class Game_Data {
@@ -165,6 +167,7 @@ public class Game_Data {
 
     public void setCaveContents(CaveContent[] caveContents) {
         this.caveContents = caveContents;
+    }
 
     public int chooseRandomCave(int cave, int totalCaves){
         Random rand = new Random();
@@ -187,9 +190,14 @@ public class Game_Data {
         return valid;
     }
 
+    /**
+     * Gets the distance between the user and a cave.
+     * @param current_Latitude Current user latitude.
+     * @param current_Longitude Current user longitude.
+     * @param cave_Number Cave number.
+     * @return Distance in meters between the user and the cave.
+     */
     public double checkDistance(double current_Latitude, double current_Longitude, int cave_Number) {
-        Boolean close_enough = false;
-
         Location loc1 = new Location("");
         loc1.setLatitude(current_Latitude);
         loc1.setLongitude(current_Longitude);
@@ -198,9 +206,15 @@ public class Game_Data {
         loc2.setLatitude(getLatitudeFromCave(cave_Number));
         loc2.setLongitude(getLongitudeFromCave(cave_Number));
 
-        return loc1.distanceTo(loc2);
+        return round(loc1.distanceTo(loc2), 1);
     }
 
+    /**
+     * Gets the latitude of a cave.
+     *
+     * @param cave_Number Number of the cave.
+     * @return Latitude of the cave.
+     */
     public double getLatitudeFromCave (int cave_Number){
         AdminSQLite admin = new AdminSQLite(game_Context, "WumpusDB", null, 7);
         SQLiteDatabase db = admin.getWritableDatabase();
@@ -218,6 +232,12 @@ public class Game_Data {
         return result;
     }
 
+    /**
+     * Gets the longitude of a cave.
+     *
+     * @param cave_Number Number of the cave.
+     * @return Longitude of the cave.
+     */
     public double getLongitudeFromCave (int cave_Number) {
         AdminSQLite admin = new AdminSQLite(game_Context, "WumpusDB", null, 7);
         SQLiteDatabase db = admin.getWritableDatabase();
@@ -233,5 +253,19 @@ public class Game_Data {
 
         cursor.close();
         return result;
+    }
+
+    /**
+     * Rounds a value to a certain number of decimals.
+     * @param value Value to round.
+     * @param places Number of decimals.
+     * @return Rounded value.
+     */
+    public double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }

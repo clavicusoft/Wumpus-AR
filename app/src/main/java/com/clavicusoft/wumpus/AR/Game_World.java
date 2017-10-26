@@ -78,17 +78,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         //Assign onClick listener
         currentBeyondARFragment.setOnClickBeyondarObjectListener(this);
 
-        AlertDialog.Builder alert;
-        CaveContent[] caveContents = this.data.getCaveContents();
-        alert = new AlertDialog.Builder(this);
-        alert.setTitle("Cuevas");
-        alert.setMessage(Arrays.toString(caveContents));
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-            }
-        });
-        alert.show();
+        showHints(1);
     }
 
     /**
@@ -120,7 +110,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         // The first element in the array belongs to the closest BeyondarObject
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
         double distance = data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number);
-        if (distance <= 4) {
+        if (distance <= 10) {
             AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
             newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
             newDialog.setMessage("¿Desea entrar a esta cueva?");
@@ -243,7 +233,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 MediaPlayer mediaPlayer;
                 toast = Toast.makeText(this, "Has caido en un pozo.", Toast.LENGTH_SHORT);
                 toast.show();
-                worldHelper.updateObjects(this, cave_Number, data);
                 mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
                 mediaPlayer.start();
                 //stop();           //Stop the current game
@@ -265,12 +254,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 newDialog.show();
                 break;
             case EMPTY:
-                toast = Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT);
-                toast.show();
-                worldHelper.updateObjects(this, cave_Number, data);
-                break;
-            case EMPTY:
                 this.showHints(cave_Number);
+                worldHelper.updateObjects(this, cave_Number, data);
                 break;
         }
     }
@@ -279,25 +264,22 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         CaveContent[] allCaves = this.data.getCaveContents();
         ArraySet<CaveContent> adjacentHints = new ArraySet<>();
 
-
         for (int i = 0 ; i< allCaves.length ;i++) {
             if(this.data.getGraph().areConnected(cave_Number,i)) {
                 adjacentHints.add(allCaves[i]);
             }
         }
 
-
         if(adjacentHints.contains(CaveContent.BAT)) {
-            Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_SHORT).show();
         }
 
         if(adjacentHints.contains(CaveContent.PIT)) {
-            Toast.makeText(this, "Acabas de percibir una brisa fría", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Acabas de percibir una brisa fría", Toast.LENGTH_SHORT).show();
         }
 
         if(adjacentHints.contains(CaveContent.WUMPUS)) {
-            Toast.makeText(this, "Acabas de percibir un olor repugnante a Wumpus", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Acabas de percibir un olor repugnante a Wumpus", Toast.LENGTH_SHORT).show();
         }
-
     }
 }
