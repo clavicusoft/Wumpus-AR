@@ -4,6 +4,7 @@ package com.clavicusoft.wumpus.AR;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.ArraySet;
@@ -25,6 +26,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.Random;
 
 public class Game_World extends FragmentActivity implements OnClickBeyondarObjectListener {
 
@@ -76,7 +78,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         //Assign onClick listener
         currentBeyondARFragment.setOnClickBeyondarObjectListener(this);
 
-
         AlertDialog.Builder alert;
         CaveContent[] caveContents = this.data.getCaveContents();
         alert = new AlertDialog.Builder(this);
@@ -118,21 +119,28 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void onClickBeyondarObject(ArrayList<BeyondarObject> arrayList) {
         // The first element in the array belongs to the closest BeyondarObject
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
-        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-        newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
-        newDialog.setMessage("¿Desea entrar a esta cueva?");
-        newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-                updateGame(cave_Number);
-            }
-        });
-        newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-            }
-        });
-        newDialog.show();
+        double distance = data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number);
+        if (distance <= 4) {
+            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+            newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
+            newDialog.setMessage("¿Desea entrar a esta cueva?");
+            newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.dismiss();
+                    updateGame(cave_Number);
+                }
+            });
+            newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.dismiss();
+                }
+            });
+            newDialog.show();
+        }
+        else {
+            Toast.makeText(this,"Debes acercarte a la cueva para poder entrar en ella. Estás a " + String.valueOf(distance) + " metros de ella." ,Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     /**
@@ -185,7 +193,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void updateGame (int cave_Number) {
         currentCave.setText(String.valueOf(cave_Number));
         checkCaveContent(cave_Number);
-        worldHelper.updateObjects(this, cave_Number, data);
     }
 
     /**
@@ -204,13 +211,63 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * @param cave_Number Current cave number.
      */
     public void checkCaveContent (int cave_Number){
+        Toast toast;
+        AlertDialog.Builder newDialog;
         CaveContent content = data.getCaveContent(cave_Number);
         switch (content) {
             case WUMPUS:
+                toast = Toast.makeText(this, "Has caido en la cueva del Wumpus.", Toast.LENGTH_SHORT);
+                toast.show();
+                worldHelper.updateObjects(this, cave_Number, data);
                 break;
             case BAT:
+                toast = Toast.makeText(this, "Has caido en la cueva de un murcielago.", Toast.LENGTH_SHORT);
+                toast.show();
+                final int newCave;
+                final Context context = this;
+                newCave = data.chooseRandomCave(cave_Number,number_of_caves);
+                worldHelper.createBat(this, cave_Number, newCave, data);
+                newDialog = new AlertDialog.Builder(this);
+                newDialog.setTitle("Un murciélago salvaje ha aparecido");
+                newDialog.setMessage("El murciélago te ha llevado a la cueva "
+                + newCave + ". Para continuar debes desplazarte a esa cueva.");
+                newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        dialog.dismiss();
+                        worldHelper.moveToCave(context, newCave, data);
+                    }
+                });
+                newDialog.show();
                 break;
             case PIT:
+                MediaPlayer mediaPlayer;
+                toast = Toast.makeText(this, "Has caido en un pozo.", Toast.LENGTH_SHORT);
+                toast.show();
+                worldHelper.updateObjects(this, cave_Number, data);
+                mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
+                mediaPlayer.start();
+                //stop();           //Stop the current game
+                //data.showScore();       //Show the game score
+                newDialog = new AlertDialog.Builder(this);
+                newDialog.setTitle("Ha caído en un pozo.");
+                newDialog.setMessage("Está fuera del juego. ¿Desea volver a jugar?");
+                newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        //Restart the game
+                    }
+                });
+                newDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        //Close app
+                        dialog.dismiss();
+                    }
+                });
+                newDialog.show();
+                break;
+            case EMPTY:
+                toast = Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT);
+                toast.show();
+                worldHelper.updateObjects(this, cave_Number, data);
                 break;
             case EMPTY:
                 this.showHints(cave_Number);
