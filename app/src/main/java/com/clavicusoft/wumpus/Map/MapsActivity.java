@@ -110,7 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         accessBD(graph_ID);
-
+        generateCaveContent();
 
     }
 
@@ -144,18 +144,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 else {//Create caves
                     putCave(numberCaves, latitude, longitude);
                 }
-                game_id++;
                 creado=true;
             }
             break;
 
             case R.id.bListo:
                 if(creado) {
-                    Intent i = new Intent(MapsActivity.this, ActualCoordinate.class);
-                    i.putExtra("gameID", (game_id - 1));
-                    i.putExtra("numCaves", numberCaves);
-                    ActivityOptions options = ActivityOptions.makeCustomAnimation(MapsActivity.this, R.anim.fade_in, R.anim.fade_out);
-                    startActivity(i, options.toBundle());
+                    startGame();
                 }
                     else
                     {
@@ -247,10 +242,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             db.close();
         }
         cell.close();
+    }
+
+    public void generateCaveContent(){
         graph = new Graph(numberCaves);
         //TODO posible cambio
         caveContents = graph.randomEntitiesGen(0);
-
     }
 
     /**
@@ -262,6 +259,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void putCave (int cave,double latitudeGPS, double longitudeGPS) {
         mMap.clear();
+        clearDB();
         switch (numberCaves) {
             case 2:
                 /*
@@ -756,7 +754,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         addMetersToLongitude(longitudeGPS, distance, 2, false));
                 break;
         }
-        startGame();
     }
 
     public void startGame()
@@ -843,6 +840,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             result = longitude - (times * (180/Math.PI) * (meters/6378137));
         }
         return result;
+    }
+
+    /**
+     * Clears the DB from the previous coordinates.
+     */
+    public void clearDB() {
+        AdminSQLite admin = new AdminSQLite(this, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+
+        db.execSQL("DELETE FROM GAME WHERE id = " + String.valueOf(game_id));
     }
 
 }
