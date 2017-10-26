@@ -18,6 +18,7 @@ public class Game_Data {
 
     private int game_ID;
     private Graph graph;
+
     private CaveContent[] caveContents;
     private Context game_Context;
     private int currentCave;
@@ -157,6 +158,13 @@ public class Game_Data {
         }
         return result;
     }
+
+    public CaveContent[] getCaveContents() {
+        return caveContents;
+    }
+
+    public void setCaveContents(CaveContent[] caveContents) {
+        this.caveContents = caveContents;
 
     public int chooseRandomCave(int cave, int totalCaves){
         Random rand = new Random();

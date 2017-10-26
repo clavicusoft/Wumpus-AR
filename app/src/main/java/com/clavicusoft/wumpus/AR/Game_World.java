@@ -7,6 +7,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.ArraySet;
 import android.support.v7.app.AlertDialog;
 
 import com.beyondar.android.fragment.BeyondarFragmentSupport;
@@ -14,13 +15,17 @@ import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.beyondar.android.view.OnClickBeyondarObjectListener;
 import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
+import com.clavicusoft.wumpus.Maze.Cave;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
 
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 import java.util.Random;
 
 public class Game_World extends FragmentActivity implements OnClickBeyondarObjectListener {
@@ -73,6 +78,17 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         //Assign onClick listener
         currentBeyondARFragment.setOnClickBeyondarObjectListener(this);
 
+        AlertDialog.Builder alert;
+        CaveContent[] caveContents = this.data.getCaveContents();
+        alert = new AlertDialog.Builder(this);
+        alert.setTitle("Cuevas");
+        alert.setMessage(Arrays.toString(caveContents));
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+        });
+        alert.show();
     }
 
     /**
@@ -253,6 +269,35 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 toast.show();
                 worldHelper.updateObjects(this, cave_Number, data);
                 break;
+            case EMPTY:
+                this.showHints(cave_Number);
+                break;
         }
+    }
+
+    private void showHints(int cave_Number) {
+        CaveContent[] allCaves = this.data.getCaveContents();
+        ArraySet<CaveContent> adjacentHints = new ArraySet<>();
+
+
+        for (int i = 0 ; i< allCaves.length ;i++) {
+            if(this.data.getGraph().areConnected(cave_Number,i)) {
+                adjacentHints.add(allCaves[i]);
+            }
+        }
+
+
+        if(adjacentHints.contains(CaveContent.BAT)) {
+            Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_LONG).show();
+        }
+
+        if(adjacentHints.contains(CaveContent.PIT)) {
+            Toast.makeText(this, "Acabas de percibir una brisa fría", Toast.LENGTH_LONG).show();
+        }
+
+        if(adjacentHints.contains(CaveContent.WUMPUS)) {
+            Toast.makeText(this, "Acabas de percibir un olor repugnante a Wumpus", Toast.LENGTH_LONG).show();
+        }
+
     }
 }
