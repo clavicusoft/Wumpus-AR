@@ -22,21 +22,21 @@ public class MainActivity extends Activity {
     AlertDialog.Builder alert; //Alert
     int whichActivity=0; //1 Single, 2 Multiplayer
 
-    private boolean checkAndRequestPermissions() {
+    private boolean checkAndRequestPermissions() { //requests the number of permissions pending: 2, 1 or none.
         int permissionCAMERA = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA);
+                Manifest.permission.CAMERA); //camera permissions
         int locationPermission = ContextCompat.checkSelfPermission(this,
 
-                Manifest.permission.ACCESS_FINE_LOCATION);
+                Manifest.permission.ACCESS_FINE_LOCATION); //ubication permissions
 
         List<String> listPermissionsNeeded = new ArrayList<>();
-        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+        if (locationPermission != PackageManager.PERMISSION_GRANTED) { //adds permissions to list
             listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-        if (permissionCAMERA != PackageManager.PERMISSION_GRANTED) {
+        if (permissionCAMERA != PackageManager.PERMISSION_GRANTED) { //adds permissions to list
             listPermissionsNeeded.add(Manifest.permission.CAMERA);
         }
-        if (!listPermissionsNeeded.isEmpty()) {
+        if (!listPermissionsNeeded.isEmpty()) { //if there are permissions to be requested, it does
             ActivityCompat.requestPermissions(this,
                     listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
             return false;
@@ -70,9 +70,26 @@ public class MainActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 1) {
-            if(grantResults.length > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)&& (grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+            if(grantResults.length == 1 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) { //if only one permission was pending it must start the activity
                 //Permission accepted
-            } else {
+                if(whichActivity == 1) { //singleplayer activity
+                    Intent i = new Intent(this, SelectPolyActivity.class);
+                    ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_down,
+                            R.anim.slide_out_down);
+                    startActivity(i, options.toBundle());
+                }
+                if(whichActivity == 2){ //multiplayer activity
+                    Intent i = new Intent(this, Multiplayer.class);
+                    ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_down,
+                            R.anim.slide_out_down);
+                    startActivity(i, options.toBundle());
+                }
+            }
+            else if(grantResults.length == 2 && (grantResults[0] == PackageManager.PERMISSION_GRANTED) && (grantResults[1] == PackageManager.PERMISSION_GRANTED)){
+                //Permission accepted
+                //if both permissions are granted, does nothing since checkAndResquestPermissions returns true and button opens activity
+            }
+            else {
                 //Permission denied
                 alert.setTitle("Error");
                 alert.setMessage("Para poder continuar con el juego debe permitir a Wumpus acceder a la cámara y a su ubicación");
@@ -93,6 +110,7 @@ public class MainActivity extends Activity {
     */
     public void singlePlayer (View view)
     {
+        whichActivity = 1; //Singleplayer
         //---This block of code ensures camera and location permissions are granted before launching anything else
         if(checkAndRequestPermissions()) {
             Intent i = new Intent(this, SelectPolyActivity.class);
@@ -109,6 +127,7 @@ public class MainActivity extends Activity {
      */
     public void multiPlayer (View view)
     {
+        whichActivity = 2; //Multiplayer
         //---This block of code ensures camera and location permissions are granted before launching anything else
         if(checkAndRequestPermissions()) {
             Intent i = new Intent(this, Multiplayer.class);
