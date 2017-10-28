@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
      * Sets the view once this activity starts.
      *
      * @param savedInstanceState Activity's previous saved state.
-    */
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         alert = new AlertDialog.Builder(this);
@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * Requests the user to accept permissions for camera services if they
+     * Requests the user to accept permissions for camera and ubication services if they
      * were not previously accepted on installation.
      *
      * @param requestCode Application specific request code to match with a result
@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
      * Starts the single player activity, and sets the animation for the transition.
      *
      * @param view Current view.
-    */
+     */
     public void singlePlayer (View view)
     {
         whichActivity = 1; //Singleplayer
