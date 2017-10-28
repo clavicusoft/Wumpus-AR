@@ -136,4 +136,12 @@ public class MainActivity extends Activity {
             startActivity(i, options.toBundle());
         }
     }
+
+    /**
+     * Close application.
+     */
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }
