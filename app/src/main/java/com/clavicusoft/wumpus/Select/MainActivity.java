@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
                     listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
             return false;
         }
-        return true; //no permissions to be requested, returns true
+        return true;
     }
 
     /**
