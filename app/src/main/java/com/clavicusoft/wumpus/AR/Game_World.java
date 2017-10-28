@@ -123,8 +123,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             newDialog.setMessage("¿Desea entrar a esta cueva?");
             newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
-                    updateGame(cave_Number);
                     dialog.dismiss();
+                    updateGame(cave_Number);
                 }
             });
             newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
@@ -220,7 +220,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 generateBat(cave_Number);
                 break;
             case PIT:
-                managePit(cave_Number);
+                managePit();
                 break;
             case EMPTY:
                 manageEmptyCave(cave_Number);
@@ -253,7 +253,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         newDialog.show();
     }
 
-    public void managePit (int cave_Number) {
+    public void managePit () {
         MediaPlayer mediaPlayer;
         mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
         mediaPlayer.start();

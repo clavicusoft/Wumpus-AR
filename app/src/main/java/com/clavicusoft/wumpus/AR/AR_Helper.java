@@ -12,7 +12,8 @@ import com.clavicusoft.wumpus.R;
 
 
 public class AR_Helper {
-    public World world;
+    private World world;
+    private int cave_Image;
     //private Location location;
 
     /**
@@ -23,6 +24,7 @@ public class AR_Helper {
      */
     public AR_Helper(Context context){
         world = new World(context);
+        cave_Image = R.drawable.cave;
     }
 
     public World getWorld () {
@@ -53,7 +55,7 @@ public class AR_Helper {
                     GeoObject geo_Object = new GeoObject(geo_id);
                     geo_Object.setGeoPosition(Double.parseDouble(cursor.getString(0)), Double.parseDouble(cursor.getString(1)));
                     geo_Object.setName("Cueva: " + String.valueOf(cursor.getInt(2)));
-                    geo_Object.setImageResource(R.drawable.cave);
+                    geo_Object.setImageResource(cave_Image);
                     world.addBeyondarObject(geo_Object);
                     ++geo_id;
                 }
