@@ -20,22 +20,15 @@ import com.beyondar.android.world.World;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
 import com.clavicusoft.wumpus.Select.MainActivity;
-import com.clavicusoft.wumpus.Select.SelectPolyActivity;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class Game_World extends FragmentActivity implements OnClickBeyondarObjectListener {
 
@@ -224,72 +217,82 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 worldHelper.updateObjects(this, cave_Number, data);
                 break;
             case BAT:
-                toast = Toast.makeText(this, "Has caido en la cueva de un murcielago.", Toast.LENGTH_SHORT);
-                toast.show();
-                score.put("visitedBatCaves",score.get("visitedBatCaves")+1);
-                final int newCave;
-                final Context context = this;
-                newCave = data.chooseRandomCave(cave_Number,number_of_caves);
-                worldHelper.createBat(this, cave_Number, newCave, data);
-                AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-                newDialog.setTitle("Un murciélago salvaje ha aparecido");
-                newDialog.setMessage("El murciélago te ha llevado a la cueva "
-                + newCave + ". Para continuar debes desplazarte a esa cueva.");
-                newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int which){
-                        worldHelper.moveToCave(context, newCave, data);
-                        dialog.dismiss();
-                    }
-                });
-                newDialog.show();
+                generateBat(cave_Number);
                 break;
             case PIT:
-                final MediaPlayer mediaPlayer;
-                toast = Toast.makeText(this, "Has caído en un pozo.", Toast.LENGTH_SHORT);
-                toast.show();
-                worldHelper.updateObjects(this, cave_Number, data);
-                mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
-                mediaPlayer.start();
-                final Dialog dialog = new Dialog(this);
-                //Animation anim = AnimationUtils.loadAnimation(this, R.anim.slow_fade_out);
-                //anim.reset();
-                //dialog.startAnimation(anim);
-                dialog.setContentView(R.layout.layout_gameover);
-                TextView txtV1 = dialog.findViewById(R.id.txtViewNumVisitedC);
-                TextView txtV2 = dialog.findViewById(R.id.txtViewNumVisitedBatC);
-                TextView txtV3 = dialog.findViewById(R.id.txtViewNumUsedA);
-                txtV1.setText(score.get("visitedCaves").toString());
-                txtV2.setText(score.get("visitedBatCaves").toString());
-                txtV3.setText(score.get("usedArrows").toString());
-                Button btn1 = dialog.findViewById(R.id.btnRestartGame);
-                Button btn2 = dialog.findViewById(R.id.btnExitGame);
-                btn1.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        Intent i = new Intent(v.getContext(),MainActivity.class);
-                        ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fade_out,R.anim.fade_out);
-                        mediaPlayer.release();
-                        startActivity(i, options.toBundle());
-                    }
-                });
-                btn2.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v) {
-                        BeyondarLocationManager.disable();
-                        mediaPlayer.release();
-                        dialog.cancel();
-                        finish();
-                    }
-                });
-                dialog.show();
+                managePit(cave_Number);
                 break;
             case EMPTY:
-                toast = Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT);
-                toast.show();
-                score.put("visitedCaves",score.get("visitedCaves")+1);
-                worldHelper.updateObjects(this, cave_Number, data);
+                manageEmptyCave(cave_Number);
                 break;
         }
+    }
+
+    public void manageEmptyCave (int cave_Number) {
+        Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT).show();
+        score.put("visitedCaves",score.get("visitedCaves")+1);
+        worldHelper.updateObjects(this, cave_Number, data);
+    }
+
+    public void generateBat(int cave_Number) {
+        score.put("visitedBatCaves",score.get("visitedBatCaves")+1);
+        final int newCave;
+        final Context context = this;
+        newCave = data.chooseRandomCave(cave_Number,number_of_caves);
+        worldHelper.createBat(this, cave_Number, newCave, data);
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("Un murciélago salvaje ha aparecido");
+        newDialog.setMessage("El murciélago te ha llevado a la cueva "
+                + newCave + ". Para continuar debes desplazarte a esa cueva.");
+        newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                worldHelper.moveToCave(context, newCave, data);
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
+    }
+
+    public void managePit (int cave_Number) {
+        MediaPlayer mediaPlayer;
+        mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
+        mediaPlayer.start();
+        showScore(mediaPlayer);
+    }
+
+    public void showScore(final MediaPlayer mediaPlayer) {
+        final Dialog dialog = new Dialog(this);
+        //Animation anim = AnimationUtils.loadAnimation(this, R.anim.slow_fade_out);
+        //anim.reset();
+        //dialog.startAnimation(anim);
+        dialog.setContentView(R.layout.layout_gameover);
+        TextView txtV1 = dialog.findViewById(R.id.txtViewNumVisitedC);
+        TextView txtV2 = dialog.findViewById(R.id.txtViewNumVisitedBatC);
+        TextView txtV3 = dialog.findViewById(R.id.txtViewNumUsedA);
+        txtV1.setText(score.get("visitedCaves").toString());
+        txtV2.setText(score.get("visitedBatCaves").toString());
+        txtV3.setText(score.get("usedArrows").toString());
+        Button btn1 = dialog.findViewById(R.id.btnRestartGame);
+        Button btn2 = dialog.findViewById(R.id.btnExitGame);
+        btn1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Intent i = new Intent(v.getContext(),MainActivity.class);
+                ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fade_out,R.anim.fade_out);
+                mediaPlayer.release();
+                startActivity(i, options.toBundle());
+            }
+        });
+        btn2.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                BeyondarLocationManager.disable();
+                mediaPlayer.release();
+                dialog.cancel();
+                finish();
+            }
+        });
+        dialog.show();
     }
 }

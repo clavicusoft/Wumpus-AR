@@ -12,7 +12,7 @@ import com.clavicusoft.wumpus.R;
 
 
 public class AR_Helper {
-    public static World world;
+    public World world;
     //private Location location;
 
     /**
