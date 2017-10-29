@@ -415,4 +415,14 @@ public class Graph {
     private boolean randomEntitiesGenValidator(CaveContent[] caveContents) {
         return false;
     }
+
+
+    public ArrayList<Cave> getAllCaves() {
+        return allCaves;
+    }
+
+    public void setAllCaves(ArrayList<Cave> allCaves) {
+        this.allCaves = allCaves;
+    }
+
 }

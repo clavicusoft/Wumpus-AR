@@ -9,7 +9,9 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.ArraySet;
 import android.support.v7.app.AlertDialog;
 
 import com.beyondar.android.fragment.BeyondarFragmentSupport;
@@ -17,6 +19,7 @@ import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.beyondar.android.view.OnClickBeyondarObjectListener;
 import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
+import com.clavicusoft.wumpus.Maze.Cave;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
 import com.clavicusoft.wumpus.Select.MainActivity;
@@ -26,7 +29,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Set;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +48,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     private TextView currentCave;
     private Map<String, Integer> score;
 
+    private Random random;
+
     /**
      * Sets the view once this activity starts.
      *
@@ -51,6 +60,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ar_layout);
         currentCave = (TextView) findViewById(R.id.numCave); //current cave number textView
+        random = new Random();
 
         //Get the game parameters
         Bundle b = getIntent().getExtras();
@@ -85,6 +95,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         score.put("visitedCaves",0);
         score.put("visitedBatCaves",0);
         score.put("usedArrows",0);
+
 
     }
 
@@ -138,6 +149,14 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             Toast.makeText(this,"Debes acercarte a la cueva para poder entrar en ella. Estás a " + String.valueOf(distance) + " metros de ella." ,Toast.LENGTH_SHORT).show();
         }
 
+            }
+        });
+        newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
     }
 
     /**
@@ -190,6 +209,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void updateGame (int cave_Number) {
         currentCave.setText(String.valueOf(cave_Number));
         checkCaveContent(cave_Number);
+        worldHelper.updateObjects(this, cave_Number, data);
     }
 
     /**
@@ -212,9 +232,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         CaveContent content = data.getCaveContent(cave_Number - 1);
         switch (content) {
             case WUMPUS:
-                toast = Toast.makeText(this, "Has caido en la cueva del Wumpus.", Toast.LENGTH_SHORT);
-                toast.show();
-                worldHelper.updateObjects(this, cave_Number, data);
                 break;
             case BAT:
                 generateBat(cave_Number);
@@ -224,9 +241,82 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 break;
             case EMPTY:
                 manageEmptyCave(cave_Number);
+                this.showHints(cave_Number);
                 break;
         }
     }
+
+
+    private void showHints(int cave_Number) {
+        CaveContent[] allCaves = this.data.getCaveContents().clone();
+        ArraySet<CaveContent> adjacentHints = new ArraySet<>();
+
+
+        for (int i = 0 ; i< this.number_of_caves ;i++) {
+            if(this.data.getGraph().areConnected(cave_Number-1,i)) {
+                adjacentHints.add(allCaves[i]);
+            }
+        }
+
+        CaveContent randomHint = adjacentHints.valueAt(random.nextInt(adjacentHints.size()));
+
+        if(adjacentHints.contains(CaveContent.BAT)) {
+
+            Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_LONG).show();
+
+            if (randomHint == CaveContent.BAT) {
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.pterodactyl);
+                mp.start();
+
+                try {
+                    Thread.sleep(3100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                mp.release();
+            }
+        }
+
+        if(adjacentHints.contains(CaveContent.PIT)) {
+
+            Toast.makeText(this, "Acabas de percibir una brisa fría", Toast.LENGTH_LONG).show();
+
+            if (randomHint == CaveContent.PIT) {
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.waterdrop);
+                mp.start();
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 500 milliseconds
+                v.vibrate(3100);
+                try {
+                    Thread.sleep(3100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                mp.release();
+            }
+        }
+
+        if(adjacentHints.contains(CaveContent.WUMPUS)) {
+
+            Toast.makeText(this, "Acabas de percibir un olor repugnante a Wumpus", Toast.LENGTH_LONG).show();
+
+            if (randomHint == CaveContent.WUMPUS) {
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.wumpushint);
+                mp.start();
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                mp.release();
+            }
+
+        }
+
 
     public void manageEmptyCave (int cave_Number) {
         Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT).show();
@@ -299,5 +389,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             }
         });
         dialog.show();
+
     }
 }
