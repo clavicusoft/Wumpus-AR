@@ -97,8 +97,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         score.put("usedArrows",0);
 
 
-        this.checkCaveContent(0);
-
+        this.checkCaveContent(1);
     }
 
     /**
@@ -221,17 +220,10 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * @param cave_Number Current cave number.
      */
     public void checkCaveContent (int cave_Number){
-        Toast toast;
         CaveContent content = data.getCaveContent(cave_Number - 1);
         switch (content) {
             case WUMPUS:
-                toast = Toast.makeText(this, "Has caido en la cueva del Wumpus.", Toast.LENGTH_SHORT);
-                toast.show();
-
-                Intent intent = new Intent(Game_World.this, WumpusAnimation.class);
-                ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
-                        R.anim.fade_out);
-                startActivity(intent,options.toBundle());
+                manageWumpus();
                 break;
             case BAT:
                 generateBat(cave_Number);
@@ -335,6 +327,12 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         }
     }
 
+    public void manageWumpus() {
+        Intent intent = new Intent(Game_World.this, WumpusAnimation.class);
+        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                R.anim.fade_out);
+        startActivity(intent,options.toBundle());
+    }
 
     public void manageEmptyCave (int cave_Number) {
         Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT).show();
