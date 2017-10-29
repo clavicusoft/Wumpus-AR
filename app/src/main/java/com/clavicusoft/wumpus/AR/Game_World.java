@@ -200,7 +200,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void updateGame (int cave_Number) {
         currentCave.setText(String.valueOf(cave_Number));
         checkCaveContent(cave_Number);
-        worldHelper.updateObjects(this, cave_Number, data);
     }
 
     /**

@@ -28,6 +28,7 @@ public class WumpusAnimation extends Activity {
                     e.printStackTrace();
                 }
                 finally {
+                    mp.release();
                     Intent intent = new Intent(WumpusAnimation.this, Splash_screen.class);
                     ActivityOptions options = ActivityOptions.makeCustomAnimation(WumpusAnimation.this, R.anim.fade_in,
                             R.anim.fade_out);
