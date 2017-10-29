@@ -148,15 +148,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         else {
             Toast.makeText(this,"Debes acercarte a la cueva para poder entrar en ella. Estás a " + String.valueOf(distance) + " metros de ella." ,Toast.LENGTH_SHORT).show();
         }
-
-            }
-        });
-        newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-            }
-        });
-        newDialog.show();
     }
 
     /**
@@ -250,38 +241,28 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     private void showHints(int cave_Number) {
         CaveContent[] allCaves = this.data.getCaveContents().clone();
         ArraySet<CaveContent> adjacentHints = new ArraySet<>();
-
-
-        for (int i = 0 ; i< this.number_of_caves ;i++) {
-            if(this.data.getGraph().areConnected(cave_Number-1,i)) {
+        for (int i = 0; i < this.number_of_caves; i++) {
+            if (this.data.getGraph().areConnected(cave_Number - 1, i)) {
                 adjacentHints.add(allCaves[i]);
             }
         }
-
         CaveContent randomHint = adjacentHints.valueAt(random.nextInt(adjacentHints.size()));
-
-        if(adjacentHints.contains(CaveContent.BAT)) {
-
+        if (adjacentHints.contains(CaveContent.BAT)) {
             Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_LONG).show();
-
             if (randomHint == CaveContent.BAT) {
                 final MediaPlayer mp = MediaPlayer.create(this, R.raw.pterodactyl);
                 mp.start();
-
                 try {
                     Thread.sleep(3100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                 mp.release();
             }
         }
 
-        if(adjacentHints.contains(CaveContent.PIT)) {
-
+        if (adjacentHints.contains(CaveContent.PIT)) {
             Toast.makeText(this, "Acabas de percibir una brisa fría", Toast.LENGTH_LONG).show();
-
             if (randomHint == CaveContent.PIT) {
                 final MediaPlayer mp = MediaPlayer.create(this, R.raw.waterdrop);
                 mp.start();
@@ -293,29 +274,24 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                 mp.release();
             }
         }
 
-        if(adjacentHints.contains(CaveContent.WUMPUS)) {
-
+        if (adjacentHints.contains(CaveContent.WUMPUS)) {
             Toast.makeText(this, "Acabas de percibir un olor repugnante a Wumpus", Toast.LENGTH_LONG).show();
-
             if (randomHint == CaveContent.WUMPUS) {
                 final MediaPlayer mp = MediaPlayer.create(this, R.raw.wumpushint);
                 mp.start();
-
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                 mp.release();
             }
-
         }
+    }
 
 
     public void manageEmptyCave (int cave_Number) {
