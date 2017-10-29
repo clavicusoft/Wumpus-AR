@@ -330,7 +330,7 @@ public class Graph {
             }
         }
     }
-    
+
 
     /**
      * This method generate all the entities for the maze and put then in random caves.
