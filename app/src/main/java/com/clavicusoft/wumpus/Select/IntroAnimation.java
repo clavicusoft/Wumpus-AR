@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.clavicusoft.wumpus.AR.Splash_screen;
 import com.clavicusoft.wumpus.R;
 
+
 public class IntroAnimation extends Activity {
 
     MediaPlayer mp;
