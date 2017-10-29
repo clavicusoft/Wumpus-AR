@@ -1,8 +1,11 @@
 package com.clavicusoft.wumpus.AR;
 
 
+import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -19,7 +22,10 @@ import com.beyondar.android.world.World;
 import com.clavicusoft.wumpus.Maze.Cave;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
+import com.clavicusoft.wumpus.Select.MainActivity;
 
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Game_World extends FragmentActivity implements OnClickBeyondarObjectListener {
 
@@ -38,6 +46,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     private int game_ID;
     private int number_of_caves;
     private TextView currentCave;
+    private Map<String, Integer> score;
 
     private Random random;
 
@@ -82,18 +91,12 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         //Assign onClick listener
         currentBeyondARFragment.setOnClickBeyondarObjectListener(this);
 
+        score = new HashMap<>();
+        score.put("visitedCaves",0);
+        score.put("visitedBatCaves",0);
+        score.put("usedArrows",0);
 
-        AlertDialog.Builder alert;
-        CaveContent[] caveContents = this.data.getCaveContents();
-        alert = new AlertDialog.Builder(this);
-        alert.setTitle("Cuevas");
-        alert.setMessage(Arrays.toString(caveContents));
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-            }
-        });
-        alert.show();
+
     }
 
     /**
@@ -124,13 +127,27 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void onClickBeyondarObject(ArrayList<BeyondarObject> arrayList) {
         // The first element in the array belongs to the closest BeyondarObject
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
+        double distance = data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number);
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-        newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
-        newDialog.setMessage("¿Desea entrar a esta cueva?");
-        newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
-                dialog.dismiss();
-                updateGame(cave_Number);
+        if (distance <= 10) {
+            newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
+            newDialog.setMessage("¿Desea entrar a esta cueva?");
+            newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.dismiss();
+                    updateGame(cave_Number);
+                }
+            });
+            newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.dismiss();
+                }
+            });
+            newDialog.show();
+        }
+        else {
+            Toast.makeText(this,"Debes acercarte a la cueva para poder entrar en ella. Estás a " + String.valueOf(distance) + " metros de ella." ,Toast.LENGTH_SHORT).show();
+        }
 
             }
         });
@@ -211,21 +228,24 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * @param cave_Number Current cave number.
      */
     public void checkCaveContent (int cave_Number){
-        CaveContent content = data.getCaveContent(cave_Number);
+        Toast toast;
+        CaveContent content = data.getCaveContent(cave_Number - 1);
         switch (content) {
             case WUMPUS:
                 break;
             case BAT:
+                generateBat(cave_Number);
                 break;
             case PIT:
+                managePit();
                 break;
             case EMPTY:
+                manageEmptyCave(cave_Number);
                 this.showHints(cave_Number);
-                break;
-            default :
                 break;
         }
     }
+
 
     private void showHints(int cave_Number) {
         CaveContent[] allCaves = this.data.getCaveContents().clone();
@@ -297,6 +317,78 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
 
         }
 
+
+    public void manageEmptyCave (int cave_Number) {
+        Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT).show();
+        score.put("visitedCaves",score.get("visitedCaves")+1);
+        worldHelper.updateObjects(this, cave_Number, data);
+    }
+
+    public void generateBat(int cave_Number) {
+        score.put("visitedBatCaves",score.get("visitedBatCaves")+1);
+        final int newCave;
+        final Context context = this;
+        newCave = data.chooseRandomCave(cave_Number,number_of_caves);
+        worldHelper.createBat(this, cave_Number, newCave, data);
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("Un murciélago salvaje ha aparecido");
+        newDialog.setMessage("El murciélago te ha llevado a la cueva "
+                + newCave + ". Para continuar debes desplazarte a esa cueva.");
+        newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                worldHelper.moveToCave(context, newCave, data);
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
+    }
+
+    /**
+     * Manages if the player fall into a pit
+     */
+    public void managePit () {
+        MediaPlayer mediaPlayer;
+        mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
+        mediaPlayer.start(); //Plays a falling sound
+        showScore(mediaPlayer);
+    }
+
+    /**
+     * Shows a score dialog
+     * @param mediaPlayer MediaPlayer to release
+     */
+    public void showScore(final MediaPlayer mediaPlayer) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.layout_gameover);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation; //Sets an animation for the dialog
+        TextView txtV1 = dialog.findViewById(R.id.txtViewNumVisitedC);
+        TextView txtV2 = dialog.findViewById(R.id.txtViewNumVisitedBatC);
+        TextView txtV3 = dialog.findViewById(R.id.txtViewNumUsedA);
+        txtV1.setText(score.get("visitedCaves").toString());    //Puts the scores on the fields
+        txtV2.setText(score.get("visitedBatCaves").toString());
+        txtV3.setText(score.get("usedArrows").toString());
+        Button btn1 = dialog.findViewById(R.id.btnRestartGame);
+        Button btn2 = dialog.findViewById(R.id.btnExitGame);
+        btn1.setOnClickListener(new View.OnClickListener(){     //To restart the game
+            @Override
+            public void onClick(View v) {
+                mediaPlayer.release();
+                Intent i = new Intent(v.getContext(),MainActivity.class);   //To return to the main activity
+                ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fade_out,R.anim.fade_out);
+                startActivity(i, options.toBundle());
+                dialog.dismiss();
+            }
+        });
+        btn2.setOnClickListener(new View.OnClickListener(){     //To exit the game
+            @Override
+            public void onClick(View v) {
+                mediaPlayer.release();
+                BeyondarLocationManager.disable();
+                dialog.cancel();
+                finishAffinity();
+            }
+        });
+        dialog.show();
 
     }
 }

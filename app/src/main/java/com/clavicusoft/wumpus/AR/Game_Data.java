@@ -133,7 +133,7 @@ public class Game_Data {
      * @return The content of the cave.
      */
     public CaveContent getCaveContent (int cave_Number) {
-        return caveContents[cave_Number - 1];
+        return caveContents[cave_Number];
     }
 
     /**
