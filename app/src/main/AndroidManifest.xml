@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Select.MainActivity"
+            android:name=".Select.IntroAnimation"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -73,6 +73,10 @@
         <activity
             android:name=".AR.WumpusAnimation"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".Select.MainActivity"
+        android:screenOrientation="portrait"/>
 
 
         <!--
