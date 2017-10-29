@@ -253,44 +253,49 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         newDialog.show();
     }
 
+    /**
+     * Manages if the player fall into a pit
+     */
     public void managePit () {
         MediaPlayer mediaPlayer;
         mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
-        mediaPlayer.start();
+        mediaPlayer.start(); //Plays a falling sound
         showScore(mediaPlayer);
     }
 
+    /**
+     * Shows a score dialog
+     * @param mediaPlayer MediaPlayer to release
+     */
     public void showScore(final MediaPlayer mediaPlayer) {
         final Dialog dialog = new Dialog(this);
-        //Animation anim = AnimationUtils.loadAnimation(this, R.anim.slow_fade_out);
-        //anim.reset();
-        //dialog.startAnimation(anim);
         dialog.setContentView(R.layout.layout_gameover);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation; //Sets an animation for the dialog
         TextView txtV1 = dialog.findViewById(R.id.txtViewNumVisitedC);
         TextView txtV2 = dialog.findViewById(R.id.txtViewNumVisitedBatC);
         TextView txtV3 = dialog.findViewById(R.id.txtViewNumUsedA);
-        txtV1.setText(score.get("visitedCaves").toString());
+        txtV1.setText(score.get("visitedCaves").toString());    //Puts the scores on the fields
         txtV2.setText(score.get("visitedBatCaves").toString());
         txtV3.setText(score.get("usedArrows").toString());
         Button btn1 = dialog.findViewById(R.id.btnRestartGame);
         Button btn2 = dialog.findViewById(R.id.btnExitGame);
-        btn1.setOnClickListener(new View.OnClickListener(){
+        btn1.setOnClickListener(new View.OnClickListener(){     //To restart the game
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
-                Intent i = new Intent(v.getContext(),MainActivity.class);
-                ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fade_out,R.anim.fade_out);
                 mediaPlayer.release();
+                Intent i = new Intent(v.getContext(),MainActivity.class);   //To return to the main activity
+                ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fade_out,R.anim.fade_out);
                 startActivity(i, options.toBundle());
+                dialog.dismiss();
             }
         });
-        btn2.setOnClickListener(new View.OnClickListener(){
+        btn2.setOnClickListener(new View.OnClickListener(){     //To exit the game
             @Override
             public void onClick(View v) {
-                BeyondarLocationManager.disable();
                 mediaPlayer.release();
+                BeyondarLocationManager.disable();
                 dialog.cancel();
-                finish();
+                finishAffinity();
             }
         });
         dialog.show();
