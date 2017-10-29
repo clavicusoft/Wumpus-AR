@@ -287,7 +287,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 mp.start();
 
                 try {
-                    Thread.sleep(4100);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
