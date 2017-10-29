@@ -330,13 +330,12 @@ public class Graph {
             }
         }
     }
-
-    //TODO RANDOM GEN
+    
 
     /**
-     *
+     * This method generate all the entities for the maze and put then in random caves.
      * @param playerPosition Id of the cave where the player will init the game
-     * @return
+     * @return an array with all the entities per cave.
      */
     public CaveContent[] randomEntitiesGen(int playerPosition) {
         CaveContent[] caveContents = new CaveContent[maximumCaves];
@@ -344,7 +343,7 @@ public class Graph {
         Arrays.fill(caveContents, CaveContent.EMPTY);
         Arrays.fill(isCaveNotEmpty, false);
 
-        caveContents[this.searchIdInArray(playerPosition)]= CaveContent.PLAYER;
+        caveContents[this.searchIdInArray(playerPosition)] = CaveContent.PLAYER;
         isCaveNotEmpty[this.searchIdInArray(playerPosition)] = true;
 
         /**1 wumpus, 2 pits (0<=3,1<=6) , 2 bats (0<=3, 1<=6)**/
@@ -353,7 +352,7 @@ public class Graph {
         amount[1] = 0;
         amount[2] = 1;
 
-        if(maximumCaves > 3 && maximumCaves <= 6) {
+        if (maximumCaves > 3 && maximumCaves <= 6) {
             amount[0] = 1;
             amount[1] = 1;
         } else if (maximumCaves > 6) {
@@ -361,45 +360,32 @@ public class Graph {
             amount[1] = 2;
         }
 
-        boolean retry = true;
 
-        while(retry) {
+        for (int i = 0; i < 3; i++) {
 
-            for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < amount[i]; j++) {
 
-                for (int j = 0; j < amount[i] ; j++) {
+                boolean replace = true;
+                while (replace) {
 
-                    boolean replace = true;
-                    while (replace) {
+                    int cavePosition = this.random.nextInt(maximumCaves);
+                    if (!isCaveNotEmpty[cavePosition]) {
 
-                        int cavePosition = this.random.nextInt(maximumCaves);
-                        if(!isCaveNotEmpty[cavePosition]) {
-
-                            switch (i) {
-                                case 0:
-                                    caveContents[cavePosition] = CaveContent.PIT;
-                                    break;
-                                case 1:
-                                    caveContents[cavePosition] = CaveContent.BAT;
-                                    break;
-                                case 2:
-                                    caveContents[cavePosition] = CaveContent.WUMPUS;
-                                    break;
-                            }
-                            isCaveNotEmpty[cavePosition] = true;
-                            replace = false;
+                        switch (i) {
+                            case 0:
+                                caveContents[cavePosition] = CaveContent.PIT;
+                                break;
+                            case 1:
+                                caveContents[cavePosition] = CaveContent.BAT;
+                                break;
+                            case 2:
+                                caveContents[cavePosition] = CaveContent.WUMPUS;
+                                break;
                         }
+                        isCaveNotEmpty[cavePosition] = true;
+                        replace = false;
                     }
                 }
-            }
-            retry = this.randomEntitiesGenValidator(caveContents);
-
-            if(retry) {
-                Arrays.fill(caveContents, CaveContent.EMPTY);
-                Arrays.fill(isCaveNotEmpty, false);
-
-                caveContents[this.searchIdInArray(playerPosition)]= CaveContent.PLAYER;
-                isCaveNotEmpty[this.searchIdInArray(playerPosition)] = true;
             }
         }
 
@@ -411,10 +397,7 @@ public class Graph {
         }*/
         return caveContents;
     }
-    //TODO RANDOM GEN VALIDATOR
-    private boolean randomEntitiesGenValidator(CaveContent[] caveContents) {
-        return false;
-    }
+
 
 
     public ArrayList<Cave> getAllCaves() {

@@ -237,7 +237,10 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         }
     }
 
-
+    /**
+     * Verify if there are entities in the adjacent caves from a given cave and show hints to the user.
+     * @param cave_Number The current cave where's the user.
+     */
     private void showHints(int cave_Number) {
         CaveContent[] allCaves = this.data.getCaveContents().clone();
         ArraySet<CaveContent> adjacentHints = new ArraySet<>();
@@ -247,9 +250,22 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             }
         }
         CaveContent randomHint = adjacentHints.valueAt(random.nextInt(adjacentHints.size()));
-        if (adjacentHints.contains(CaveContent.BAT)) {
+
+        this.batHint(adjacentHints,randomHint);
+        this.pitHint(adjacentHints,randomHint);
+        this.wumpusHint(adjacentHints,randomHint);
+    }
+
+    /**
+     * If there is a Bat in an adjacent cave, plays an audio and show a message as a hint.
+     * @param arraySet Entities that are in the adjacent caves.
+     * @param caveContent A random entity, if this is equal to the entity case, the method will play
+     *                    an audio.
+     */
+    private void batHint(ArraySet<CaveContent> arraySet, CaveContent caveContent) {
+        if (arraySet.contains(CaveContent.BAT)) {
             Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_LONG).show();
-            if (randomHint == CaveContent.BAT) {
+            if (caveContent == CaveContent.BAT) {
                 final MediaPlayer mp = MediaPlayer.create(this, R.raw.pterodactyl);
                 mp.start();
                 try {
@@ -261,9 +277,18 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             }
         }
 
-        if (adjacentHints.contains(CaveContent.PIT)) {
+    }
+
+    /**
+     *  If there is a Pit in an adjacent cave, plays an audio and show a message as a hint.
+     * @param arraySet Entities that are in the adjacent caves.
+     * @param caveContent A random entity, if this is equal to the entity case, the method will play
+     *                    an audio.
+     */
+    private void pitHint(ArraySet<CaveContent> arraySet, CaveContent caveContent) {
+        if (arraySet.contains(CaveContent.PIT)) {
             Toast.makeText(this, "Acabas de percibir una brisa fría", Toast.LENGTH_LONG).show();
-            if (randomHint == CaveContent.PIT) {
+            if (caveContent == CaveContent.PIT) {
                 final MediaPlayer mp = MediaPlayer.create(this, R.raw.waterdrop);
                 mp.start();
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -277,10 +302,18 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 mp.release();
             }
         }
+    }
 
-        if (adjacentHints.contains(CaveContent.WUMPUS)) {
+    /**
+     * If there is a Wumpus in an adjacent cave, plays an audio and show a message as a hint.
+     * @param arraySet Entities that are in the adjacent caves.
+     * @param caveContent A random entity, if this is equal to the entity case, the method will play
+     *                    an audio.
+     */
+    private void wumpusHint(ArraySet<CaveContent> arraySet, CaveContent caveContent) {
+        if (arraySet.contains(CaveContent.WUMPUS)) {
             Toast.makeText(this, "Acabas de percibir un olor repugnante a Wumpus", Toast.LENGTH_LONG).show();
-            if (randomHint == CaveContent.WUMPUS) {
+            if (caveContent == CaveContent.WUMPUS) {
                 final MediaPlayer mp = MediaPlayer.create(this, R.raw.wumpushint);
                 mp.start();
                 try {
