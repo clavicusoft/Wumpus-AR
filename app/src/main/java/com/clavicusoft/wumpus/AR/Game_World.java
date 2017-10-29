@@ -26,6 +26,7 @@ import android.widget.Toast;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Set;
 
 public class Game_World extends FragmentActivity implements OnClickBeyondarObjectListener {
@@ -38,6 +39,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     private int number_of_caves;
     private TextView currentCave;
 
+    private Random random;
+
     /**
      * Sets the view once this activity starts.
      *
@@ -48,6 +51,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ar_layout);
         currentCave = (TextView) findViewById(R.id.numCave); //current cave number textView
+        random = new Random();
 
         //Get the game parameters
         Bundle b = getIntent().getExtras();
@@ -125,8 +129,9 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         newDialog.setMessage("¿Desea entrar a esta cueva?");
         newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
-                updateGame(cave_Number);
                 dialog.dismiss();
+                updateGame(cave_Number);
+
             }
         });
         newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
@@ -233,41 +238,63 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             }
         }
 
+        CaveContent randomHint = adjacentHints.valueAt(random.nextInt(adjacentHints.size()));
 
         if(adjacentHints.contains(CaveContent.BAT)) {
-            final MediaPlayer mp = MediaPlayer.create(this, R.raw.pterodactyl);
+
             Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_LONG).show();
-            mp.start();
 
-            try {
-                Thread.sleep(3100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (randomHint == CaveContent.BAT) {
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.pterodactyl);
+                mp.start();
+
+                try {
+                    Thread.sleep(3100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                mp.release();
             }
-
-            mp.release();
         }
 
         if(adjacentHints.contains(CaveContent.PIT)) {
-            final MediaPlayer mp = MediaPlayer.create(this, R.raw.pterodactyl);
-            Toast.makeText(this, "Acabas de percibir una brisa fría", Toast.LENGTH_LONG).show();
-            mp.start();
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            // Vibrate for 500 milliseconds
-            v.vibrate(3100);
-            try {
-                Thread.sleep(3100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-            mp.release();
+            Toast.makeText(this, "Acabas de percibir una brisa fría", Toast.LENGTH_LONG).show();
+
+            if (randomHint == CaveContent.PIT) {
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.waterdrop);
+                mp.start();
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 500 milliseconds
+                v.vibrate(3100);
+                try {
+                    Thread.sleep(3100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                mp.release();
+            }
         }
 
         if(adjacentHints.contains(CaveContent.WUMPUS)) {
 
-
             Toast.makeText(this, "Acabas de percibir un olor repugnante a Wumpus", Toast.LENGTH_LONG).show();
+
+            if (randomHint == CaveContent.WUMPUS) {
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.wumpushint);
+                mp.start();
+
+                try {
+                    Thread.sleep(4100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                mp.release();
+            }
+
         }
 
 
