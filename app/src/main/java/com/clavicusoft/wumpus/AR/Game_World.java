@@ -209,7 +209,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      */
     public void checkCaveContent (int cave_Number){
         Toast toast;
-        CaveContent content = data.getCaveContent(cave_Number);
+        CaveContent content = data.getCaveContent(cave_Number - 1);
         switch (content) {
             case WUMPUS:
                 toast = Toast.makeText(this, "Has caido en la cueva del Wumpus.", Toast.LENGTH_SHORT);
