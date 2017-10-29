@@ -225,6 +225,13 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         CaveContent content = data.getCaveContent(cave_Number - 1);
         switch (content) {
             case WUMPUS:
+                toast = Toast.makeText(this, "Has caido en la cueva del Wumpus.", Toast.LENGTH_SHORT);
+                toast.show();
+
+                Intent intent = new Intent(Game_World.this, WumpusAnimation.class);
+                ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                        R.anim.fade_out);
+                startActivity(intent,options.toBundle());
                 break;
             case BAT:
                 generateBat(cave_Number);
