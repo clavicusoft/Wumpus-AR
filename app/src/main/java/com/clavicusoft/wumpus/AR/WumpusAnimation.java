@@ -27,10 +27,7 @@ public class WumpusAnimation extends Activity {
                 catch(InterruptedException e){
                     e.printStackTrace();
                 }
-
                 finally {
-
-
                     Intent intent = new Intent(WumpusAnimation.this, Splash_screen.class);
                     ActivityOptions options = ActivityOptions.makeCustomAnimation(WumpusAnimation.this, R.anim.fade_in,
                             R.anim.fade_out);
@@ -39,7 +36,6 @@ public class WumpusAnimation extends Activity {
             }
         };
         timer.start();
-
     }
 
     @Override

@@ -96,7 +96,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         score.put("visitedBatCaves",0);
         score.put("usedArrows",0);
 
-
         this.checkCaveContent(1);
     }
 
