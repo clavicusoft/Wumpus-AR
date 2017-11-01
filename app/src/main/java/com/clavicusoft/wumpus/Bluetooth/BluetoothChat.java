@@ -20,8 +20,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
-import com.clavicusoft.wumpus.Select.MainActivity;
-import com.clavicusoft.wumpus.Select.Multiplayer;
+import com.clavicusoft.wumpus.FirstIterationTests.MainActivity;
+import com.clavicusoft.wumpus.FirstIterationTests.Multiplayer;
 import com.clavicusoft.wumpus.R;
 
 public class BluetoothChat extends Activity {

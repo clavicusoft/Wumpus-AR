@@ -10,7 +10,6 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.ArraySet;
 import android.support.v7.app.AlertDialog;
@@ -20,21 +19,17 @@ import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.beyondar.android.view.OnClickBeyondarObjectListener;
 import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
-import com.clavicusoft.wumpus.Maze.Cave;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
-import com.clavicusoft.wumpus.Select.MainActivity;
+import com.clavicusoft.wumpus.FirstIterationTests.MainActivity;
 
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
-import java.util.Set;
 import java.util.HashMap;
 import java.util.Map;
 

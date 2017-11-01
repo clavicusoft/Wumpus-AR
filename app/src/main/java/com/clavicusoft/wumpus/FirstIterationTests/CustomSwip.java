@@ -1,4 +1,4 @@
-package com.clavicusoft.wumpus.Select;
+package com.clavicusoft.wumpus.FirstIterationTests;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;

@@ -1,4 +1,4 @@
-package com.clavicusoft.wumpus.Select;
+package com.clavicusoft.wumpus.FirstIterationTests;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
-import com.clavicusoft.wumpus.AR.Splash_screen;
 import com.clavicusoft.wumpus.R;
 
 

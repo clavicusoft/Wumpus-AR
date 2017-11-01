@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Select.IntroAnimation"
+            android:name=".FirstIterationTests.IntroAnimation"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,13 +31,13 @@
         <!-- Allowed activities -->
 
         <activity
-            android:name=".Select.SelectPolyActivity"
+            android:name=".FirstIterationTests.SelectPolyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Select.Multiplayer"
+            android:name=".FirstIterationTests.Multiplayer"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Select.SelectFromLibActivity"
+            android:name=".FirstIterationTests.SelectFromLibActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Map.Coordinates"
@@ -75,7 +75,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".Select.MainActivity"
+            android:name=".FirstIterationTests.MainActivity"
         android:screenOrientation="portrait"/>
 
 

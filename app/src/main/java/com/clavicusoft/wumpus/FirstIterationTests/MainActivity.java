@@ -1,4 +1,4 @@
-package com.clavicusoft.wumpus.Select;
+package com.clavicusoft.wumpus.FirstIterationTests;
 
 import android.Manifest;
 import android.app.Activity;

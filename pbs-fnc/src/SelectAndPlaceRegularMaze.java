@@ -5,7 +5,7 @@ import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.clavicusoft.wumpus.Select.MainActivity;
+import com.clavicusoft.wumpus.FirstIterationTests.MainActivity;
 
 import org.junit.Rule;
 import org.junit.Test;

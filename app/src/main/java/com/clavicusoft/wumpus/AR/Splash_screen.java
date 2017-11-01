@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +11,7 @@ import android.widget.TextView;
 
 import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.clavicusoft.wumpus.R;
-import com.clavicusoft.wumpus.Select.MainActivity;
+import com.clavicusoft.wumpus.FirstIterationTests.MainActivity;
 
 public class Splash_screen extends Activity {
 

@@ -1,7 +1,8 @@
-package com.clavicusoft.wumpus;
+package com.clavicusoft.wumpus.FirstIterationTests;
 
 
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import com.clavicusoft.wumpus.FirstIterationTests.MainActivity;
+import com.clavicusoft.wumpus.R;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -33,7 +35,7 @@ import static org.hamcrest.Matchers.allOf;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class SelectAndPlaceFromLibrary {
+public class IndividualGameSelectAndPlaceFromLibrary {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -42,7 +44,7 @@ public class SelectAndPlaceFromLibrary {
     public void selectAndPlaceFromLibrary() {
 
         ViewInteraction button10 = onView(
-                allOf(withId(R.id.Individual), withText("Individual"),
+                allOf(ViewMatchers.withId(R.id.Individual), withText("Individual"),
                         withParent(withId(R.id.linearLayout)),
                         isDisplayed()));
         button10.perform(click());
