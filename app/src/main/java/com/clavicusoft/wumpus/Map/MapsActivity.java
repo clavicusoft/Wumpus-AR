@@ -123,7 +123,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
             accessBD(graph_ID);
-            generateCaveContent();
 
         } else {
             setContentView(R.layout.activity_maps);
@@ -198,7 +197,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
                         alert.setTitle("Compartir emplazamiento");
-                        alert.setMessage("¿Quiere compartir el emplazamiento con otros dispositivos?"/*+"\n"+msj*/);
+                        alert.setMessage("¿Quiere compartir el emplazamiento con otros dispositivos?");
                         alert.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -269,7 +268,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 createCaveExp(cave_number, lat, lon, contenido);
             }
         } else {
-
             mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
                 public void onMapLongClick(LatLng latLngChosen) {
@@ -960,7 +958,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         AdminSQLite admin = new AdminSQLite(this, "WumpusDB", null, 7);
         SQLiteDatabase db = admin.getWritableDatabase();
         for (int i = 1; i <= numberCaves; i++) {
-            Cursor cell = db.rawQuery("SELECT * FROM GAME WHERE GAME.cave_number = \"" + i + "\";", null);
+            Cursor cell = db.rawQuery("SELECT * FROM GAME WHERE GAME.cave_number = \"" + i + "\" AND GAME.id = " + game_id + ";", null);
             if (cell.moveToFirst()) {
                 caves[i - 1] = cell.getString(0) + "%" + cell.getString(1) + "%" + cell.getString(2) + "%" + cell.getString(3) + "%" + cell.getString(4) + "%" + cell.getString(5);
                 cell.close();
@@ -1006,7 +1004,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 data.put("relations", relations);
                 data.put("number_of_caves", number_of_caves);
                 db.insert("GRAPH", null, data);
-                db.close();
                 Cursor cell2 = db.rawQuery("SELECT * FROM GRAPH WHERE GRAPH.name = \"" + name + "1" + "\";", null);
                 if (cell.moveToFirst()) {
                     graph_ID = Integer.parseInt(cell2.getString(0));
@@ -1018,7 +1015,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             data.put("relations", relations);
             data.put("number_of_caves", number_of_caves);
             db.insert("GRAPH", null, data);
-            db.close();
             Cursor cell2 = db.rawQuery("SELECT * FROM GRAPH WHERE GRAPH.name = \"" + name + "\";", null);
             if (cell.moveToFirst()) {
                 graph_ID = Integer.parseInt(cell2.getString(0));
