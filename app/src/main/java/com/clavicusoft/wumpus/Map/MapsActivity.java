@@ -64,8 +64,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     String msj = "";
     String msjValues[] = null;
-    Graph graph;
-    CaveContent[] caveContents;
 
     Graph graph;
     CaveContent[] caveContents;
@@ -829,16 +827,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         addMetersToLongitude(longitudeGPS, distance, 2, false));
                 break;
         }
-    }
-
-    public void startGame()
-    {
-        Intent i = new Intent(this, Game_World.class);
-        i.putExtra("game_ID",game_id);
-        i.putExtra("number_of_caves",numberCaves);
-        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
-                R.anim.fade_out);
-        startActivity(i, options.toBundle());
     }
 
     /**
