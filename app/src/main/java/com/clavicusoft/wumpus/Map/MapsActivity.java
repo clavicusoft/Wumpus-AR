@@ -72,13 +72,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Bundle b;
         b = getIntent().getExtras();
+        String tipo = getIntent().getStringExtra("tipo").toString();
 
-        if (getIntent().getStringExtra("funcion").toString() == "multijugador") {
+        if (tipo.equals("multijugador")) {
+
             setContentView(R.layout.activity_multiplayer_maps);
             btnListo = (Button) findViewById(R.id.bListo);
             btnListo.setOnClickListener(this);
+            creado = false;
+            longitude = -84.132292;
+            latitude = 10.000645;
+            //selectedLatitude = latitude;
+            //selectedLongitude = longitude;
+            graph_ID = b.getInt("graphID");
+            distance = b.getDouble("Distancia");
+            meterToCoordinates = 0.0000095;
+
+            int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+
+            if (status == ConnectionResult.SUCCESS) {
+
+                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.map);
+                mapFragment.getMapAsync(this);
+            } else {
+                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity) getApplicationContext(), 10);
+                dialog.show();
+            }
+
+            accessBD(graph_ID);
+            generateCaveContent();
+
         } else {
             setContentView(R.layout.activity_maps);
             btnContinue = (Button) findViewById(R.id.bcontinuar);
@@ -89,35 +116,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             btnTerrain.setOnClickListener(this);
             btnHybrid.setOnClickListener(this);
             btnListo.setOnClickListener(this);
+            creado = false;
+            longitude = b.getDouble("Longitud");
+            latitude = b.getDouble("Latitud");
+            graph_ID = b.getInt("graphID");
+            distance = b.getDouble("Distancia");
+            selectedLatitude = 0.0;
+            selectedLongitude = 0.0;
+            meterToCoordinates = 0.0000095;
+
+            int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+
+            if (status == ConnectionResult.SUCCESS) {
+
+                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.map);
+                mapFragment.getMapAsync(this);
+            } else {
+                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity) getApplicationContext(), 10);
+                dialog.show();
+            }
+
+            accessBD(graph_ID);
+            generateCaveContent();
         }
-
-        longitude = b.getDouble("Longitud");
-        latitude = b.getDouble("Latitud");
-        graph_ID = b.getInt("graphID");
-        distance = b.getDouble("Distancia");
-
-        selectedLatitude = 0.0;
-        selectedLongitude = 0.0;
-
-        meterToCoordinates = 0.0000095;
-
-        creado = false;
-
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-
-        if (status == ConnectionResult.SUCCESS) {
-
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);
-        } else {
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity) getApplicationContext(), 10);
-            dialog.show();
-        }
-
-        accessBD(graph_ID);
-        generateCaveContent();
-
     }
 
     /**
@@ -147,9 +169,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             break;
             case R.id.bListo:
                 if (creado) {
-                    if (getIntent().getStringExtra("funcion").toString() == "multijugador") {
+                    if (getIntent().getStringExtra("tipo").toString() == "multijugador") {
                         startGame();
                     } else {
+
+                        String caves[] = getCaves();
+                        String laberinto = getLaberinto(graph_ID);
+                        String cavesTest  = "";
+                        AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+                        alert.setTitle("Compartir emplazamiento");
+                        for (int i = 1; i <= numberCaves; i++) {
+                            cavesTest = cavesTest + "\n\nCueva "+i+": " + caves[i-1];
+                        }
+                        alert.setMessage("Num Cuevas = " + numberCaves + "\n\nCuevas:"+cavesTest+"\n\nLaberinto= "+ laberinto);
+                        alert.show();
+
+                        /*
                         AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
                         alert.setTitle("Compartir emplazamiento");
                         alert.setMessage("¿Quiere compartir el emplazamiento con otros dispositivos?");
@@ -163,6 +198,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 i.putExtra("laberinto", getLaberinto(graph_ID));
                                 i.putExtra("Distancia", distance);
                                 i.putExtra("funcion", "enviarEmplazamiento");
+
+
                                 ActivityOptions options = ActivityOptions.makeCustomAnimation(MapsActivity.this, R.anim.fade_in, R.anim.fade_out);
                                 startActivity(i, options.toBundle());
                             }
@@ -175,16 +212,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                         });
                         alert.show();
+                        */
                     }
                 } else {
                     Toast.makeText(MapsActivity.this, "Debe crear un mapa de juego", Toast.LENGTH_LONG).show();
                 }
-        break;
-        default:
-        break;
-    }
+                break;
+            default:
+                break;
+        }
 
-}
+    }
 
     /**
      * Manipulates the map once available.
@@ -212,7 +250,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         float zoomLevel = 16;
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, zoomLevel));
-
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
@@ -866,10 +903,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     /**
-     * Prepare the message to send using the lab selected.
-     *
+     * Get information about the lab.
      * @param id labs id
-     * @return msg ready to send
+     * @return labs information.
      */
     public String getLaberinto(int id) {
         AdminSQLite admin = new AdminSQLite(this, "WumpusDB", null, 7);
@@ -889,6 +925,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return relations + "%" + number_of_caves + "%" + name;
     }
+
+
+    /**
+     * Save all the caves information in caves[] and returns the array.
+     *
+     * @return array that contains all of created caves information.
+     */
+    public String[] getCaves() {
+        String caves[] = new String[numberCaves];
+        AdminSQLite admin = new AdminSQLite(this, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+        for (int i = 1; i <= numberCaves; i++) {
+            Cursor cell = db.rawQuery("SELECT * FROM GAME WHERE GAME.cave_number = \"" + i + "\";", null);
+            if (cell.moveToFirst()) {
+                caves[i-1] = cell.getString(0) + "%" + cell.getString(1) + "%" + cell.getString(2) + "%" + cell.getString(3) + "%" + cell.getString(4) + "%" + cell.getString(5);
+                cell.close();
+            }
+            cell = null;
+        }
+        return caves;
+    }
+
 }
 
 

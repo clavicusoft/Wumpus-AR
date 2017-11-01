@@ -288,7 +288,7 @@ public class BluetoothChat extends Activity {
                         alert.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                AdminSQLite admin = new AdminSQLite(BluetoothChat.this, "WumpusDB", null, 6);
+                                AdminSQLite admin = new AdminSQLite(BluetoothChat.this, "WumpusDB", null, 7);
                                 SQLiteDatabase db = admin.getWritableDatabase();
                                 ContentValues data = new ContentValues();
                                 data.put("name", splitMessage[2]);
@@ -297,13 +297,12 @@ public class BluetoothChat extends Activity {
                                 db.insert("GRAPH", null, data);
                                 db.close();
                                 dialog.dismiss();
-                                SelectFromLibActivity selectFromLibActivity = new SelectFromLibActivity();
                                 Intent i = new Intent(BluetoothChat.this, MapsActivity.class);
-                                i.putExtra("Latitud", splitMessage[3]);
-                                i.putExtra("Longitud", splitMessage[4]);
-                                i.putExtra("graphID",selectFromLibActivity.getGraphID(splitMessage[2]));
-                                i.putExtra("Distancia",splitMessage[5]);
-                                i.putExtra("funcion","multijugador");
+                                i.putExtra("tipo","multijugador");
+                                i.putExtra("Latitud", Double.parseDouble(splitMessage[3]));
+                                i.putExtra("Longitud", Double.parseDouble(splitMessage[4]));
+                                i.putExtra("graphID", getGraphID(splitMessage[2]));
+                                i.putExtra("Distancia", Double.parseDouble(splitMessage[5]));
                                 ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.fade_in, R.anim.fade_out);
                                 startActivity(i, options.toBundle());
                             }
@@ -390,5 +389,31 @@ public class BluetoothChat extends Activity {
         super.onBackPressed();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
+
+
+    /**
+     * Gets the ID of a graph based on it's name.
+     *
+     * @param graphName The name of the graph.
+     * @return The DB ID of the graph
+     */
+    public int getGraphID(String graphName) {
+        int graphID = 0;
+        AdminSQLite admin = new AdminSQLite(BluetoothChat.this, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+        Cursor cell = db.rawQuery("SELECT GRAPH.id FROM GRAPH WHERE GRAPH.name = \"" + graphName +"\";", null);
+        if (cell.moveToFirst()){
+            graphID = cell.getInt(0);
+            cell.close();
+            return graphID;
+        }
+        else {
+            Toast.makeText(this, "The Wumpus isn't around this caves. Try another one!", Toast.LENGTH_LONG).show();
+            db.close();
+        }
+        cell.close();
+        return graphID;
+    }
+
 
 }
