@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
 
     }
 
+
     /**
      * Requests the user to accept permissions for camera and ubication services if they
      * were not previously accepted on installation.

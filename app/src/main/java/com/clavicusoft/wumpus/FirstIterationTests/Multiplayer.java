@@ -16,7 +16,7 @@ public class Multiplayer extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.multiplayer_sr_layout);
+        setContentView(R.layout.multiplayer_menu);
     }
 
     /**
@@ -53,5 +53,23 @@ public class Multiplayer extends Activity {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
     }
+
+    public void labs(View view){
+        setContentView(R.layout.multiplayer_sr_layout);
+    }
+
+
+    public void emplacements(View view){
+        Intent i = new Intent(this, BluetoothChat.class);
+        i.putExtra("funcion","buscarEmplazamiento");
+        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                R.anim.fade_out);
+        startActivity(i, options.toBundle());
+    }
+
+
+
+
+
 
 }

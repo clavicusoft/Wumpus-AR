@@ -65,7 +65,7 @@
         <activity
             android:name=".AR.Game_World"
             android:screenOrientation="landscape" />
-
+      
         <activity
             android:name=".AR.Splash_screen"
             android:screenOrientation="landscape" />
