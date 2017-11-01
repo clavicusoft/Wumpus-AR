@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.ArraySet;
 import android.support.v7.app.AlertDialog;
@@ -326,10 +327,13 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     }
 
     public void manageWumpus() {
-        Intent intent = new Intent(Game_World.this, WumpusAnimation.class);
+        Intent i = new Intent(Game_World.this, WumpusAnimation.class);
+
+
         ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
                 R.anim.fade_out);
-        startActivity(intent,options.toBundle());
+        startActivity(i,options.toBundle());
+
     }
 
     public void manageEmptyCave (int cave_Number) {
