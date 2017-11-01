@@ -40,10 +40,7 @@ public class BluetoothChat extends Activity {
     private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
     public String laberinto = "";
-    private double latitud=0.0;
-    private double longitud=0.0;
-    private int graph_ID = 0;
-    double distance = 0.0;
+    public String msj ="";
     public String nombreLaberinto = "";
     public String funcion = "";
     private Button mSendButton;
@@ -61,6 +58,14 @@ public class BluetoothChat extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        /*String msj = getIntent().getStringExtra("data").toString();
+        Intent i = new Intent(BluetoothChat.this, MapsActivity.class);
+        i.putExtra("tipo", "multijugador");
+        i.putExtra("data", msj);
+        startActivity(i);
+        */
+
         funcion = getIntent().getStringExtra("funcion").toString();
         if(funcion.equals("enviar")){
             setContentView(R.layout.send_labs);
@@ -68,10 +73,7 @@ public class BluetoothChat extends Activity {
             nombreLaberinto = getIntent().getStringExtra("nombreLaberinto");
         }else if(funcion.equals("enviarEmplazamiento")){
             setContentView(R.layout.send_emplacement);
-            laberinto = getIntent().getStringExtra("laberinto");
-            latitud = getIntent().getDoubleExtra("Latitud", 0);
-            longitud = getIntent().getDoubleExtra("Longitud", 0);
-            distance = getIntent().getDoubleExtra("Distancia", 0);
+            msj = getIntent().getStringExtra("data");
         }else if(funcion.equals("buscarEmplazamiento")){
             setContentView(R.layout.searching_emplacements);
         }else{
@@ -129,7 +131,7 @@ public class BluetoothChat extends Activity {
             mSendButton = (Button) findViewById(R.id.button_send);
             mSendButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    String message = laberinto+"%"+latitud+"%"+longitud+"%"+distance;
+                    String message = msj;
                     sendMessage(message);
                 }
             });
@@ -288,21 +290,9 @@ public class BluetoothChat extends Activity {
                         alert.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                AdminSQLite admin = new AdminSQLite(BluetoothChat.this, "WumpusDB", null, 7);
-                                SQLiteDatabase db = admin.getWritableDatabase();
-                                ContentValues data = new ContentValues();
-                                data.put("name", splitMessage[2]);
-                                data.put("relations", splitMessage[0]);
-                                data.put("number_of_caves", splitMessage[1]);
-                                db.insert("GRAPH", null, data);
-                                db.close();
-                                dialog.dismiss();
                                 Intent i = new Intent(BluetoothChat.this, MapsActivity.class);
                                 i.putExtra("tipo","multijugador");
-                                i.putExtra("Latitud", Double.parseDouble(splitMessage[3]));
-                                i.putExtra("Longitud", Double.parseDouble(splitMessage[4]));
-                                i.putExtra("graphID", getGraphID(splitMessage[2]));
-                                i.putExtra("Distancia", Double.parseDouble(splitMessage[5]));
+                                i.putExtra("data", msj);
                                 ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.fade_in, R.anim.fade_out);
                                 startActivity(i, options.toBundle());
                             }

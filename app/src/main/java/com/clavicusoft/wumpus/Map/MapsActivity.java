@@ -38,7 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
 
-    private GoogleMap mMap;
+    GoogleMap mMap;
 
     private double latitude;
     private double longitude;
@@ -58,8 +58,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button btnHybrid;
     Button btnListo;
 
+    String tipo = "";
+
     boolean creado;
 
+    String msj = "";
+    String msjValues[] = null;
     Graph graph;
     CaveContent[] caveContents;
 
@@ -75,28 +79,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Bundle b;
         b = getIntent().getExtras();
-        String tipo = getIntent().getStringExtra("tipo").toString();
+        tipo = getIntent().getStringExtra("tipo").toString();
 
         if (tipo.equals("multijugador")) {
 
             setContentView(R.layout.activity_multiplayer_maps);
             btnListo = (Button) findViewById(R.id.bListo);
             btnListo.setOnClickListener(this);
-            creado = false;
-            longitude = -84.132292;
-            latitude = 10.000645;
-            //selectedLatitude = latitude;
-            //selectedLongitude = longitude;
-            graph_ID = b.getInt("graphID");
-            distance = b.getDouble("Distancia");
+
+            msj = getIntent().getStringExtra("data").toString();
+            //msj = laberinto+"%"+numberCaves+"%"+latitude+"%"+longitude+"%"+distance+"%"+cavesInf;
+            //laberinto [relations,caves,name]
+            //numberCaves = [int]
+            //latitude = [double]
+            //longitude = [double]
+            //distance = [double]
+            //cavesInf = numberCaves*6  -> [int, int, int, double, double, int]
+            msjValues = tokenizer(msj);
+
+            graph_ID = createGraph(msjValues[2], msjValues[0], Integer.parseInt(msjValues[1]));
+
+            numberCaves = Integer.parseInt(msjValues[3]);
+
+            latitude = Double.parseDouble(msjValues[4]);
+            longitude = Double.parseDouble(msjValues[5]);
+            selectedLatitude = latitude;
+            selectedLongitude = longitude;
+
+            distance = Double.parseDouble(msjValues[6]);
+
             meterToCoordinates = 0.0000095;
+
+            creado = true;
 
             int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
 
             if (status == ConnectionResult.SUCCESS) {
-
-                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.map);
+                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
                 mapFragment.getMapAsync(this);
             } else {
                 Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity) getApplicationContext(), 10);
@@ -126,11 +145,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             meterToCoordinates = 0.0000095;
 
             int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-
             if (status == ConnectionResult.SUCCESS) {
-
-                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.map);
+                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
                 mapFragment.getMapAsync(this);
             } else {
                 Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity) getApplicationContext(), 10);
@@ -169,37 +185,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             break;
             case R.id.bListo:
                 if (creado) {
-                    if (getIntent().getStringExtra("tipo").toString() == "multijugador") {
+                    if (tipo.equals("multijugador")) {
                         startGame();
                     } else {
-
-                        String caves[] = getCaves();
                         String laberinto = getLaberinto(graph_ID);
-                        String cavesTest  = "";
-                        AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
-                        alert.setTitle("Compartir emplazamiento");
+                        String caves[] = getCaves();
+                        String cavesInf = "";
                         for (int i = 1; i <= numberCaves; i++) {
-                            cavesTest = cavesTest + "\n\nCueva "+i+": " + caves[i-1];
+                            cavesInf = cavesInf + "%" + caves[i - 1];
                         }
-                        alert.setMessage("Num Cuevas = " + numberCaves + "\n\nCuevas:"+cavesTest+"\n\nLaberinto= "+ laberinto);
-                        alert.show();
+                        msj = laberinto + "%" + numberCaves + "%" + latitude + "%" + longitude + "%" + distance + "%" + cavesInf;
 
-                        /*
                         AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
                         alert.setTitle("Compartir emplazamiento");
-                        alert.setMessage("¿Quiere compartir el emplazamiento con otros dispositivos?");
+                        alert.setMessage("¿Quiere compartir el emplazamiento con otros dispositivos?"/*+"\n"+msj*/);
                         alert.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 Intent i = new Intent(MapsActivity.this, BluetoothChat.class);
-                                i.putExtra("Latitud", latitude);
-                                i.putExtra("Longitud", longitude);
-                                i.putExtra("laberinto", getLaberinto(graph_ID));
-                                i.putExtra("Distancia", distance);
                                 i.putExtra("funcion", "enviarEmplazamiento");
-
-
+                                i.putExtra("data", msj);
                                 ActivityOptions options = ActivityOptions.makeCustomAnimation(MapsActivity.this, R.anim.fade_in, R.anim.fade_out);
                                 startActivity(i, options.toBundle());
                             }
@@ -212,7 +218,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                         });
                         alert.show();
-                        */
                     }
                 } else {
                     Toast.makeText(MapsActivity.this, "Debe crear un mapa de juego", Toast.LENGTH_LONG).show();
@@ -248,22 +253,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng current = new LatLng(latitude, longitude);
         mMap.addMarker(new MarkerOptions().position(current).title("Ubicación Actual").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
         float zoomLevel = 16;
-
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, zoomLevel));
 
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng latLngChosen) {
-                mMap.clear();
-                LatLng actual = new LatLng(latitude, longitude);
-                mMap.addMarker(new MarkerOptions().position(actual).title("Ubicación Actual").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                mMap.addMarker(new MarkerOptions().title("Posicion Deseada").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).position(latLngChosen));
-                selectedLatitude = latLngChosen.latitude;
-                selectedLongitude = latLngChosen.longitude;
-
-
+        if (tipo.equals("multijugador")) {
+            mMap.clear();
+            clearDB();
+            for (int i = 8; i <= (numberCaves+1)*6; i = i + 6) {
+                int cave_number = Integer.parseInt(msjValues[i + 2]);
+                double lat = Double.parseDouble(msjValues[i + 3]);
+                double lon = Double.parseDouble(msjValues[i + 4]);
+                int contenido = Integer.parseInt(msjValues[i + 5].toString());
+                createCaveExp(cave_number, lat, lon, contenido);
             }
-        });
+        } else {
+
+            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                @Override
+                public void onMapLongClick(LatLng latLngChosen) {
+                    mMap.clear();
+                    LatLng actual = new LatLng(latitude, longitude);
+                    mMap.addMarker(new MarkerOptions().position(actual).title("Ubicación Actual").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                    mMap.addMarker(new MarkerOptions().title("Posicion Deseada").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).position(latLngChosen));
+                    selectedLatitude = latLngChosen.latitude;
+                    selectedLongitude = latLngChosen.longitude;
+                }
+            });
+
+        }
     }
 
     /**
@@ -810,6 +826,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    /**
+     * This method start the game.
+     */
     public void startGame() {
         Intent i = new Intent(this, Game_World.class);
         i.putExtra("game_ID", game_id);
@@ -904,6 +923,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     /**
      * Get information about the lab.
+     *
      * @param id labs id
      * @return labs information.
      */
@@ -939,13 +959,98 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 1; i <= numberCaves; i++) {
             Cursor cell = db.rawQuery("SELECT * FROM GAME WHERE GAME.cave_number = \"" + i + "\";", null);
             if (cell.moveToFirst()) {
-                caves[i-1] = cell.getString(0) + "%" + cell.getString(1) + "%" + cell.getString(2) + "%" + cell.getString(3) + "%" + cell.getString(4) + "%" + cell.getString(5);
+                caves[i - 1] = cell.getString(0) + "%" + cell.getString(1) + "%" + cell.getString(2) + "%" + cell.getString(3) + "%" + cell.getString(4) + "%" + cell.getString(5);
                 cell.close();
             }
-            cell = null;
         }
         return caves;
     }
+
+    /**
+     * This method split the message and interprets the information.
+     *
+     * @param msj msg received
+     * @return the information interpreted
+     */
+    public String[] tokenizer(String msj) {
+        String[] mensaje = msj.split("%");
+        return mensaje;
+    }
+
+
+    /**
+     * This method creates the graph, but first seeks to know if the graph exists, if the graph exists and the relations
+     * are equals, the return the graph_id, if the name is the same but the relations are different, creates a new graph
+     * with name+1 as name.
+     * If the method doesn't find any graph with this name, then creates a new one.
+     *
+     * @param name
+     * @param relations
+     * @param number_of_caves
+     * @return the graph id.
+     */
+    public int createGraph(String name, String relations, int number_of_caves) {
+        AdminSQLite admin = new AdminSQLite(MapsActivity.this, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+        Cursor cell = db.rawQuery("SELECT * FROM GRAPH WHERE GRAPH.name = \"" + name + "\";", null);
+        if (cell.moveToFirst()) {
+            String test = cell.getString(1);
+            if (cell.getString(1).equals(relations)) {
+                graph_ID = Integer.parseInt(cell.getString(0));
+            } else {
+                ContentValues data = new ContentValues();
+                data.put("name", name + "1");
+                data.put("relations", relations);
+                data.put("number_of_caves", number_of_caves);
+                db.insert("GRAPH", null, data);
+                db.close();
+                Cursor cell2 = db.rawQuery("SELECT * FROM GRAPH WHERE GRAPH.name = \"" + name + "1" + "\";", null);
+                if (cell.moveToFirst()) {
+                    graph_ID = Integer.parseInt(cell2.getString(0));
+                }
+            }
+        } else {
+            ContentValues data = new ContentValues();
+            data.put("name", name);
+            data.put("relations", relations);
+            data.put("number_of_caves", number_of_caves);
+            db.insert("GRAPH", null, data);
+            db.close();
+            Cursor cell2 = db.rawQuery("SELECT * FROM GRAPH WHERE GRAPH.name = \"" + name + "\";", null);
+            if (cell.moveToFirst()) {
+                graph_ID = Integer.parseInt(cell2.getString(0));
+            }
+        }
+        return graph_ID;
+    }
+
+
+    /**
+     * Stores the cave in the DB from emplacement shared.
+     *
+     * @param cave_number The number of the cave inside the graph.
+     * @param coordX      The latitude of the cave.
+     * @param coordY      The longitude of the cave.
+     * @param content     The content of the cave.
+     */
+    public void createCaveExp(int cave_number, double coordX, double coordY, int content) {
+        AdminSQLite admin = new AdminSQLite(this, "WumpusDB", null, 7);
+        SQLiteDatabase db = admin.getWritableDatabase();
+
+        ContentValues data = new ContentValues();
+        data.put("id", game_id);
+        data.put("graph_id", graph_ID);
+        data.put("cave_number", cave_number);
+        data.put("latitude", String.valueOf(coordX));
+        data.put("longitude", String.valueOf(coordY));
+        data.put("content", content);
+        db.insert("GAME", null, data);
+
+        LatLng newCave = new LatLng(coordX, coordY);
+
+        mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva " + cave_number).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+    }
+
 
 }
 
