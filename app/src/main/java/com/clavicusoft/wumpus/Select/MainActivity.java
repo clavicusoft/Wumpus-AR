@@ -22,6 +22,10 @@ public class MainActivity extends Activity {
     AlertDialog.Builder alert; //Alert
     int whichActivity=0; //1 Single, 2 Multiplayer
 
+    /**
+     * Requests the number of permissions pending, if none are pending returns true
+     * @return False if there are still pending permissions and true if there are none
+     */
     private boolean checkAndRequestPermissions() { //requests the number of permissions pending: 2, 1 or none.
         int permissionCAMERA = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA); //camera permissions
@@ -41,7 +45,7 @@ public class MainActivity extends Activity {
                     listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
             return false;
         }
-        return true; //no permissions to be requested, returns true
+        return true;
     }
 
     /**
@@ -135,5 +139,13 @@ public class MainActivity extends Activity {
                     R.anim.slide_out_down);
             startActivity(i, options.toBundle());
         }
+    }
+
+    /**
+     * Close application.
+     */
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

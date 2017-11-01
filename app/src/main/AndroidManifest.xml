@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA"/>
-
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <!-- Sets the default values for the game such as it's icon and opening screen -->
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Select.MainActivity"
+            android:name=".Select.IntroAnimation"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,6 +65,18 @@
         <activity
             android:name=".AR.Game_World"
             android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".AR.Splash_screen"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".AR.WumpusAnimation"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".Select.MainActivity"
+        android:screenOrientation="portrait"/>
 
 
         <!--
