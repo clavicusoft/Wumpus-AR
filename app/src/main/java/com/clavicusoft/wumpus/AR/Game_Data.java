@@ -161,6 +161,10 @@ public class Game_Data {
         return result;
     }
 
+    /**
+     * Returns all cave contents.
+     * @return Array with the cave content of all caves.
+     */
     public CaveContent[] getCaveContents() {
         return caveContents;
     }
@@ -169,17 +173,28 @@ public class Game_Data {
         this.caveContents = caveContents;
     }
 
+    /**
+     * Chooses a random cave different from the current one and checks if it's valid.
+     * @param cave Current cave where the player is.
+     * @param totalCaves Total caves in the current game for the random number to choose.
+     * @return Valid random cave number.
+     */
     public int chooseRandomCave(int cave, int totalCaves){
         Random rand = new Random();
         int newCave;
         boolean validCave;
         do {
-            newCave = rand.nextInt(totalCaves) + 1;
+            newCave = rand.nextInt(totalCaves) + 1; //Generate random cave
             validCave = isValid(newCave);
-        }while((newCave == cave) || !(validCave));
+        }while((newCave == cave) || !(validCave)); //Check if random cave is valid
         return newCave;
     }
 
+    /**
+     * Checks if the random cave is valid for the bat to choose it.
+     * @param checkCave Cave number to check.
+     * @return True if the cave content is empty, false if else.
+     */
     public boolean isValid(int checkCave){
         boolean valid = false;
         CaveContent caveContent;
