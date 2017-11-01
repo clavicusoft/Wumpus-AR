@@ -59,13 +59,6 @@ public class BluetoothChat extends Activity {
 
         super.onCreate(savedInstanceState);
 
-        /*String msj = getIntent().getStringExtra("data").toString();
-        Intent i = new Intent(BluetoothChat.this, MapsActivity.class);
-        i.putExtra("tipo", "multijugador");
-        i.putExtra("data", msj);
-        startActivity(i);
-        */
-
         funcion = getIntent().getStringExtra("funcion").toString();
         if(funcion.equals("enviar")){
             setContentView(R.layout.send_labs);
