@@ -331,7 +331,6 @@ public class Graph {
         }
     }
 
-
     /**
      * This method generate all the entities for the maze and put then in random caves.
      * @param playerPosition Id of the cave where the player will init the game
@@ -359,7 +358,6 @@ public class Graph {
             amount[0] = 2;
             amount[1] = 2;
         }
-
 
         for (int i = 0; i < 3; i++) {
 
@@ -397,7 +395,6 @@ public class Graph {
         }*/
         return caveContents;
     }
-
 
 
     public ArrayList<Cave> getAllCaves() {
