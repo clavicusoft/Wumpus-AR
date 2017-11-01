@@ -67,6 +67,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Graph graph;
     CaveContent[] caveContents;
 
+    Graph graph;
+    CaveContent[] caveContents;
     /**
      * Obtain the SupportMapFragment and get notified when the map is ready to be used. Further,
      * gets the number of caves and the relationships according to the id of the graph in the database.
@@ -225,7 +227,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             default:
                 break;
+
+
         }
+
 
     }
 
@@ -826,6 +831,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public void startGame()
+    {
+        Intent i = new Intent(this, Game_World.class);
+        i.putExtra("game_ID",game_id);
+        i.putExtra("number_of_caves",numberCaves);
+        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                R.anim.fade_out);
+        startActivity(i, options.toBundle());
+    }
+
     /**
      * This method start the game.
      */
@@ -1050,8 +1065,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva " + cave_number).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
     }
-
-
 }
 
 

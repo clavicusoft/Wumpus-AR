@@ -133,7 +133,7 @@ public class Game_Data {
      * @return The content of the cave.
      */
     public CaveContent getCaveContent (int cave_Number) {
-        return caveContents[cave_Number - 1];
+        return caveContents[cave_Number];
     }
 
     /**
@@ -176,7 +176,7 @@ public class Game_Data {
         do {
             newCave = rand.nextInt(totalCaves) + 1;
             validCave = isValid(newCave);
-        }while((newCave != cave) && (validCave));
+        }while((newCave == cave) || !(validCave));
         return newCave;
     }
 
