@@ -176,7 +176,7 @@ public class Game_Data {
         do {
             newCave = rand.nextInt(totalCaves) + 1;
             validCave = isValid(newCave);
-        }while((newCave != cave) && (validCave));
+        }while((newCave == cave) || !(validCave));
         return newCave;
     }
 
