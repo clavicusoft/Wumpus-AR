@@ -276,7 +276,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         if (arraySet.contains(CaveContent.BAT)) {
             Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_LONG).show();
             if (caveContent == CaveContent.BAT) {
-                final MediaPlayer mp = MediaPlayer.create(this, R.raw.LotsOfBats);
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.lotsofbats);
                 mp.start();
                 try {
                     Thread.sleep(3100);
