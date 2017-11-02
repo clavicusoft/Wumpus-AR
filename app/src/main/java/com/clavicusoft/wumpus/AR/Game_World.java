@@ -341,8 +341,9 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      */
     public void manageWumpus() {
         Intent i = new Intent(Game_World.this, WumpusAnimation.class);
-
-
+        i.putExtra("usedArrows", score.get("usedArrows").toString());
+        i.putExtra("visitedBatCaves", score.get("visitedBatCaves").toString());
+        i.putExtra("visitedCaves", score.get("visitedCaves").toString());
         ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
                 R.anim.fade_out);
         startActivity(i,options.toBundle());
