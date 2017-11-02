@@ -30,78 +30,55 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="81dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/btnAddCave"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="addC"
-                android:text="Agregar cueva"
-                android:textSize="13sp"
-                android:textColor="@color/white"
-                android:background="@color/white_button"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
-                tools:ignore="ContentDescription" />
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnDelCave"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="delC"
-                android:text="Eliminar cueva"
-                android:textSize="13sp"
-                android:textColor="@color/white"
-                android:background="@color/white_button"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@color/white_button"
+                android:onClick="delC"
+                android:text="Eliminar cueva"
+                android:textColor="@color/white"
+                android:textSize="13sp"
                 tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
 
             <Button
                 android:id="@+id/btnAddArc"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:background="@color/white_button"
                 android:onClick="addA"
                 android:text="Agregar camino"
-                android:textSize="13sp"
                 android:textColor="@color/white"
-                android:background="@color/white_button"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:textSize="13sp"
                 tools:ignore="ContentDescription" />
 
             <Button
                 android:id="@+id/btnDelArc"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:background="@color/white_button"
                 android:onClick="delA"
                 android:text="Eliminar camino"
-                android:textSize="13sp"
                 android:textColor="@color/white"
-                android:background="@color/white_button"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:textSize="13sp"
                 tools:ignore="ContentDescription" />
 
         </LinearLayout>
@@ -110,36 +87,38 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnNew"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="1"
+                android:background="@color/white_button"
                 android:onClick="newD"
                 android:text="Reiniciar dibujo"
-                android:textSize="13sp"
                 android:textColor="@color/white"
-                android:background="@color/white_button"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:textSize="13sp"
                 tools:ignore="ContentDescription" />
 
             <Button
-                android:id="@+id/imgBtnCheck"
+                android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:background="@color/white_button"
                 android:elevation="1dp"
                 android:onClick="checkD"
                 android:text="Guardar dibujo"
-                android:textSize="13sp"
                 android:textColor="@color/white"
-                android:background="@color/white_button"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:textSize="13sp"
                 tools:ignore="ContentDescription" />
+
         </LinearLayout>
 
     </LinearLayout>

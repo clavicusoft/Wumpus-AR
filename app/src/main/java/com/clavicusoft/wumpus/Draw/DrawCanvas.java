@@ -22,19 +22,9 @@ public class DrawCanvas extends View {
     private Canvas drawCanvas; //Canvas
     private Bitmap canvasBitmap; //Stores canvas bit state
     private ArrayList<IntPair> relations; //Stores all current relations
-
-    public ArrayList<Cave> getCaves() {
-        return caves;
-    }
-
     private ArrayList<Cave> caves; //Stores all current caves
     private float touchX, touchY; //Stores coordinates
     private int numCave; //Counter to assign an ID to each cave
-
-    public int getTotalCaves() {
-        return totalCaves;
-    }
-
     private int totalCaves; //Counter of drawn caves
     private int maxCaves; //Maximun number of caves allowed
 
@@ -69,8 +59,6 @@ public class DrawCanvas extends View {
         numCave = 0;
         maxCaves = 20;
     }
-
-
 
     /**
      * Size given to the drawing area
@@ -109,7 +97,8 @@ public class DrawCanvas extends View {
     public boolean onTouchEvent(MotionEvent event) {
         touchX = event.getX();
         touchY = event.getY();
-        return true;
+        addCave();
+        return super.onTouchEvent(event);
     }
 
 
@@ -334,5 +323,21 @@ public class DrawCanvas extends View {
      */
     public int getNumCave() {
         return numCave;
+    }
+
+    /**
+     * Returns the array of created caves
+     * @return caves
+     */
+    public ArrayList<Cave> getCaves() {
+        return caves;
+    }
+
+    /**
+     * Returns the total number of created caves
+     * @return totalCaves
+     */
+    public int getTotalCaves() {
+        return totalCaves;
     }
 }
