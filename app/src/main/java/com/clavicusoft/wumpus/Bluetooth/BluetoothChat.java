@@ -49,6 +49,7 @@ public class BluetoothChat extends Activity {
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
     public int counter = 0;
+    String readMessage="";
 
     /**
      * On create of the  Activity, creates the Bluetooth Chat.
@@ -60,6 +61,7 @@ public class BluetoothChat extends Activity {
         super.onCreate(savedInstanceState);
 
         funcion = getIntent().getStringExtra("funcion").toString();
+
         if(funcion.equals("enviar")){
             setContentView(R.layout.send_labs);
             laberinto = getIntent().getStringExtra("laberinto");
@@ -229,7 +231,7 @@ public class BluetoothChat extends Activity {
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    readMessage = new String(readBuf, 0, msg.arg1);
                     final String[] splitMessage = tokenizer(readMessage);
                     if (splitMessage.length == 3) {
                         AlertDialog.Builder alert = new AlertDialog.Builder(BluetoothChat.this);
@@ -285,7 +287,7 @@ public class BluetoothChat extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent i = new Intent(BluetoothChat.this, MapsActivity.class);
                                 i.putExtra("tipo","multijugador");
-                                i.putExtra("data", msj);
+                                i.putExtra("data",readMessage);
                                 ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.fade_in, R.anim.fade_out);
                                 startActivity(i, options.toBundle());
                             }
