@@ -4,6 +4,7 @@ package com.clavicusoft.wumpus.Maze;
 public class Cave {
     private int id;
     private float corX, corY;
+    private CaveContent caveContent;
 
     /**
      * Creates a cave with id and coordinates.
@@ -15,6 +16,7 @@ public class Cave {
         this.id = id;
         this.corX = corX;
         this.corY = corY;
+        this.setCaveContent(CaveContent.EMPTY);
     }
 
     /**
@@ -39,5 +41,21 @@ public class Cave {
      */
     public float getCorY() {
         return corY;
+    }
+
+    /**
+     * Yields the current CaveContent of the cave.
+     * @return the CaveContent of the cave.
+     */
+    public CaveContent getCaveContent() {
+        return caveContent;
+    }
+
+    /**
+     * Sets a new CaveContent for the cave.
+     * @param caveContent the given CaveContent.
+     */
+    public void setCaveContent(CaveContent caveContent) {
+        this.caveContent = caveContent;
     }
 }

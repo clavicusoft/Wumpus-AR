@@ -25,7 +25,7 @@
         android:gravity="center">
 
             <Button
-                android:id="@+id/btOnBluetooth"
+                android:id="@+id/btsend"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -38,7 +38,7 @@
 
 
             <Button
-                android:id="@+id/btVisible"
+                android:id="@+id/btReceive"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
