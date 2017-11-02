@@ -336,6 +336,9 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         }
     }
 
+    /**
+     * If the player falls in the Wumpus' cave then the game ends.
+     */
     public void manageWumpus() {
         Intent i = new Intent(Game_World.this, WumpusAnimation.class);
 
@@ -346,24 +349,43 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
 
     }
 
+    /**
+     * If the cave content is empty then it updates the game and the score.
+     * @param cave_Number
+     */
     public void manageEmptyCave (int cave_Number) {
         Toast.makeText(this, "Esta cueva esta vacia.", Toast.LENGTH_SHORT).show();
         score.put("visitedCaves",score.get("visitedCaves")+1);
         worldHelper.updateObjects(this, cave_Number, data);
     }
 
+    /**
+     * If the player falls in a cave where there's a bat, then the bat appears
+     * and guides the player to the cave that he is taken to.
+     * @param cave_Number Current cave where the player is located
+     */
     public void generateBat(int cave_Number) {
         score.put("visitedBatCaves",score.get("visitedBatCaves")+1);
         final int newCave;
         final Context context = this;
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.pterodactyl); //Creates bat sound
         newCave = data.chooseRandomCave(cave_Number,number_of_caves);
-        worldHelper.createBat(this, cave_Number, newCave, data);
+        worldHelper.createBat(this, cave_Number, newCave, data); //Create the bat in front of you
+        mp.start(); //Plays bat sound
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mp.release();
+        //Instructions that the player must follow to continue the game
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-        newDialog.setTitle("Un murciélago salvaje ha aparecido");
+        newDialog.setTitle("Un murciélago ha aparecido");
         newDialog.setMessage("El murciélago te ha llevado a la cueva "
                 + newCave + ". Para continuar debes desplazarte a esa cueva.");
         newDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
+                //Sets the destination cave that the player must follow
                 worldHelper.moveToCave(context, newCave, data);
                 dialog.dismiss();
             }

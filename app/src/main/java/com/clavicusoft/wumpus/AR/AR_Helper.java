@@ -65,6 +65,13 @@ public class AR_Helper {
         cursor.close();
     }
 
+    /**
+     *Creates the bat object and the cave where the bat chooses to take the player and disables everything else.
+     * @param context App Context.
+     * @param cave_Number Cave where the bat appears.
+     * @param newCave Cave where the player is taken.
+     * @param data Game data.
+     */
     public void createBat(Context context, int cave_Number, int newCave, Game_Data data){
         world.clearWorld();
 
@@ -73,7 +80,7 @@ public class AR_Helper {
 
         Cursor cursor = db.rawQuery("SELECT latitude, longitude, cave_number FROM GAME WHERE id = " +
                 String.valueOf(data.getGame_ID()) + " AND cave_number = " + String.valueOf(cave_Number) + ";", null);
-
+        //Shows the bat in the camera.
         int geo_id = 1;
         if (cursor.moveToFirst()) {
             GeoObject geo_Object = new GeoObject(geo_id);
@@ -86,7 +93,7 @@ public class AR_Helper {
 
         cursor = db.rawQuery("SELECT latitude, longitude, cave_number FROM GAME WHERE id = " +
                 String.valueOf(data.getGame_ID()) + " AND cave_number = " + String.valueOf(newCave) + ";", null);
-
+        //Shows the cave in the camera.
         if (cursor.moveToFirst()) {
             GeoObject geo_Object = new GeoObject(geo_id);
             geo_Object.setGeoPosition(Double.parseDouble(cursor.getString(0)), Double.parseDouble(cursor.getString(1)));
@@ -94,10 +101,15 @@ public class AR_Helper {
             geo_Object.setImageResource(R.drawable.cave);
             world.addBeyondarObject(geo_Object);
         }
-
         cursor.close();
     }
 
+    /**
+     * Creates a cave object where the player has to go and disables everything else.
+     * @param context App context.
+     * @param newCave Cave where the player is taken to.
+     * @param data Game data.
+     */
     public void moveToCave(Context context, int newCave, Game_Data data){
         world.clearWorld();
 
@@ -106,7 +118,7 @@ public class AR_Helper {
 
         Cursor cursor = db.rawQuery("SELECT latitude, longitude, cave_number FROM GAME WHERE id = " +
                 String.valueOf(data.getGame_ID()) + " AND cave_number = " + String.valueOf(newCave) + ";", null);
-
+        //Shows the cave with the bat above it in the camera.
         int geo_id = 1;
         if (cursor.moveToFirst()) {
             GeoObject geo_Object = new GeoObject(geo_id);
@@ -117,5 +129,4 @@ public class AR_Helper {
         }
         cursor.close();
     }
-
 }
