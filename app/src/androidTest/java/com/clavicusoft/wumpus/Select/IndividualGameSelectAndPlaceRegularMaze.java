@@ -1,11 +1,12 @@
-package com.clavicusoft.wumpus;
+package com.clavicusoft.wumpus.Select;
 
 
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.clavicusoft.wumpus.Select.MainActivity;
+import com.clavicusoft.wumpus.R;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +22,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 @RunWith(AndroidJUnit4.class)
-public class SelectAndPlaceRegularMaze {
+public class IndividualGameSelectAndPlaceRegularMaze {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -29,7 +30,7 @@ public class SelectAndPlaceRegularMaze {
     @Test
     public void selectAndPlaceRegularMaze() {
         ViewInteraction button = onView(
-                allOf(withId(R.id.Individual), withText("Individual"),
+                allOf(ViewMatchers.withId(R.id.Individual), withText("Individual"),
                         withParent(withId(R.id.linearLayout)),
                         isDisplayed()));
         button.perform(click());

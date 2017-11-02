@@ -287,6 +287,7 @@ public class Coordinates extends Activity {
                 spn_distances.setVisibility(View.VISIBLE);
                 Intent i = new Intent(Coordinates.this, MapsActivity.class);
                 //Sets atributes for the next activity like coordinates, distance and the maze ID.
+                i.putExtra("tipo","individual");
                 i.putExtra("Latitud", getLatitudeGPS());
                 i.putExtra("Longitud", getLongitudeGPS());
                 i.putExtra("graphID",graph_id);

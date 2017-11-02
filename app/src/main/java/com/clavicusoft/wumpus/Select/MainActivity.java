@@ -22,6 +22,10 @@ public class MainActivity extends Activity {
     AlertDialog.Builder alert; //Alert
     int whichActivity=0; //1 Single, 2 Multiplayer
 
+    /**
+     * Requests the number of permissions pending, if none are pending returns true
+     * @return False if there are still pending permissions and true if there are none
+     */
     private boolean checkAndRequestPermissions() { //requests the number of permissions pending: 2, 1 or none.
         int permissionCAMERA = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA); //camera permissions
@@ -58,6 +62,7 @@ public class MainActivity extends Activity {
 
     }
 
+
     /**
      * Requests the user to accept permissions for camera and ubication services if they
      * were not previously accepted on installation.
@@ -90,7 +95,7 @@ public class MainActivity extends Activity {
                 //if both permissions are granted, does nothing since checkAndResquestPermissions returns true and button opens activity
             }
             else {
-                //Permission denied
+                //Permissions denied
                 alert.setTitle("Error");
                 alert.setMessage("Para poder continuar con el juego debe permitir a Wumpus acceder a la cámara y a su ubicación");
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

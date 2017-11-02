@@ -37,6 +37,10 @@ public class Game_Data {
         return currentCave;
     }
 
+    public void setCurrentCave(int cave){
+        this.currentCave = cave;
+    }
+
     /**
      * Creates a new Game_Data object.
      *
@@ -190,6 +194,22 @@ public class Game_Data {
         return newCave;
     }
 
+    /**
+     * Chooses a random empty cave for the player to start.
+     *
+     * @param totalCaves Total caves in the world.
+     * @return Number of the cave.
+     */
+    public int chooseStartingCave(int totalCaves){
+        Random rand = new Random();
+        int newCave;
+        boolean validCave;
+        do {
+            newCave = rand.nextInt(totalCaves) + 1;
+            validCave = isValid(newCave);
+        }while(!(validCave));
+        return newCave;
+    }
     /**
      * Checks if the random cave is valid for the bat to choose it.
      * @param checkCave Cave number to check.
