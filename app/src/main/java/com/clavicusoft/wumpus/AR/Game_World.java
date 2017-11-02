@@ -276,7 +276,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         if (arraySet.contains(CaveContent.BAT)) {
             Toast.makeText(this, "Acabas de percibir un chillido de murcielago.", Toast.LENGTH_LONG).show();
             if (caveContent == CaveContent.BAT) {
-                final MediaPlayer mp = MediaPlayer.create(this, R.raw.pterodactyl);
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.LotsOfBats);
                 mp.start();
                 try {
                     Thread.sleep(3100);
@@ -374,7 +374,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         worldHelper.createBat(this, cave_Number, newCave, data); //Create the bat in front of you
         mp.start(); //Plays bat sound
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
