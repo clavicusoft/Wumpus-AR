@@ -1,4 +1,4 @@
-package com.clavicusoft.wumpus.FirstIterationTests;
+package com.clavicusoft.wumpus.Select;
 
 
 import android.support.test.espresso.ViewInteraction;
@@ -10,12 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
-import static android.support.test.espresso.assertion.ViewAssertions.*;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-
-import com.clavicusoft.wumpus.FirstIterationTests.IntroAnimation;
 import com.clavicusoft.wumpus.R;
 
 import org.hamcrest.Description;
@@ -25,33 +19,43 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withParent;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MultiplayerGame {
+public class IndividualGameSelectFromLibrary {
 
     @Rule
     public ActivityTestRule<IntroAnimation> mActivityTestRule = new ActivityTestRule<>(IntroAnimation.class);
 
     @Test
-    public void multiplayerGame() {
+    public void individualGameSelectFromLibrary() {
         ViewInteraction button = onView(
-                allOf(ViewMatchers.withId(R.id.buttonMultijuador), withText("Multijugador"),
+                allOf(ViewMatchers.withId(R.id.Individual), withText("Individual"),
                         withParent(withId(R.id.linearLayout)),
                         isDisplayed()));
         button.perform(click());
 
+        ViewInteraction button2 = onView(
+                allOf(withId(R.id.bttnChooseLib), withText("Biblioteca de laberintos"), isDisplayed()));
+        button2.perform(click());
+
         ViewInteraction textView = onView(
-                allOf(withText("Compartir Laberintos Personalizados"),
+                allOf(withId(R.id.lblChooseLib), withText("Seleccione un laberinto"),
                         childAtPosition(
                                 childAtPosition(
                                         withId(android.R.id.content),
                                         0),
-                                1),
+                                0),
                         isDisplayed()));
-        textView.check(matches(withText("Compartir Laberintos Personalizados")));
+        textView.check(matches(withText("Seleccione un laberinto")));
 
     }
 

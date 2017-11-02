@@ -1,4 +1,4 @@
-package com.clavicusoft.wumpus.FirstIterationTests;
+package com.clavicusoft.wumpus.Select;
 
 
 import android.support.test.espresso.ViewInteraction;
@@ -10,64 +10,47 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.clavicusoft.wumpus.FirstIterationTests.IntroAnimation;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.assertion.ViewAssertions.*;
+import static android.support.test.espresso.matcher.ViewMatchers.*;
+
 import com.clavicusoft.wumpus.R;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withParent;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MultiplayerGameReadyToReceive {
+public class MultiplayerGame {
 
     @Rule
     public ActivityTestRule<IntroAnimation> mActivityTestRule = new ActivityTestRule<>(IntroAnimation.class);
 
     @Test
-    public void multiplayerGameReadyToReceive() {
+    public void multiplayerGame() {
         ViewInteraction button = onView(
                 allOf(ViewMatchers.withId(R.id.buttonMultijuador), withText("Multijugador"),
                         withParent(withId(R.id.linearLayout)),
                         isDisplayed()));
         button.perform(click());
 
-        ViewInteraction button2 = onView(
-                allOf(withId(R.id.btVisible), withText("Recibir"), isDisplayed()));
-        button2.perform(click());
-
         ViewInteraction textView = onView(
-                allOf(withText("Buscando laberintos"),
+                allOf(withText("Compartir Laberintos Personalizados"),
                         childAtPosition(
                                 childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class),
+                                        withId(android.R.id.content),
                                         0),
-                                0),
+                                1),
                         isDisplayed()));
-        textView.check(matches(withText("Buscando laberintos")));
-
-        ViewInteraction button3 = onView(
-                allOf(withId(R.id.discoverable),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class),
-                                        0),
-                                2),
-                        isDisplayed()));
-        button3.check(matches(isDisplayed()));
+        textView.check(matches(withText("Compartir Laberintos Personalizados")));
 
     }
 

@@ -1,4 +1,4 @@
-package com.clavicusoft.wumpus.FirstIterationTests;
+package com.clavicusoft.wumpus.Select;
 
 
 import android.support.test.espresso.ViewInteraction;
@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.clavicusoft.wumpus.FirstIterationTests.IntroAnimation;
 import com.clavicusoft.wumpus.R;
 
 import org.hamcrest.Description;

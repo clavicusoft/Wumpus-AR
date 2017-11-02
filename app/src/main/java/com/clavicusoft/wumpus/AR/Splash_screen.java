@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.clavicusoft.wumpus.R;
-import com.clavicusoft.wumpus.FirstIterationTests.MainActivity;
+import com.clavicusoft.wumpus.Select.MainActivity;
 
 public class Splash_screen extends Activity {
 

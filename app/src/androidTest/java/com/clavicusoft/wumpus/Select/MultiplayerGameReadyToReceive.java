@@ -1,4 +1,4 @@
-package com.clavicusoft.wumpus.FirstIterationTests;
+package com.clavicusoft.wumpus.Select;
 
 
 import android.support.test.espresso.ViewInteraction;
@@ -10,12 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.clavicusoft.wumpus.FirstIterationTests.IntroAnimation;
 import com.clavicusoft.wumpus.R;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,32 +31,42 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class IndividualGameSelectFromLibrary {
+public class MultiplayerGameReadyToReceive {
 
     @Rule
     public ActivityTestRule<IntroAnimation> mActivityTestRule = new ActivityTestRule<>(IntroAnimation.class);
 
     @Test
-    public void individualGameSelectFromLibrary() {
+    public void multiplayerGameReadyToReceive() {
         ViewInteraction button = onView(
-                allOf(ViewMatchers.withId(R.id.Individual), withText("Individual"),
+                allOf(ViewMatchers.withId(R.id.buttonMultijuador), withText("Multijugador"),
                         withParent(withId(R.id.linearLayout)),
                         isDisplayed()));
         button.perform(click());
 
         ViewInteraction button2 = onView(
-                allOf(withId(R.id.bttnChooseLib), withText("Biblioteca de laberintos"), isDisplayed()));
+                allOf(withId(R.id.btVisible), withText("Recibir"), isDisplayed()));
         button2.perform(click());
 
         ViewInteraction textView = onView(
-                allOf(withId(R.id.lblChooseLib), withText("Seleccione un laberinto"),
+                allOf(withText("Buscando laberintos"),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(android.R.id.content),
+                                        IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class),
                                         0),
                                 0),
                         isDisplayed()));
-        textView.check(matches(withText("Seleccione un laberinto")));
+        textView.check(matches(withText("Buscando laberintos")));
+
+        ViewInteraction button3 = onView(
+                allOf(withId(R.id.discoverable),
+                        childAtPosition(
+                                childAtPosition(
+                                        IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class),
+                                        0),
+                                2),
+                        isDisplayed()));
+        button3.check(matches(isDisplayed()));
 
     }
 

@@ -1,4 +1,4 @@
-package com.clavicusoft.wumpus.FirstIterationTests;
+package com.clavicusoft.wumpus.Select;
 
 
 import android.support.test.espresso.ViewInteraction;
@@ -10,13 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.clavicusoft.wumpus.FirstIterationTests.IntroAnimation;
 import com.clavicusoft.wumpus.R;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,32 +30,32 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class IndividualGameSelectRegularMaze {
+public class MultiplayerGameReadyToSend {
 
     @Rule
     public ActivityTestRule<IntroAnimation> mActivityTestRule = new ActivityTestRule<>(IntroAnimation.class);
 
     @Test
-    public void individualGameSelectRegularMaze() {
+    public void multiplayerGameReadyToSend() {
         ViewInteraction button = onView(
-                allOf(ViewMatchers.withId(R.id.Individual), withText("Individual"),
+                allOf(ViewMatchers.withId(R.id.buttonMultijuador), withText("Multijugador"),
                         withParent(withId(R.id.linearLayout)),
                         isDisplayed()));
         button.perform(click());
 
         ViewInteraction button2 = onView(
-                allOf(withId(R.id.bttnStartGame), withText("Iniciar el juego"), isDisplayed()));
+                allOf(withId(R.id.btOnBluetooth), withText("Enviar"), isDisplayed()));
         button2.perform(click());
 
         ViewInteraction textView = onView(
-                allOf(withId(R.id.tv_dist), withText("Determine la distancia promedio que desea entre cuevas"),
+                allOf(withId(R.id.lblChooseLib), withText("Seleccione el laberinto que desea compartir"),
                         childAtPosition(
                                 childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
+                                        withId(android.R.id.content),
                                         0),
                                 0),
                         isDisplayed()));
-        textView.check(matches(withText("Determine la distancia promedio que desea entre cuevas")));
+        textView.check(matches(withText("Seleccione el laberinto que desea compartir")));
 
     }
 

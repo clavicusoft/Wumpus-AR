@@ -21,7 +21,7 @@ import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
-import com.clavicusoft.wumpus.FirstIterationTests.MainActivity;
+import com.clavicusoft.wumpus.Select.MainActivity;
 
 import android.view.View;
 import android.widget.Button;
@@ -64,13 +64,14 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         number_of_caves = b.getInt("number_of_caves");
 
         data = new Game_Data(this, game_ID, 1);
+        data.setCurrentCave(data.chooseStartingCave(number_of_caves));
 
         //Sets the fragment.
         currentBeyondARFragment = (BeyondarFragmentSupport) getSupportFragmentManager().findFragmentById(
                 R.id.beyondarFragment);
 
         worldHelper = new AR_Helper(this);
-        worldHelper.updateObjects(this, 1, data);
+        worldHelper.updateObjects(this, data.getCurrentCave(), data);
 
         //Allows BeyondAR to access user's position
         BeyondarLocationManager.setLocationManager((LocationManager) this.getSystemService(
@@ -92,7 +93,21 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         score.put("visitedBatCaves",0);
         score.put("usedArrows",0);
 
-        this.showHints(1);
+        currentCave.setText(String.valueOf(data.getCurrentCave()));
+        this.showHints(data.getCurrentCave());
+        showCurrentCave();
+    }
+
+    public void showCurrentCave() {
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("¡A cazar el Wumpus!");
+        newDialog.setMessage("Te encuentras en la cueva " + data.getCurrentCave());
+        newDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
     }
 
     /**

@@ -1,8 +1,7 @@
-package com.clavicusoft.wumpus.FirstIterationTests;
+package com.clavicusoft.wumpus.Select;
 
 
 import android.support.test.espresso.ViewInteraction;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -10,17 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.clavicusoft.wumpus.FirstIterationTests.IntroAnimation;
 import com.clavicusoft.wumpus.R;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -29,34 +29,71 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
+
+/**
+ * In order to run this test successfully,
+ * you must grant the location permissions to the application,
+ * you have to create a maze with 2 caves with the name "prueba"
+ * and then you must modify in the code of the test the identifier of the saved maze, as indicated below.
+ */
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MultiplayerGameReadyToSend {
+public class MultiplayerGameSendingFromLibrary {
 
     @Rule
     public ActivityTestRule<IntroAnimation> mActivityTestRule = new ActivityTestRule<>(IntroAnimation.class);
 
     @Test
-    public void multiplayerGameReadyToSend() {
-        ViewInteraction button = onView(
-                allOf(ViewMatchers.withId(R.id.buttonMultijuador), withText("Multijugador"),
+    public void multiplayerGameSendingFromLibrary() {
+        ViewInteraction button9 = onView(
+                allOf(withId(R.id.buttonMultijuador), withText("Multijugador"),
                         withParent(withId(R.id.linearLayout)),
                         isDisplayed()));
-        button.perform(click());
+        button9.perform(click());
 
-        ViewInteraction button2 = onView(
+        ViewInteraction button10 = onView(
                 allOf(withId(R.id.btOnBluetooth), withText("Enviar"), isDisplayed()));
-        button2.perform(click());
+        button10.perform(click());
 
         ViewInteraction textView = onView(
-                allOf(withId(R.id.lblChooseLib), withText("Seleccione el laberinto que desea compartir"),
+                //To run this test successfully change the numbers between '-' and '\n' to the current identifier of the maze.
+                allOf(withId(R.id.text_view_item), withText("Nombre: prueba-1509550928\nNúmero de cuevas: 2"),
+                        childAtPosition(
+                                withId(R.id.listViewMazes),
+                                0),
+                        isDisplayed()));
+        textView.perform(click());
+
+        ViewInteraction button11 = onView(
+                allOf(withId(R.id.scan), withText("Seleccione un dispositivo"), isDisplayed()));
+        button11.perform(click());
+
+        ViewInteraction button12 = onView(
+                allOf(withId(R.id.button_scan),
                         childAtPosition(
                                 childAtPosition(
                                         withId(android.R.id.content),
                                         0),
+                                4),
+                        isDisplayed()));
+        button12.check(matches(isDisplayed()));
+
+        pressBack();
+
+        ViewInteraction button13 = onView(
+                allOf(withId(R.id.button_send), withText("Enviar laberinto"), isDisplayed()));
+        button13.perform(click());
+
+        ViewInteraction button14 = onView(
+                allOf(withId(R.id.button_send),
+                        childAtPosition(
+                                childAtPosition(
+                                        IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
+                                        0),
                                 0),
                         isDisplayed()));
-        textView.check(matches(withText("Seleccione el laberinto que desea compartir")));
+        button14.check(matches(isDisplayed()));
 
     }
 

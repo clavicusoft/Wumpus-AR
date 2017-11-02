@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.clavicusoft.wumpus.FirstIterationTests.MainActivity;
+import com.clavicusoft.wumpus.Select.MainActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
