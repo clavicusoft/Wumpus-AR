@@ -39,26 +39,12 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btnDelCave"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:background="@color/white_button"
-                android:onClick="delC"
-                android:text="Eliminar cueva"
-                android:textColor="@color/white"
-                android:textSize="13sp"
-                tools:ignore="ContentDescription" />
-
-            <Button
                 android:id="@+id/btnAddArc"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="5dp"
                 android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:background="@color/white_button"
                 android:onClick="addA"

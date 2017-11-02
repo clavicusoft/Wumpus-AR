@@ -95,12 +95,17 @@ public class DrawCanvas extends View {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Cave c;
         touchX = event.getX();
         touchY = event.getY();
-        addCave();
+        c = searchCaveByCoordinates(touchX, touchY);
+        if (c != null) {
+            deleteCave(c.getId());
+        } else {
+            addCave();
+        }
         return super.onTouchEvent(event);
     }
-
 
     /**
      * Restarts the drawing
@@ -339,5 +344,29 @@ public class DrawCanvas extends View {
      */
     public int getTotalCaves() {
         return totalCaves;
+    }
+
+    /**
+     * Searches the cave based on the received coordenates and returns it
+     * @param x Coordinate x of the touch event
+     * @param y Coordinate y of the touch event
+     * @return Cave with the corresponding coordinates
+     */
+    public Cave searchCaveByCoordinates(float x, float y){
+        float currentX, currentY;
+        int i = 0;
+        while(i < caves.size()) {
+            currentX = caves.get(i).getCorX();
+            currentY = caves.get(i).getCorY();
+            if ((x >= currentX-50 && x < currentX+50) && (y >= currentY-50 && y < currentY+50))
+            //if ((x >= currentX-50 && y >= currentY-50)|| (x <= currentX+50 && y >= currentY-50) || (x >= currentX-50 && y <= currentY+50) || (x >= currentX+50 && y <= currentY+50))
+            {
+                return caves.get(i);
+            }
+            else{
+                i++;
+            }
+        }
+        return null;
     }
 }

@@ -24,7 +24,7 @@ public class DrawMazeActivity extends Activity {
 
     private DrawCanvas myCanvas; //Instance of the canvas
     private Graph customMaze; //Object graph used to store the maze
-    private int caveToDelete, cave1, cave2; //Store the chosen caves
+    private int cave1, cave2; //Store the chosen caves
     private String name; //Name of the created maze
     AlertDialog.Builder alert; //Dialog used to show important information
 
@@ -41,7 +41,7 @@ public class DrawMazeActivity extends Activity {
         myCanvas = findViewById(R.id.viewDrawCanvas);
         alert = new AlertDialog.Builder(this);
         alert.setTitle("Instrucciones");
-        alert.setMessage("- Para agregar una cueva debe presionar la pantalla donde desea colocarla.\n\n- Para eliminar una cueva, presione el botón \"Eliminar Cueva\" e indique el número de la cueva que desea eliminar, esto eliminará a su vez los caminos conectados a esta cueva.\n\n- Para agregar o eliminar un camino entre dos cuevas, presione el botón \"Agregar Camino\" o \"Eliminar Camino\" e indique las dos cuevas que desea conectar o desconectar.\n\n- Una vez finalizado el dibujo presione el botón \"Guardar Dibujo\" lo que almacenará el laberinto en la biblioteca y permitirá utilizarlo para jugar.");
+        alert.setMessage("- Para agregar una cueva debe presionar la pantalla donde desea colocarla.\n\n- Para eliminar una cueva debe presionar la pantalla donde esta se encuentra, esto eliminará a su vez los caminos conectados a la cueva.\n\n- Para agregar o eliminar un camino entre dos cuevas, presione el botón \"Agregar Camino\" o \"Eliminar Camino\" e indique las dos cuevas que desea conectar o desconectar.\n\n- Una vez finalizado el dibujo presione el botón \"Guardar Dibujo\" lo que almacenará el laberinto en la biblioteca y permitirá utilizarlo para jugar.");
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
                 dialog.dismiss();
@@ -74,55 +74,55 @@ public class DrawMazeActivity extends Activity {
 //        myCanvas.addCave();
 //    }
 
-    /**
-     * Deletes a cave
-     * @param v View to be affected
-     */
-    public void delC(View v){
-        final Dialog dialogDeleteCave= new Dialog(this);
-        dialogDeleteCave.setContentView(R.layout.layout_choosecave);
-        final EditText edtTxtCaveToDelete = dialogDeleteCave.findViewById(R.id.editTxtNumCave);
-        Button btnAcceptDeleteCave = dialogDeleteCave.findViewById(R.id.btnAccept);
-        Button btnCancelDeleteCave = dialogDeleteCave.findViewById(R.id.btnCancel);
-        btnAcceptDeleteCave.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if (!edtTxtCaveToDelete.getText().toString().equals("")) {
-                    caveToDelete = Integer.parseInt(edtTxtCaveToDelete.getText().toString());
-                    if (caveToDelete < myCanvas.getNumCave()) {
-                        myCanvas.deleteCave(caveToDelete);
-                        dialogDeleteCave.dismiss();
-                    } else {
-                        alert.setTitle("Error");
-                        alert.setMessage("La cueva que desea borrar no existe.");
-                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.show();
-                    }
-                }
-                else {
-                    alert.setTitle("Error");
-                    alert.setMessage("Ingrese el número de la cueva que desea borrar.");
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.show();
-                }
-            }
-        });
-        btnCancelDeleteCave.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                dialogDeleteCave.cancel();
-            }
-        });
-        dialogDeleteCave.show();
-    }
+//    /**
+//     * Deletes a cave
+//     * @param v View to be affected
+//     */
+//    public void delC(View v){
+//        final Dialog dialogDeleteCave= new Dialog(this);
+//        dialogDeleteCave.setContentView(R.layout.layout_choosecave);
+//        final EditText edtTxtCaveToDelete = dialogDeleteCave.findViewById(R.id.editTxtNumCave);
+//        Button btnAcceptDeleteCave = dialogDeleteCave.findViewById(R.id.btnAccept);
+//        Button btnCancelDeleteCave = dialogDeleteCave.findViewById(R.id.btnCancel);
+//        btnAcceptDeleteCave.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//                if (!edtTxtCaveToDelete.getText().toString().equals("")) {
+//                    cave1 = Integer.parseInt(edtTxtCaveToDelete.getText().toString());
+//                    if (cave1 < myCanvas.getNumCave()) {
+//                        myCanvas.deleteCave(cave1);
+//                        dialogDeleteCave.dismiss();
+//                    } else {
+//                        alert.setTitle("Error");
+//                        alert.setMessage("La cueva que desea borrar no existe.");
+//                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                        alert.show();
+//                    }
+//                }
+//                else {
+//                    alert.setTitle("Error");
+//                    alert.setMessage("Ingrese el número de la cueva que desea borrar.");
+//                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                        }
+//                    });
+//                    alert.show();
+//                }
+//            }
+//        });
+//        btnCancelDeleteCave.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//                dialogDeleteCave.cancel();
+//            }
+//        });
+//        dialogDeleteCave.show();
+//    }
 
     /**
      * Adds an edge between caves
