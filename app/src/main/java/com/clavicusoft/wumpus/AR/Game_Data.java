@@ -173,6 +173,10 @@ public class Game_Data {
         return caveContents;
     }
 
+    /**
+     * Set the caveContents with a given array of caveContents.
+     * @param caveContents the given array.
+     */
     public void setCaveContents(CaveContent[] caveContents) {
         this.caveContents = caveContents;
     }
