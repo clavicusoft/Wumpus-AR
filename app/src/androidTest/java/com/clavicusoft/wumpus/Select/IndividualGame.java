@@ -37,6 +37,11 @@ public class IndividualGame {
 
     @Test
     public void individualGame() {
+        try {
+            Thread.sleep(12000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ViewInteraction button = onView(
                 allOf(ViewMatchers.withId(R.id.Individual), withText("Individual"),
                         withParent(withId(R.id.linearLayout)),

@@ -41,6 +41,11 @@ public class IndividualGameSelectAndPlaceFromLibrary {
 
     @Test
     public void selectAndPlaceFromLibrary() {
+        try {
+            Thread.sleep(12000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         ViewInteraction button10 = onView(
                 allOf(ViewMatchers.withId(R.id.Individual), withText("Individual"),

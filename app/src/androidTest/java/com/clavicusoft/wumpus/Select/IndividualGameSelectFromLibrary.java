@@ -37,6 +37,11 @@ public class IndividualGameSelectFromLibrary {
 
     @Test
     public void individualGameSelectFromLibrary() {
+        try {
+            Thread.sleep(12000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ViewInteraction button = onView(
                 allOf(ViewMatchers.withId(R.id.Individual), withText("Individual"),
                         withParent(withId(R.id.linearLayout)),
