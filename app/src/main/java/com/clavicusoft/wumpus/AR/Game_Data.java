@@ -6,11 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 
-import com.beyondar.android.world.GeoObject;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.Maze.Graph;
-import com.clavicusoft.wumpus.R;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -25,18 +23,34 @@ public class Game_Data {
     private Context game_Context;
     private int currentCave;
 
+    /**
+     * Returns the current game's ID.
+     * @return game_ID
+     */
     public int getGame_ID() {
         return game_ID;
     }
 
+    /**
+     * Returns the game's graph.
+     * @return graph
+     */
     public Graph getGraph() {
         return graph;
     }
 
+    /**
+     * Returns the number of the user's current cave.
+     * @return currentCave
+     */
     public int getCurrentCave() {
         return currentCave;
     }
 
+    /**
+     * Updates the number of the user's current cave.
+     * @param cave
+     */
     public void setCurrentCave(int cave){
         this.currentCave = cave;
     }

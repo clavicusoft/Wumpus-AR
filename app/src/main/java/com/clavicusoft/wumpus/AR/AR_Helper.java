@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.beyondar.android.world.GeoObject;
 import com.beyondar.android.world.World;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
-import com.clavicusoft.wumpus.Maze.Graph;
 import com.clavicusoft.wumpus.R;
 
 
@@ -20,13 +19,16 @@ public class AR_Helper {
      * Creates the AR World
      *
      * @param context App´s context.
-     * @return The created world.
      */
     public AR_Helper(Context context){
         world = new World(context);
         cave_Image = R.drawable.cave;
     }
 
+    /**
+     * Returns the current world
+     * @return world
+     */
     public World getWorld () {
         return world;
     }

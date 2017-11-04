@@ -395,7 +395,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     }
 
     /**
-     * Manages if the player fall into a pit
+     * Manages if the player fall into a pit, plays a falling sound and allow the user to restart or exit the game
      */
     public void managePit () {
         MediaPlayer mediaPlayer;
@@ -405,7 +405,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     }
 
     /**
-     * Shows a score dialog
+     * Shows a score dialog and allow the user to restart or exit the game
      * @param mediaPlayer MediaPlayer to release
      */
     public void showScore(final MediaPlayer mediaPlayer) {
