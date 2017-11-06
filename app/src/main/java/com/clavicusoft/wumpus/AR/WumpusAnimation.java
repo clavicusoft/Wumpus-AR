@@ -15,6 +15,9 @@ public class WumpusAnimation extends Activity {
     String visitedBatCaves;
     String usedArrows;
 
+    /**Indicates the end of the game and show the score of the game
+     * @param savedInstanceState Activity's previous saved state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,9 @@ public class WumpusAnimation extends Activity {
         timer.start();
     }
 
+    /**
+     *Pause the activity when the user is not inside
+     */
     @Override
     protected void onPause() {
         super.onPause();

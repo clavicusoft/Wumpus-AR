@@ -13,6 +13,10 @@ public class IntroAnimation extends Activity {
 
     MediaPlayer mp;
 
+    /**
+     *Show the introduction animation and call the main activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +42,9 @@ public class IntroAnimation extends Activity {
         timer.start();
     }
 
+    /**
+     *Pause the activity when the user is not inside in this activity
+     */
     @Override
     protected void onPause() {
         super.onPause();

@@ -19,6 +19,9 @@ public class Splash_screen extends Activity {
     String visitedBatCaves;
     String usedArrows;
 
+    /**Indicates the end of the game and show the score of the game
+     * @param savedInstanceState Activity's previous saved state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +38,7 @@ public class Splash_screen extends Activity {
     }
 
     /**
-     * Shows a score dialog
+     * Shows a score dialog and allow the user to restart or exit the game
      */
     public void showScore() {
         final Dialog dialog = new Dialog(this);
