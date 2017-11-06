@@ -73,7 +73,7 @@ public class Graph {
     /**
      * Yields the index in the CaveArray with a given Id.
      * @param x The cave Id.
-     * @return
+     * @return i
      */
     public int searchIdInArray (int x){
         int i = 0;
