@@ -55,7 +55,7 @@ public class DrawMazeActivity extends Activity {
     public void info (View v) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Instrucciones");
-        alert.setMessage("- Para agregar una cueva debe presionar la pantalla donde desea colocarla, seguidamente presionar el botón \"Agregar Cueva\".\n\n- Para eliminar una cueva, presione el botón \"Eliminar Cueva\" e indique el número de la cueva que desea eliminar, esto eliminará a su vez los caminos conectados a esta cueva.\n\n- Para agregar o eliminar un camino entre dos cuevas, presione el botón \"Agregar Camino\" o \"Eliminar Camino\" e indique las dos cuevas que desea conectar o desconectar.\n\n- Una vez finalizado el dibujo presione el botón \"Guardar Dibujo\" lo que almacenará el laberinto en la biblioteca y permitirá utilizarlo para jugar.");
+        alert.setMessage("- Para agregar una cueva debe presionar la pantalla donde desea colocarla.\n\n- Para eliminar una cueva debe presionar la pantalla dos veces donde esta se encuentra, esto eliminará a su vez los caminos conectados a la cueva.\n\n- Para agregar o eliminar un camino entre dos cuevas, presione donde se encuentra la primera cueva y luego donde se encuentra la segunda.\n\n- Una vez finalizado el dibujo presione el botón \"Guardar Dibujo\" lo que almacenará el laberinto en la biblioteca y permitirá utilizarlo para jugar.");
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
                 dialog.dismiss();
