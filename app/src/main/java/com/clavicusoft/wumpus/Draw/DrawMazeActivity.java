@@ -16,7 +16,6 @@ import android.support.v7.app.AlertDialog;
 import android.widget.EditText;
 
 import com.clavicusoft.wumpus.Database.AdminSQLite;
-import com.clavicusoft.wumpus.Maze.Cave;
 import com.clavicusoft.wumpus.Maze.Graph;
 import com.clavicusoft.wumpus.R;
 
@@ -24,13 +23,12 @@ public class DrawMazeActivity extends Activity {
 
     private DrawCanvas myCanvas; //Instance of the canvas
     private Graph customMaze; //Object graph used to store the maze
-    private int cave1, cave2; //Store the chosen caves
     private String name; //Name of the created maze
     AlertDialog.Builder alert; //Dialog used to show important information
 
 
     /**
-     * On create of the  Activity, creates the canvas.
+     * Creates a draw  Activity, creates the canvas.
      * @param savedInstanceState Activity's previous saved state.
      */
     @Override
@@ -41,7 +39,7 @@ public class DrawMazeActivity extends Activity {
         myCanvas = findViewById(R.id.viewDrawCanvas);
         alert = new AlertDialog.Builder(this);
         alert.setTitle("Instrucciones");
-        alert.setMessage("- Para agregar una cueva debe presionar la pantalla donde desea colocarla.\n\n- Para eliminar una cueva debe presionar la pantalla donde esta se encuentra, esto eliminará a su vez los caminos conectados a la cueva.\n\n- Para agregar o eliminar un camino entre dos cuevas, presione el botón \"Agregar Camino\" o \"Eliminar Camino\" e indique las dos cuevas que desea conectar o desconectar.\n\n- Una vez finalizado el dibujo presione el botón \"Guardar Dibujo\" lo que almacenará el laberinto en la biblioteca y permitirá utilizarlo para jugar.");
+        alert.setMessage("- Para agregar una cueva debe presionar la pantalla donde desea colocarla.\n\n- Para eliminar una cueva debe presionar la pantalla dos veces donde esta se encuentra, esto eliminará a su vez los caminos conectados a la cueva.\n\n- Para agregar o eliminar un camino entre dos cuevas, presione donde se encuentra la primera cueva y luego donde se encuentra la segunda.\n\n- Una vez finalizado el dibujo presione el botón \"Guardar Dibujo\" lo que almacenará el laberinto en la biblioteca y permitirá utilizarlo para jugar.");
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
                 dialog.dismiss();
@@ -66,287 +64,8 @@ public class DrawMazeActivity extends Activity {
         alert.show();
     }
 
-//    /**
-//     * Adds a cave
-//     * @param v View to be affected
-//     */
-//    public void addC(View v){
-//        myCanvas.addCave();
-//    }
-
-//    /**
-//     * Deletes a cave
-//     * @param v View to be affected
-//     */
-//    public void delC(View v){
-//        final Dialog dialogDeleteCave= new Dialog(this);
-//        dialogDeleteCave.setContentView(R.layout.layout_choosecave);
-//        final EditText edtTxtCaveToDelete = dialogDeleteCave.findViewById(R.id.editTxtNumCave);
-//        Button btnAcceptDeleteCave = dialogDeleteCave.findViewById(R.id.btnAccept);
-//        Button btnCancelDeleteCave = dialogDeleteCave.findViewById(R.id.btnCancel);
-//        btnAcceptDeleteCave.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                if (!edtTxtCaveToDelete.getText().toString().equals("")) {
-//                    cave1 = Integer.parseInt(edtTxtCaveToDelete.getText().toString());
-//                    if (cave1 < myCanvas.getNumCave()) {
-//                        myCanvas.deleteCave(cave1);
-//                        dialogDeleteCave.dismiss();
-//                    } else {
-//                        alert.setTitle("Error");
-//                        alert.setMessage("La cueva que desea borrar no existe.");
-//                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                        alert.show();
-//                    }
-//                }
-//                else {
-//                    alert.setTitle("Error");
-//                    alert.setMessage("Ingrese el número de la cueva que desea borrar.");
-//                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.dismiss();
-//                        }
-//                    });
-//                    alert.show();
-//                }
-//            }
-//        });
-//        btnCancelDeleteCave.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                dialogDeleteCave.cancel();
-//            }
-//        });
-//        dialogDeleteCave.show();
-//    }
-
     /**
-     * Adds an edge between caves
-     * @param v View to be affected
-     */
-    public void addA(View v)
-    {
-        final Dialog dialogAddArc = new Dialog(this);
-        dialogAddArc.setContentView(R.layout.layout_choosecaves);
-        final EditText edtTxtCave1 = dialogAddArc.findViewById(R.id.editTxtCave1);
-        final EditText edtTxtCave2 = dialogAddArc.findViewById(R.id.editTxtCave2);
-        Button btnAcceptAddArc = dialogAddArc.findViewById(R.id.btnAccept);
-        Button btnCancelAddArc = dialogAddArc.findViewById(R.id.btnCancel);
-        btnAcceptAddArc.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if (!edtTxtCave1.getText().toString().equals("") && !edtTxtCave2.getText().toString().equals("")) {
-                    cave1 = Integer.parseInt(edtTxtCave1.getText().toString());
-                    cave2 = Integer.parseInt(edtTxtCave2.getText().toString());
-                    if (cave1 < myCanvas.getNumCave() && cave2 < myCanvas.getNumCave()) {
-                        if (cave1 != cave2) {
-                            Cave c1 = myCanvas.searchCave(cave1);
-                            Cave c2 = myCanvas.searchCave(cave2);
-                            if (c1 != null && c2 != null) {
-                                myCanvas.addArc(c1, c2);
-                                myCanvas.getRelations().add(new IntPair(c1.getId(), c2.getId()));
-                            }
-                        } else {
-                            alert.setTitle("Error");
-                            alert.setMessage("No puede haber un camino de una cueva hacia sí misma.");
-                            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            alert.show();
-                        }
-
-                    } else if (cave1 > myCanvas.getNumCave() && cave2 < myCanvas.getNumCave()) {
-                        alert.setTitle("Error");
-                        alert.setMessage("La primera cueva que ingresó no existe.");
-                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.show();
-                    } else if (cave1 < myCanvas.getNumCave() && cave2 > myCanvas.getNumCave()) {
-                        alert.setTitle("Error");
-                        alert.setMessage("La segunda cueva que ingresó no existe.");
-                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.show();
-                    } else {
-                        alert.setTitle("Error");
-                        alert.setMessage("Las cuevas que ingresó no existen.");
-                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.show();
-                    }
-                    dialogAddArc.dismiss();
-                }
-                else if (edtTxtCave1.getText().toString().equals("")) {
-                    alert.setTitle("Error");
-                    alert.setMessage("Por favor digite el número de la primera cueva.");
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int which){
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.show();
-                }
-                else if (edtTxtCave2.getText().toString().equals("")) {
-                    alert.setTitle("Error");
-                    alert.setMessage("Por favor digite el número de la segunda cueva.");
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int which){
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.show();
-                }
-                else {
-                    alert.setTitle("Error");
-                    alert.setMessage("Por favor digite los números de las cuevas que desea conectar.");
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int which){
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.show();
-                }
-
-            }
-        });
-        btnCancelAddArc.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                dialogAddArc.cancel();
-            }
-        });
-        dialogAddArc.show();
-    }
-
-    /**
-     * Deletes an edge
-     * @param v View to be affected
-     */
-    public void delA(View v){
-        final Dialog dialogDeleteArc = new Dialog(this);
-        dialogDeleteArc.setContentView(R.layout.layout_delete_relation);
-        final EditText edtTxtCaveDel1 = dialogDeleteArc.findViewById(R.id.editTxtCave01);
-        final EditText edtTxtCaveDel2 = dialogDeleteArc.findViewById(R.id.editTxtCave02);
-        Button btnAcceptDelArc = dialogDeleteArc.findViewById(R.id.btnAccept);
-        Button btnCancelDelArc = dialogDeleteArc.findViewById(R.id.btnCancel);
-        btnAcceptDelArc.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if (!edtTxtCaveDel1.getText().toString().equals("") && !edtTxtCaveDel2.getText().toString().equals(""))
-                {
-                    cave1 = Integer.parseInt(edtTxtCaveDel1.getText().toString());
-                    cave2 = Integer.parseInt(edtTxtCaveDel2.getText().toString());
-                    if(cave1 < myCanvas.getNumCave() && cave2 < myCanvas.getNumCave()){
-                        if (cave1 != cave2)
-                        {
-                            Cave c1 = myCanvas.searchCave(cave1);
-                            Cave c2 = myCanvas.searchCave(cave2);
-                            if(c1 != null && c2 != null) {
-                                myCanvas.deleteArc(c1, c2);
-                            }
-                        }
-                        else
-                        {
-                            alert.setTitle("Error");
-                            alert.setMessage("El camino que desea borrar no existe.");
-                            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                                public void onClick(DialogInterface dialog, int which){
-                                    dialog.dismiss();
-                                }
-                            });
-                            alert.show();
-                        }
-                    }
-                    else if(cave1 > myCanvas.getNumCave() && cave2 < myCanvas.getNumCave()){
-                        alert.setTitle("Error");
-                        alert.setMessage("La primera cueva que ingresó no existe.");
-                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog, int which){
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.show();
-                    }
-                    else if (cave1 < myCanvas.getNumCave()&& cave2 > myCanvas.getNumCave()){
-                        alert.setTitle("Error");
-                        alert.setMessage("La segunda cueva que ingresó no existe.");
-                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog, int which){
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.show();
-                    }
-                    else {
-                        alert.setTitle("Error");
-                        alert.setMessage("Las cuevas que ingresó no existen.");
-                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog, int which){
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.show();
-                    }
-                    dialogDeleteArc.dismiss();
-                }
-                else if (edtTxtCaveDel1.getText().toString().equals("")) {
-                    alert.setTitle("Error");
-                    alert.setMessage("Por favor digite el número de la primera cueva.");
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int which){
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.show();
-                }
-                else if (edtTxtCaveDel2.getText().toString().equals("")) {
-                    alert.setTitle("Error");
-                    alert.setMessage("Por favor digite el número de la segunda cueva.");
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int which){
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.show();
-                }
-                else {
-                    alert.setTitle("Error");
-                    alert.setMessage("Por favor digite los números de las cuevas que desea desconectar.");
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int which){
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.show();
-                }
-            }
-        });
-        btnCancelDelArc.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                dialogDeleteArc.cancel();
-            }
-        });
-        dialogDeleteArc.show();
-    }
-
-    /**
-     * Restarts the drawing.
+     * Restarts the drawing
      * @param v View to be affected
      */
     public void newD(View v){
@@ -390,7 +109,7 @@ public class DrawMazeActivity extends Activity {
     }
 
     /**
-    * Saves the actual maze.
+    * Saves the actual maze in the DB
     */
     public void saveMaze() {
         String relations = customMaze.arrayToString();
