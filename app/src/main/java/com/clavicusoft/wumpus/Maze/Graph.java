@@ -396,6 +396,30 @@ public class Graph {
         return caveContents;
     }
 
+    /**
+     * Gets a random adjacent cave.
+     * @param cave Initial cave.
+     * @return Random adjacent cave.
+     */
+    public int getRandomAdjacentCave (int cave) {
+        ArrayList<Integer> adjacentCaves = getAdjacentCaves(cave);
+        return adjacentCaves.get(random.nextInt(adjacentCaves.size()));
+    }
+
+    /**
+     * Get all the adjacent caves of an specific cave.
+     * @param cave Initial cave.
+     * @return ArrayList of the adjacent caves.
+     */
+    public ArrayList<Integer> getAdjacentCaves (int cave){
+        ArrayList<Integer> adjacentCaves = new ArrayList<>();
+        for (int i = 0; i < maximumCaves; ++i) {
+            if (areConnected(cave, i)){
+                adjacentCaves.add(i);
+            }
+        }
+        return adjacentCaves;
+    }
 
     public ArrayList<Cave> getAllCaves() {
         return allCaves;
@@ -404,5 +428,6 @@ public class Graph {
     public void setAllCaves(ArrayList<Cave> allCaves) {
         this.allCaves = allCaves;
     }
+
 
 }

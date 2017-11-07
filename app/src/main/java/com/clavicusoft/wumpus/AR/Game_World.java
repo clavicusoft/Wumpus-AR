@@ -43,6 +43,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     private int number_of_caves;
     private TextView currentCave;
     private Map<String, Integer> score;
+    private Boolean arrowPressed;
 
     private Random random;
 
@@ -57,6 +58,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         setContentView(R.layout.ar_layout);
         currentCave = (TextView) findViewById(R.id.numCave); //current cave number textView
         random = new Random();
+        arrowPressed = false;
 
         //Get the game parameters
         Bundle b = getIntent().getExtras();
@@ -138,26 +140,31 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     public void onClickBeyondarObject(ArrayList<BeyondarObject> arrayList) {
         // The first element in the array belongs to the closest BeyondarObject
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
-        double distance = data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number);
-        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-        if (distance <= 10) {
-            newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
-            newDialog.setMessage("¿Desea entrar a esta cueva?");
-            newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    dialog.dismiss();
-                    updateGame(cave_Number);
-                }
-            });
-            newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    dialog.dismiss();
-                }
-            });
-            newDialog.show();
+        if (arrowPressed) {
+            shootArrow(cave_Number);
         }
         else {
-            Toast.makeText(this,"Debes acercarte a la cueva para poder entrar en ella. Estás a " + String.valueOf(distance) + " metros de ella." ,Toast.LENGTH_SHORT).show();
+            double distance = data.checkDistance(world.getLatitude(), world.getLongitude(), cave_Number);
+            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+            if (distance <= 10) {
+                newDialog.setTitle("Has encontrado " + arrayList.get(0).getName());
+                newDialog.setMessage("¿Desea entrar a esta cueva?");
+                newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        dialog.dismiss();
+                        updateGame(cave_Number);
+                    }
+                });
+                newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        dialog.dismiss();
+                    }
+                });
+                newDialog.show();
+            }
+            else {
+                Toast.makeText(this,"Debes acercarte a la cueva para poder entrar en ella. Estás a " + String.valueOf(distance) + " metros de ella." ,Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -440,6 +447,64 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             }
         });
         dialog.show();
+
+    }
+
+    /**
+     * Shoots an arrow to the respective cave.
+     * @param cave Cave number.
+     */
+    public void shootArrow (int cave) {
+        score.put("usedArrows",score.get("usedArrows")+1);
+        int finalArrowCave = data.generateArrowCave(cave);
+        if (finalArrowCave == data.getCurrentCave()){
+            manageArrowShot();
+        }
+        else {
+            switch (data.getCaveContent(finalArrowCave)){
+                case BAT:
+                    Toast.makeText(this, "La flecha ha agitado a los murciélagos", Toast.LENGTH_LONG).show();
+                    break;
+                case PIT:
+                    Toast.makeText(this, "La flecha ha desaparecido en la oscuridad de una cueva", Toast.LENGTH_LONG).show();
+                    break;
+                case WUMPUS:
+                    manageKillWumpus();
+                    break;
+                case EMPTY:
+                    Toast.makeText(this, "La flecha chocó en la pared de una cueva", Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Manages if the player is hit by an arrow.
+     */
+    public void manageArrowShot(){
+        MediaPlayer mediaPlayer;
+        mediaPlayer = MediaPlayer.create(this, R.raw.arrow_hit_blood);
+        mediaPlayer.start();
+        showScore(mediaPlayer);
+    }
+
+    /**
+     * Manages if the arrow kills the Wumpus
+     */
+    public void manageKillWumpus(){
+        final MediaPlayer mediaPlayer;
+        mediaPlayer = MediaPlayer.create(this, R.raw.kill_wumpus);
+        mediaPlayer.start();
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("Has ganado");
+        newDialog.setMessage("La flecha acabó con el Wumpus. Has liberado estas tierras de sus garras.");
+        newDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                showScore(mediaPlayer);
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
 
     }
 }
