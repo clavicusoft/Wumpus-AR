@@ -32,7 +32,7 @@ public class IntroAnimation extends Activity {
                     e.printStackTrace();
                 }
                 finally {
-                    Intent intent = new Intent(IntroAnimation.this, MainActivity.class);
+                    Intent intent = new Intent(IntroAnimation.this, SelectPolyActivity.class);
                     ActivityOptions options = ActivityOptions.makeCustomAnimation(IntroAnimation.this, R.anim.fade_in,
                             R.anim.fade_out);
                     startActivity(intent,options.toBundle());

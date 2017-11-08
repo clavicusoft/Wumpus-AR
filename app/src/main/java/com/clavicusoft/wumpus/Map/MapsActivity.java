@@ -12,6 +12,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import android.widget.Spinner;
 
 /**
  * Shows the real location in the map and generates the labyrinth from where the user wishes. Storing them in the database with a game id
@@ -57,6 +60,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button btnTerrain;
     Button btnHybrid;
     Button btnListo;
+
+    SpinnerActivity sp;
+    Spinner spn_distances; //Displays the available distances between caves.
 
     String tipo = "";
 
@@ -142,6 +148,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             selectedLatitude = 0.0;
             selectedLongitude = 0.0;
             meterToCoordinates = 0.0000095;
+
+            spn_distances = (Spinner) findViewById(R.id.spn_distancias);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.distances, R.layout.spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spn_distances.setAdapter(adapter);
+            sp = new SpinnerActivity();
+            spn_distances.setOnItemSelectedListener(sp);
 
             int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
             if (status == ConnectionResult.SUCCESS) {
@@ -1048,6 +1061,62 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng newCave = new LatLng(coordX, coordY);
 
         mMap.addMarker(new MarkerOptions().position(newCave).title("Cueva " + cave_number).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+    }
+
+    /**
+     * Spinner class
+     */
+    public class SpinnerActivity extends Activity implements AdapterView.OnItemSelectedListener {
+
+        boolean selected; //Option selected status.
+
+        /**
+         * Invoked when an item in this view has been selected.
+         *
+         * @param parent AdapterView where the selection happened
+         * @param view View within the AdapterView that was clicked
+         * @param pos Position of the view in the adapter
+         * @param id Iow id of the item that is selected
+         */
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            selected = true;
+            switch(pos){
+                //Sets the distance between caves depending on ehich item was selected.
+                case 0:
+                    //Sets distance to 5 meters.
+                    distance = 5;
+                    break;
+                case 1:
+                    //Sets distance to 10 meters.
+                    distance = 10;
+                    break;
+                case 2:
+                    //Sets distance to 25 meters.
+                    distance = 25;
+                    break;
+                case 3:
+                    //Sets distance to 50 meters.
+                    distance = 50;
+                    break;
+                case 4:
+                    //Sets distance to 100 meters.
+                    distance = 100;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /**
+         * Invoked when an item in this view has not been selected.
+         *
+         * @param parent AdapterView where the selection is missing.
+         */
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            selected = false;
+        }
     }
 }
 

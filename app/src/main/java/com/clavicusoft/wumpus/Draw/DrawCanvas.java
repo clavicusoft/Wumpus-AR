@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.clavicusoft.wumpus.Maze.Cave;
+import com.clavicusoft.wumpus.R;
 
 import java.util.ArrayList;
 
@@ -72,7 +73,7 @@ public class DrawCanvas extends View {
         super.onSizeChanged(w,h,oldw,oldh);
         canvasBitmap = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
-        drawCanvas.drawColor(Color.TRANSPARENT);
+        drawCanvas.drawColor(getResources().getColor(R.color.beige));
     }
 
     /**
@@ -162,14 +163,14 @@ public class DrawCanvas extends View {
     {
         drawPaint.setStrokeWidth(20);
         drawPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        drawPaint.setColor(0xFFFFFFFF);//White
+        drawPaint.setColor(getResources().getColor(R.color.pinkish));
         drawPath.addCircle(x, y, 50, Path.Direction.CW); //Draw the cave in these coordinates
         drawCanvas.drawPath(drawPath, drawPaint);
         drawPath.reset();
         drawPaint.setStrokeWidth(3);
         drawPaint.setTextSize(30);
         drawPaint.setStyle(Paint.Style.STROKE);
-        drawPaint.setColor(0xFF000000);//Black
+        drawPaint.setColor(getResources().getColor(R.color.white));
         drawCanvas.drawText(id, x - 5, y + 5, drawPaint); //Draw the cave ID
     }
 
@@ -181,7 +182,7 @@ public class DrawCanvas extends View {
     public void drawArc(int c1, int c2, float x1, float y1, float x2, float y2){
         drawPaint.setStrokeWidth(20);
         drawPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        drawPaint.setColor(0xFFFFFFFF);//White
+        drawPaint.setColor(getResources().getColor(R.color.pinkish));//White
         drawPath.moveTo(x1,y1);
         drawPath.lineTo(x2,y2);
         drawCanvas.drawPath(drawPath, drawPaint);
@@ -189,7 +190,7 @@ public class DrawCanvas extends View {
         drawPaint.setStrokeWidth(3);
         drawPaint.setTextSize(30);
         drawPaint.setStyle(Paint.Style.STROKE);
-        drawPaint.setColor(0xFF000000);//Black
+        drawPaint.setColor(getResources().getColor(R.color.white));
         drawCanvas.drawText(Integer.toString(c1), x1 - 5, y1 + 5, drawPaint);
         drawCanvas.drawText(Integer.toString(c2), x2 - 5, y2 + 5, drawPaint);
         invalidate();

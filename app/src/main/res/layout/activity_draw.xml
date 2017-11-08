@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.clavicusoft.wumpus.Draw.DrawMazeActivity"
-    android:background="@drawable/other_background">
+    android:background="@color/beige">
 
     <Button
         android:id="@+id/btnInfo"
@@ -23,52 +23,43 @@
         layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="480dp"
-        android:layout_marginBottom="5dp"
         android:layout_weight="5.17"
-        android:background="@color/transparent" />
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+        android:layout_height="100dp"
+        android:orientation="vertical"
+        android:weightSum="2">
 
             <Button
                 android:id="@+id/btnNew"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_width="300dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
-                android:background="@color/white_button"
+                android:background="@drawable/capsule_blueish"
                 android:onClick="newD"
                 android:text="Reiniciar dibujo"
                 android:textColor="@color/white"
                 android:textSize="13sp"
+                android:layout_gravity="center"
                 tools:ignore="ContentDescription" />
 
             <Button
                 android:id="@+id/btnSave"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_width="300dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
-                android:background="@color/white_button"
-                android:elevation="1dp"
+                android:background="@drawable/capsule_blueish"
                 android:onClick="checkD"
                 android:text="Guardar dibujo"
+                android:layout_gravity="center"
                 android:textColor="@color/white"
                 android:textSize="13sp"
                 tools:ignore="ContentDescription" />
-
-        </LinearLayout>
 
     </LinearLayout>
 

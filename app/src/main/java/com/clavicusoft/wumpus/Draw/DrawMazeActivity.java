@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import android.text.InputType;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.app.Activity;
@@ -165,38 +167,28 @@ public class DrawMazeActivity extends Activity {
      * Asks the name of the maze created
      */
     public void askMazeName () {
-        final Dialog dialogAddArc = new Dialog(this);
-        dialogAddArc.setContentView(R.layout.layout_maze_name);
-        final EditText edtTxtName = dialogAddArc.findViewById(R.id.editTxtNameMaze);
-        Button btnAccept = dialogAddArc.findViewById(R.id.btnAcceptName);
-        Button btnCancel = dialogAddArc.findViewById(R.id.btnCancelName);
-        btnAccept.setOnClickListener(new View.OnClickListener(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Ingrese el nombre del laberinto");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setGravity(Gravity.CENTER_HORIZONTAL);
+        builder.setView(input);
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (!edtTxtName.getText().toString().equals("")){
-                    name =  edtTxtName.getText().toString();
-                    dialogAddArc.dismiss();
-                    saveMaze();
-                }
-                else {
-                    alert.setTitle("Error");
-                    alert.setMessage("Debe introducir un nombre para el dibujo");
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int which){
-                            dialog.dismiss();
-                        }
-                    });
-                    alert.show();
-                }
+            public void onClick(DialogInterface dialog, int which) {
+                name = input.getText().toString();
+                saveMaze();
             }
         });
-        btnCancel.setOnClickListener(new View.OnClickListener(){
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                dialogAddArc.cancel();
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
             }
         });
-        dialogAddArc.show();
+        builder.show();
     }
 
     /**

@@ -10,4 +10,8 @@
     <color name="transparent">#80000000</color>
     <color name="black">#000000</color>
     <color name="purple">#800080</color>
+    <color name="light_blue">#aad1da</color>
+    <color name="pinkish">#fe9a9a</color>
+    <color name="blueish">#6c99a3</color>
+    <color name="beige">#f7f7e5</color>
 </resources>

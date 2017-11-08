@@ -112,6 +112,19 @@ public class SelectPolyActivity extends Activity {
     }
 
     /**
+     * Starts the multiplayer activity, and sets the animation for the transition.
+     *
+     * @param view Current view.
+     */
+    public void multiplayerView(View view)
+    {
+        Intent i = new Intent(this,Multiplayer.class);
+        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                R.anim.fade_out);
+        startActivity(i, options.toBundle());
+    }
+
+    /**
      * Starts the select from library activity, and sets the animation for the transition.
      *
      * @param view Current view.
