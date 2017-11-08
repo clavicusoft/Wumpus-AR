@@ -117,7 +117,6 @@ public class DrawCanvas extends View {
                         touchY2 = 0;
                     } else {
                         addArc(c1.getId(),c2.getId(),c1.getCorX(),c1.getCorY(),c2.getCorX(),c2.getCorY());
-                        relations.add(new IntPair(c1.getId(),c2.getId()));
                         touchX = 0;
                         touchY = 0;
                         touchX2 = 0;
@@ -134,6 +133,8 @@ public class DrawCanvas extends View {
             } else {
                 touchX2 = touchX;
                 touchY2 = touchY;
+                touchX = 0;
+                touchY = 0;
             }
         }
         else
