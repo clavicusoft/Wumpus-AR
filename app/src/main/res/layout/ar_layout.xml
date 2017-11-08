@@ -104,7 +104,7 @@
             tools:layout_constraintLeft_creator="1"
             app:layout_constraintLeft_toLeftOf="@+id/camera_preview" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/arrow_icon"
             android:layout_width="69dp"
             android:layout_height="75dp"
@@ -115,7 +115,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.0"
             tools:layout_constraintRight_creator="1"
-            app:layout_constraintRight_toRightOf="@+id/camera_preview" />
+            app:layout_constraintRight_toRightOf="@+id/camera_preview"
+            android:onClick="selectArrow"/>
 
     </android.support.constraint.ConstraintLayout>
 
