@@ -22,52 +22,15 @@
         class="com.clavicusoft.wumpus.Draw.DrawCanvas"
         layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5.17"
+        android:layout_height="480dp"
         android:layout_marginBottom="5dp"
-        android:background="@color/transparent"/>
+        android:layout_weight="5.17"
+        android:background="@color/transparent" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="81dp"
+        android:layout_height="45dp"
         android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnAddArc"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_weight="1"
-                android:background="@color/white_button"
-                android:onClick="addA"
-                android:text="Agregar camino"
-                android:textColor="@color/white"
-                android:textSize="13sp"
-                tools:ignore="ContentDescription" />
-
-            <Button
-                android:id="@+id/btnDelArc"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:background="@color/white_button"
-                android:onClick="delA"
-                android:text="Eliminar camino"
-                android:textColor="@color/white"
-                android:textSize="13sp"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,8 +43,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="5dp"
-                android:layout_marginRight="5dp"
                 android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:background="@color/white_button"
                 android:onClick="newD"
