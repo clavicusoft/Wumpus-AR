@@ -25,6 +25,7 @@ import com.clavicusoft.wumpus.Select.MainActivity;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,10 +42,12 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     private Game_Data data;
     private int game_ID;
     private int number_of_caves;
+    private int numArrows;
     private TextView currentCave;
+    private TextView arrowNumber;
+    private ImageButton arrowButton;
     private Map<String, Integer> score;
     private Boolean arrowPressed;
-
     private Random random;
 
     /**
@@ -54,11 +57,29 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        numArrows = 5;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ar_layout);
         currentCave = (TextView) findViewById(R.id.numCave); //current cave number textView
+        arrowNumber = (TextView) findViewById(R.id.numArrow); //current arrow number textView
         random = new Random();
+
         arrowPressed = false;
+        arrowButton = (ImageButton) findViewById(R.id.arrow_icon);
+        arrowNumber.setText(String.valueOf(numArrows));
+        arrowButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(arrowPressed == false){
+                    arrowPressed = true;
+                    arrowButton.setBackgroundResource(R.drawable.arrow_icon_selected);
+                }
+                else
+                {
+                    arrowPressed = false;
+                    arrowButton.setBackgroundResource(R.drawable.arrow_icon);
+                }
+            }
+        });
 
         //Get the game parameters
         Bundle b = getIntent().getExtras();
@@ -95,7 +116,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         score.put("visitedBatCaves",0);
         score.put("usedArrows",0);
 
-        currentCave.setText(String.valueOf(data.getCurrentCave()));
         this.showHints(data.getCurrentCave());
         showCurrentCave();
     }
@@ -141,6 +161,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         // The first element in the array belongs to the closest BeyondarObject
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
         if (arrowPressed) {
+            numArrows--;
+            arrowNumber.setText(String.valueOf(numArrows));
             shootArrow(cave_Number);
         }
         else {
@@ -456,8 +478,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      */
     public void shootArrow (int cave) {
         score.put("usedArrows",score.get("usedArrows")+1);
-        int finalArrowCave = data.generateArrowCave(cave);
-        if (finalArrowCave == data.getCurrentCave()){
+        int finalArrowCave = data.generateArrowCave(cave - 1);
+        if (finalArrowCave + 1 == data.getCurrentCave()){
             manageArrowShot();
         }
         else {
@@ -475,6 +497,9 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                     Toast.makeText(this, "La flecha chocó en la pared de una cueva", Toast.LENGTH_LONG).show();
                     break;
             }
+        }
+        if (numArrows == 0) {
+            outOfArrows();
         }
     }
 
@@ -506,5 +531,30 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         });
         newDialog.show();
 
+    }
+
+    public void outOfArrows(){
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("Has perdido");
+        newDialog.setMessage("Se te han acabado las flechas y no has logrado matar al Wumpus.");
+        newDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
+
+    }
+
+    public void changeArrowState(){
+        if(arrowPressed == false){
+            arrowPressed = true;
+            arrowButton.setBackgroundResource(R.drawable.arrow_icon_selected);
+        }
+        else
+        {
+            arrowPressed = false;
+            arrowButton.setBackgroundResource(R.drawable.arrow_icon);
+        }
     }
 }
