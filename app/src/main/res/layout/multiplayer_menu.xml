@@ -4,19 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/other_background_purple"
+    android:background="@color/beige"
     tools:context="com.clavicusoft.wumpus.Select.Multiplayer">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:layout_marginTop="50dp"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        android:text="Wumpus Compartido"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,29 +14,41 @@
         android:orientation="vertical"
         android:gravity="center">
 
-            <Button
-                android:id="@+id/btLabs"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="50dp"
-                android:background="@color/white_button"
-                android:onClick="labs"
-                android:text="Compartir Laberintos"
-                android:textSize="18sp"
-                android:textColor="@color/white" />
+        <Button
+            android:id="@+id/btLabs"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/capsule_blueish"
+            android:onClick="send"
+            android:text="Enviar Laberintos"
+            android:textSize="17sp"
+            android:textColor="@color/white" />
 
 
-            <Button
-                android:id="@+id/btEmplzements"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@color/white_button"
-                android:onClick="emplacements"
-                android:text="Recibir Emplazamientos"
-                android:textSize="18sp"
-                android:textColor="@color/white" />
+        <Button
+            android:id="@+id/btRecLab"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@drawable/capsule_blueish"
+            android:layout_marginBottom="10dp"
+            android:onClick="receive"
+            android:text="Recibir Laberintos"
+            android:textSize="17sp"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btEmplzements"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@drawable/capsule_blueish"
+            android:onClick="emplacements"
+            android:text="Recibir Emplazamientos"
+            android:textSize="17sp"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </RelativeLayout>

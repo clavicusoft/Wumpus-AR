@@ -54,10 +54,6 @@ public class Multiplayer extends Activity {
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
     }
 
-    public void labs(View view){
-        setContentView(R.layout.multiplayer_sr_layout);
-    }
-
 
     public void emplacements(View view){
         Intent i = new Intent(this, BluetoothChat.class);
