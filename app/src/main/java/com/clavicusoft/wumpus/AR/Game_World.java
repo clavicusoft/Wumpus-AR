@@ -88,6 +88,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
 
         data = new Game_Data(this, game_ID, 1);
         data.setCurrentCave(data.chooseStartingCave(number_of_caves));
+        currentCave.setText(String.valueOf(data.getCurrentCave()));
 
         //Sets the fragment.
         currentBeyondARFragment = (BeyondarFragmentSupport) getSupportFragmentManager().findFragmentById(
@@ -452,7 +453,9 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         btn1.setOnClickListener(new View.OnClickListener(){     //To restart the game
             @Override
             public void onClick(View v) {
-                mediaPlayer.release();
+                if (mediaPlayer != null){
+                    mediaPlayer.release();
+                }
                 Intent i = new Intent(v.getContext(),MainActivity.class);   //To return to the main activity
                 ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fade_out,R.anim.fade_out);
                 startActivity(i, options.toBundle());
@@ -462,7 +465,9 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         btn2.setOnClickListener(new View.OnClickListener(){     //To exit the game
             @Override
             public void onClick(View v) {
-                mediaPlayer.release();
+                if (mediaPlayer != null){
+                    mediaPlayer.release();
+                }
                 BeyondarLocationManager.disable();
                 dialog.cancel();
                 finishAffinity();
@@ -539,6 +544,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         newDialog.setMessage("Se te han acabado las flechas y no has logrado matar al Wumpus.");
         newDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
+                showScore(null);
                 dialog.dismiss();
             }
         });
