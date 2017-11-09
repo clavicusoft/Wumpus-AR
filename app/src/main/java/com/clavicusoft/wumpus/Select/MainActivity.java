@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
                     startActivity(i, options.toBundle());
                 }
                 if(whichActivity == 2){ //multiplayer activity
-                    Intent i = new Intent(this, Multiplayer.class);
+                    Intent i = new Intent(this, SelectPolyActivity.class);
                     ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_down,
                             R.anim.slide_out_down);
                     startActivity(i, options.toBundle());
@@ -119,23 +119,6 @@ public class MainActivity extends Activity {
         //---This block of code ensures camera and location permissions are granted before launching anything else
         if(checkAndRequestPermissions()) {
             Intent i = new Intent(this, SelectPolyActivity.class);
-            ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_down,
-                    R.anim.slide_out_down);
-            startActivity(i, options.toBundle());
-        }
-    }
-
-    /**
-     * Starts the single player activity, and sets the animation for the transition.
-     *
-     * @param view Current view.
-     */
-    public void multiPlayer (View view)
-    {
-        whichActivity = 2; //Multiplayer
-        //---This block of code ensures camera and location permissions are granted before launching anything else
-        if(checkAndRequestPermissions()) {
-            Intent i = new Intent(this, Multiplayer.class);
             ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_down,
                     R.anim.slide_out_down);
             startActivity(i, options.toBundle());

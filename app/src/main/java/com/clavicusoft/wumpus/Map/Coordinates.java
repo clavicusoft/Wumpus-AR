@@ -16,12 +16,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.clavicusoft.wumpus.R;
 
@@ -34,8 +29,6 @@ public class Coordinates extends Activity {
     double latitudeGPS; //Current latitude.
     double longitudeGPS; //Current longitude.
     double distance = 5; //Selected distance between caves.
-    TextView tv_dist; //Sets distance on screen.
-    Button btnGetLocation; //Requests current distance.
     boolean flag; //Checks if location services are enabled.
     int graph_id; //ID of the selected maze.
     AlertDialog.Builder alert; //Alert

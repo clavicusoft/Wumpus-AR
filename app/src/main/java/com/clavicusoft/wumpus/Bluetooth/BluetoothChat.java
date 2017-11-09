@@ -15,18 +15,14 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
-import com.clavicusoft.wumpus.Map.Coordinates;
 import com.clavicusoft.wumpus.Map.MapsActivity;
-import com.clavicusoft.wumpus.Select.MainActivity;
-import com.clavicusoft.wumpus.Select.Multiplayer;
 import com.clavicusoft.wumpus.R;
-import com.clavicusoft.wumpus.Select.SelectFromLibActivity;
+import com.clavicusoft.wumpus.Select.SelectPolyActivity;
 
 public class BluetoothChat extends Activity {
 
@@ -50,6 +46,10 @@ public class BluetoothChat extends Activity {
     private BluetoothChatService mChatService = null;
     public int counter = 0;
     String readMessage="";
+    Button btnSend;
+    Button btnVisibility;
+    Button btnFinish;
+    Boolean sending;
 
     /**
      * On create of the  Activity, creates the Bluetooth Chat.
@@ -63,21 +63,78 @@ public class BluetoothChat extends Activity {
         funcion = getIntent().getStringExtra("funcion").toString();
 
         if(funcion.equals("enviar")){
-            setContentView(R.layout.send_labs);
+            sending = true;
+            setContentView(R.layout.multiplayer_send_menu);
             laberinto = getIntent().getStringExtra("laberinto");
             nombreLaberinto = getIntent().getStringExtra("nombreLaberinto");
         }else if(funcion.equals("enviarEmplazamiento")){
-            setContentView(R.layout.send_emplacement);
+            sending = true;
+            setContentView(R.layout.multiplayer_send_menu);
             msj = getIntent().getStringExtra("data");
-        }else if(funcion.equals("buscarEmplazamiento")){
-            setContentView(R.layout.searching_emplacements);
         }else{
-            setContentView(R.layout.searching_labs);
+            sending = false;
+            setContentView(R.layout.multiplayer_menu);
         }
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             Toast.makeText(this, "El dispositivo no soporta bluetooth", Toast.LENGTH_LONG).show();
         }
+        startButtons();
+    }
+
+    public void startButtons () {
+
+        if (sending) {
+            btnSend = (Button) findViewById(R.id.btSend);
+            btnVisibility = (Button) findViewById(R.id.btDevice);
+            btnFinish = (Button) findViewById(R.id.btFinish);
+            btnSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setupChat(view);
+                }
+            });
+            btnVisibility.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    connect(view);
+                }
+            });
+            btnFinish.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
+        }
+        else {
+            btnSend = (Button) findViewById(R.id.btLabs);
+            btnVisibility = (Button) findViewById(R.id.btVisibility);
+            btnSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    send(view);
+                }
+            });
+            btnVisibility.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    discoverable(view);
+                }
+            });
+        }
+    }
+
+    /**
+     * Starts the send activity, and sets the animation for the transition.
+     *
+     * @param view current view.
+     */
+    public void send(View view){
+        Intent i = new Intent(this, SelectLabToShare.class);
+        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                R.anim.fade_out);
+        startActivity(i, options.toBundle());
     }
 
     /**
@@ -91,7 +148,8 @@ public class BluetoothChat extends Activity {
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         } else {
             if (mChatService == null){
-                setupChat();
+                mChatService = new BluetoothChatService(this, mHandler);
+                mOutStringBuffer = new StringBuffer("");
             }
         }
     }
@@ -112,27 +170,15 @@ public class BluetoothChat extends Activity {
     /**
      * Recognize if the button send is pressed and send the lab.
      */
-    private void setupChat() {
+    public void setupChat(View view) {
         if(funcion.equals("enviar")){
-            mSendButton = (Button) findViewById(R.id.button_send);
-            mSendButton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    String message = laberinto;
-                    sendMessage(message);
-                }
-            });
+            String message = laberinto;
+            sendMessage(message);
         }
         if(funcion.equals("enviarEmplazamiento")){
-            mSendButton = (Button) findViewById(R.id.button_send);
-            mSendButton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    String message = msj;
-                    sendMessage(message);
-                }
-            });
+            String message = msj;
+            sendMessage(message);
         }
-        mChatService = new BluetoothChatService(this, mHandler);
-        mOutStringBuffer = new StringBuffer("");
     }
 
     /**
@@ -254,15 +300,12 @@ public class BluetoothChat extends Activity {
                                 newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        Intent i = new Intent(BluetoothChat.this, Multiplayer.class);
-                                        ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.fade_in, R.anim.fade_out);
-                                        startActivity(i, options.toBundle());
                                     }
                                 });
                                 newDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        Intent i = new Intent(BluetoothChat.this, MainActivity.class);
+                                        Intent i = new Intent(BluetoothChat.this, SelectPolyActivity.class);
                                         ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.slide_in_up, R.anim.slide_out_up);
                                         startActivity(i, options.toBundle());
                                     }
@@ -331,7 +374,8 @@ public class BluetoothChat extends Activity {
                 break;
             case REQUEST_ENABLE_BT:
                 if (resultCode == Activity.RESULT_OK) {
-                    setupChat();
+                    mChatService = new BluetoothChatService(this, mHandler);
+                    mOutStringBuffer = new StringBuffer("");
                 } else {
                     Toast.makeText(this, R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
                 }
@@ -348,8 +392,7 @@ public class BluetoothChat extends Activity {
     }
 
     /**
-     *
-     * call to ensureDiscoverable method.
+     * Call to ensureDiscoverable method.
      * @param v View to be shown.
      */
     public void discoverable(View v) {

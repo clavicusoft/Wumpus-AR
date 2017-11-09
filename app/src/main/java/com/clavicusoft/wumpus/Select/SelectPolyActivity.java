@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.clavicusoft.wumpus.Bluetooth.BluetoothChat;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
 import com.clavicusoft.wumpus.Draw.DrawMazeActivity;
 import com.clavicusoft.wumpus.Map.Coordinates;
@@ -118,7 +119,8 @@ public class SelectPolyActivity extends Activity {
      */
     public void multiplayerView(View view)
     {
-        Intent i = new Intent(this,Multiplayer.class);
+        Intent i = new Intent(this,BluetoothChat.class);
+        i.putExtra("funcion","inicio");
         ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
                 R.anim.fade_out);
         startActivity(i, options.toBundle());
