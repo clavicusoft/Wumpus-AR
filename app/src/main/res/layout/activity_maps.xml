@@ -62,15 +62,28 @@ android:id="@+id/mapLayout"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     tools:context="com.clavicusoft.wumpus.Map.MapsActivity"
-    android:layout_weight="0.74"/>
+    android:layout_weight="0.66"/>
 
     <LinearLayout
 
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.17"
-        android:weightSum="2">
+        android:layout_weight="0.25"
+        android:weightSum="3">
+
+        <Button
+            android:layout_width="300dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="Iniciar"
+            android:id="@+id/bListo"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textSize="17sp"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:background="@drawable/capsule_darkest"/>
 
         <Button
             android:layout_width="300dp"
@@ -85,19 +98,19 @@ android:id="@+id/mapLayout"
             android:textColor="@color/white"
             android:background="@drawable/capsule_darkest"/>
 
-
         <Button
             android:layout_width="300dp"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Iniciar"
-            android:id="@+id/bListo"
+            android:text="Compartir"
+            android:id="@+id/btCompar"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:textSize="17sp"
             android:layout_gravity="center"
             android:textColor="@color/white"
             android:background="@drawable/capsule_darkest"/>
+
 
     </LinearLayout>
 

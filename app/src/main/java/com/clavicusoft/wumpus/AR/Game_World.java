@@ -21,7 +21,6 @@ import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
-import com.clavicusoft.wumpus.Select.MainActivity;
 import com.clavicusoft.wumpus.Select.SelectPolyActivity;
 
 import android.view.View;

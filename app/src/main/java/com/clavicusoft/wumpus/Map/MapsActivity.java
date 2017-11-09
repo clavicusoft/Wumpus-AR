@@ -60,6 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button btnTerrain;
     Button btnHybrid;
     Button btnListo;
+    Button btnShare;
 
     SpinnerActivity sp;
     Spinner spn_distances; //Displays the available distances between caves.
@@ -136,10 +137,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             btnHybrid = (Button) findViewById(R.id.bhibrido);
             btnTerrain = (Button) findViewById(R.id.bterreno);
             btnListo = (Button) findViewById(R.id.bListo);
+            btnShare = (Button) findViewById(R.id.btCompar);
             btnContinue.setOnClickListener(this);
             btnTerrain.setOnClickListener(this);
             btnHybrid.setOnClickListener(this);
             btnListo.setOnClickListener(this);
+            btnShare.setOnClickListener(this);
             creado = false;
             longitude = b.getDouble("Longitud");
             latitude = b.getDouble("Latitud");
@@ -197,51 +200,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             break;
             case R.id.bListo:
                 if (creado) {
-                    if (tipo.equals("multijugador")) {
-                        startGame();
-                    } else {
-                        String laberinto = getLaberinto(graph_ID);
-                        String caves[] = getCaves();
-                        String cavesInf = "";
-                        for (int i = 1; i <= numberCaves; i++) {
-                            cavesInf = cavesInf + "%" + caves[i - 1];
-                        }
-                        msj = laberinto + "%" + numberCaves + "%" + latitude + "%" + longitude + "%" + distance + "%" + cavesInf;
-
-                        AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
-                        alert.setTitle("Compartir emplazamiento");
-                        alert.setMessage("¿Quiere compartir el emplazamiento con otros dispositivos?");
-                        alert.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                Intent i = new Intent(MapsActivity.this, BluetoothChat.class);
-                                i.putExtra("funcion", "enviarEmplazamiento");
-                                i.putExtra("data", msj);
-                                ActivityOptions options = ActivityOptions.makeCustomAnimation(MapsActivity.this, R.anim.fade_in, R.anim.fade_out);
-                                startActivity(i, options.toBundle());
-                            }
-                        });
-                        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                startGame();
-                            }
-                        });
-                        alert.show();
+                    startGame();
+                } else {
+                    Toast.makeText(MapsActivity.this, "Debe crear un mapa de juego", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.btCompar:
+                if (creado) {
+                    String laberinto = getLaberinto(graph_ID);
+                    String caves[] = getCaves();
+                    String cavesInf = "";
+                    for (int i = 1; i <= numberCaves; i++) {
+                        cavesInf = cavesInf + "%" + caves[i - 1];
                     }
+                    msj = laberinto + "%" + numberCaves + "%" + latitude + "%" + longitude + "%" + distance + "%" + cavesInf;
+
+                    Intent i = new Intent(MapsActivity.this, BluetoothChat.class);
+                    i.putExtra("funcion", "enviarEmplazamiento");
+                    i.putExtra("data", msj);
+                    ActivityOptions options = ActivityOptions.makeCustomAnimation(MapsActivity.this, R.anim.fade_in, R.anim.fade_out);
+                    startActivity(i, options.toBundle());
                 } else {
                     Toast.makeText(MapsActivity.this, "Debe crear un mapa de juego", Toast.LENGTH_LONG).show();
                 }
                 break;
             default:
                 break;
-
-
         }
-
-
     }
 
     /**
