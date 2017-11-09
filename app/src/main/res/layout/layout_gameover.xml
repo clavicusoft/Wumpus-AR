@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation = "vertical"
     android:weightSum="1"
-    android:background="@color/beige">
+    android:background="@color/background">
 
     <TextView
         android:id="@+id/txtVTitle"
@@ -14,7 +14,7 @@
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="Puntaje del juego:"
-        android:textColor="@color/pinkish"
+        android:textColor="@color/dark"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
                     android:layout_gravity="center"
                     android:gravity="bottom"
                     android:text="Cuevas visitadas: "
-                    android:textColor="@color/blueish"
+                    android:textColor="@color/medium"
                     android:textSize="16sp" />
 
                 <TextView
@@ -60,7 +60,7 @@
                     android:gravity="center_vertical"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="@color/pinkish"
+                    android:textColor="@color/darkest"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -79,7 +79,7 @@
                     android:layout_gravity="center"
                     android:gravity="center_vertical"
                     android:text="Cuevas con murciélago visitadas: "
-                    android:textColor="@color/blueish"
+                    android:textColor="@color/medium"
                     android:textSize="16sp" />
 
                 <TextView
@@ -91,7 +91,7 @@
                     android:gravity="center_vertical"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="@color/pinkish"
+                    android:textColor="@color/darkest"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -110,7 +110,7 @@
                     android:layout_gravity="center"
                     android:gravity="center_vertical"
                     android:text="Flechas utilizadas: "
-                    android:textColor="@color/blueish"
+                    android:textColor="@color/medium"
                     android:textSize="16sp" />
 
                 <TextView
@@ -122,7 +122,7 @@
                     android:gravity="center_vertical"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="@color/pinkish"
+                    android:textColor="@color/darkest"
                     android:textSize="16sp" />
 
             </LinearLayout>
@@ -137,7 +137,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/capsule_blueish"
+        android:background="@drawable/capsule_darkest"
         android:text="Reiniciar juego"
         android:textColor="@color/white" />
 
@@ -147,7 +147,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/capsule_blueish"
+        android:background="@drawable/capsule_darkest"
         android:text="Salir del juego"
         android:textColor="@color/white" />
 

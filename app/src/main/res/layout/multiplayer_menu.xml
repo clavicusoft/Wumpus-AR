@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/beige"
+    android:background="@color/background"
     android:weightSum="1">
 
     <TextView
@@ -17,7 +17,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="20sp"
-        android:textColor="@color/pinkish"
+        android:textColor="@color/dark"
         android:text="Recibiendo datos"/>
 
     <LinearLayout
@@ -45,7 +45,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/capsule_blueish"
+            android:background="@drawable/capsule_darkest"
             android:text="Enviar Laberintos"
             android:textSize="17sp"
             android:textColor="@color/white" />
@@ -56,7 +56,7 @@
             android:layout_width="300dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:background="@drawable/capsule_blueish"
+            android:background="@drawable/capsule_darkest"
             android:layout_marginBottom="10dp"
             android:text="Activar visibilidad"
             android:textSize="17sp"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.clavicusoft.wumpus.Select.SelectFromLibActivity"
-    android:background="@color/beige">
+    android:background="@color/background">
 
     <TextView
         android:id="@+id/lblChooseLib"
@@ -16,7 +16,7 @@
         android:textSize="20sp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
-        android:textColor="@color/pinkish"
+        android:textColor="@color/dark"
         android:textStyle="bold" />
 
     <ListView

@@ -7,7 +7,7 @@
     android:orientation = "vertical"
     tools:context="com.clavicusoft.wumpus.Select.SelectPolyActivity"
     android:weightSum="4"
-    android:background="@color/beige">
+    android:background="@color/background">
 
     <TextView
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         android:textStyle="bold"
         android:textSize="20sp"
         android:layout_marginTop="5dp"
-        android:textColor="@color/blueish"
+        android:textColor="@color/dark"
         android:text="Deslice para escoger un laberinto" />
 
     <LinearLayout
@@ -26,7 +26,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:background="@drawable/rounded_corner_pinkish">
+        android:background="@drawable/rounded_corner_light">
         <android.support.v4.view.ViewPager
             android:id="@+id/ImageSlider"
             android:layout_width="match_parent"
@@ -49,7 +49,7 @@
         android:layout_weight="1"
         android:onClick="startGame"
         android:textColor="@color/white"
-        android:background="@drawable/capsule_blueish"
+        android:background="@drawable/capsule_darkest"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="15dp"
         android:text="Iniciar el juego" />
@@ -62,7 +62,7 @@
         android:layout_weight="1"
         android:onClick="drawLabyrinthView"
         android:textColor="@color/white"
-        android:background="@drawable/capsule_blueish"
+        android:background="@drawable/capsule_darkest"
         android:layout_marginBottom="10dp"
         android:text="Dibujar un laberinto" />
 
@@ -74,7 +74,7 @@
         android:layout_weight="1"
         android:onClick="selectFromLibView"
         android:textColor="@color/white"
-        android:background="@drawable/capsule_blueish"
+        android:background="@drawable/capsule_darkest"
         android:layout_marginBottom="10dp"
         android:text="Biblioteca de laberintos" />
 
@@ -86,7 +86,7 @@
         android:layout_weight="1"
         android:onClick="multiplayerView"
         android:textColor="@color/white"
-        android:background="@drawable/capsule_blueish"
+        android:background="@drawable/capsule_darkest"
         android:text="Multijugador"
         android:layout_marginBottom="15dp"/>
 </LinearLayout>

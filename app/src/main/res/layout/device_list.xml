@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/beige"
+    android:background="@color/background"
     tools:context="com.clavicusoft.wumpus.Bluetooth.BluetoothChat"
     android:weightSum="1">
 
@@ -18,7 +18,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="20sp"
-        android:textColor="@color/pinkish"
+        android:textColor="@color/dark"
         android:text="@string/title_paired_devices"/>
 
     <ListView
@@ -29,7 +29,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:textColor="#ffffff"
-        android:divider="@color/beige"
+        android:divider="@color/background"
         android:dividerHeight="5dp"/>
 
     <TextView
@@ -42,7 +42,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="20sp"
-        android:textColor="@color/blueish"
+        android:textColor="@color/dark"
         android:text="@string/title_other_devices" />
 
 
@@ -54,7 +54,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:textColor="#ffffff"
-        android:divider="@color/beige"
+        android:divider="@color/background"
         android:dividerHeight="5dp" />
 
 
@@ -66,7 +66,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/capsule_blueish"
+        android:background="@drawable/capsule_darkest"
         android:text="@string/button_scan"
         android:textColor="@color/white" />
 

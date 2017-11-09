@@ -5,7 +5,7 @@ android:id="@+id/mapLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/beige"
+    android:background="@color/background"
     android:weightSum="1">
 
     <LinearLayout
@@ -27,7 +27,7 @@ android:id="@+id/mapLayout"
             android:layout_marginBottom="5dp"
             android:textSize="17sp"
             android:textColor="@color/white"
-            android:background="@drawable/capsule_pinkish"/>
+            android:background="@drawable/capsule_dark"/>
 
         <Button
             android:layout_width="0dp"
@@ -40,7 +40,7 @@ android:id="@+id/mapLayout"
             android:layout_marginBottom="5dp"
             android:textSize="17sp"
             android:textColor="@color/white"
-            android:background="@drawable/capsule_pinkish"/>
+            android:background="@drawable/capsule_dark"/>
 
         <Spinner
             android:id="@+id/spn_distancias"
@@ -50,7 +50,7 @@ android:id="@+id/mapLayout"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:spinnerMode="dialog"
-            android:textColor="@color/blueish" />
+            android:textColor="@color/dark" />
 
     </LinearLayout>
 
@@ -83,7 +83,7 @@ android:id="@+id/mapLayout"
             android:textSize="17sp"
             android:layout_gravity="center"
             android:textColor="@color/white"
-            android:background="@drawable/capsule_blueish"/>
+            android:background="@drawable/capsule_darkest"/>
 
 
         <Button
@@ -97,7 +97,7 @@ android:id="@+id/mapLayout"
             android:textSize="17sp"
             android:layout_gravity="center"
             android:textColor="@color/white"
-            android:background="@drawable/capsule_blueish"/>
+            android:background="@drawable/capsule_darkest"/>
 
     </LinearLayout>
 

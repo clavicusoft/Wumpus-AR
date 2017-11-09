@@ -6,4 +6,4 @@
     android:textSize="18sp"
     android:layout_marginLeft="5dp"
     android:textColor="@color/white"
-    android:background="@drawable/capsule_blueish"/>
+    android:background="@drawable/capsule_medium"/>
