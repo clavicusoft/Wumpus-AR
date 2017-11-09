@@ -168,7 +168,9 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         final int cave_Number = getCaveNumberFromName(arrayList.get(0).getName());
         if (arrowPressed) {
             numArrows--;
-            arrowNumber.setText(String.valueOf(numArrows));
+            arrowNumber.setText(String.valueOf(numArrows)); //update number of available arrows
+            arrowPressed = false; //after shooting, put button back to normal
+            arrowButton.setBackgroundResource(R.drawable.arrow_icon); //after shooting, put button back to normal
             shootArrow(cave_Number);
         }
         else {
