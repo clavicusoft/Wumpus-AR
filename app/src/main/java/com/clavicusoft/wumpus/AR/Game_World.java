@@ -22,6 +22,7 @@ import com.beyondar.android.world.World;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
 import com.clavicusoft.wumpus.Select.MainActivity;
+import com.clavicusoft.wumpus.Select.SelectPolyActivity;
 
 import android.view.View;
 import android.widget.Button;
@@ -116,8 +117,11 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         score.put("visitedCaves",0);
         score.put("visitedBatCaves",0);
         score.put("usedArrows",0);
+    }
 
-        this.showHints(data.getCurrentCave());
+    @Override
+    public void onStart () {
+        super.onStart();
         showCurrentCave();
     }
 
@@ -128,6 +132,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         newDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
                 dialog.dismiss();
+                showHints(data.getCurrentCave());
             }
         });
         newDialog.show();
@@ -456,7 +461,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                 if (mediaPlayer != null){
                     mediaPlayer.release();
                 }
-                Intent i = new Intent(v.getContext(),MainActivity.class);   //To return to the main activity
+                Intent i = new Intent(v.getContext(),SelectPolyActivity.class);   //To return to the main activity
                 ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fade_out,R.anim.fade_out);
                 startActivity(i, options.toBundle());
                 dialog.dismiss();

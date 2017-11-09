@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:adjustViewBounds="true"
-        android:src="@drawable/intrologogif"
+        android:src="@drawable/start_gif"
         android:scaleType="fitXY"
         />
 
