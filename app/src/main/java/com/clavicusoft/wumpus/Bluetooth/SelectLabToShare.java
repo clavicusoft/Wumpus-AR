@@ -107,7 +107,7 @@ public class SelectLabToShare extends Activity {
         names = new ArrayList<String>();
         if (cursor.moveToFirst()) {
             do{
-                String dato = "Nombre: " + cursor.getString(0) + "\nNúmero de cuevas: " + cursor.getString(1);
+                String dato = "    Nombre: " + cursor.getString(0) + "\n    Número de cuevas: " + cursor.getString(1);
                 datos.add(dato);
                 names.add(cursor.getString(0));
             }while(cursor.moveToNext());

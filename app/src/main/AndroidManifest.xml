@@ -34,9 +34,6 @@
             android:name=".Select.SelectPolyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Select.Multiplayer"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".Select.SelectFromLibActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -58,9 +55,6 @@
             android:name=".Map.MapsActivity"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait" />
-        <activity 
-            android:name=".Map.ActualCoordinate" 
-            android:screenOrientation="portrait" />
 
         <activity
             android:name=".AR.Game_World"
@@ -73,10 +67,6 @@
         <activity
             android:name=".AR.WumpusAnimation"
             android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".Select.MainActivity"
-        android:screenOrientation="portrait"/>
 
 
         <!--

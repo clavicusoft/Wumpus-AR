@@ -321,4 +321,20 @@ public class Game_Data {
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
+
+    /**
+     * Generates the final cave for the arrow.
+     * @param initialCave Initial cave of the arrow.
+     * @return Final cave of the arrow.
+     */
+    public int generateArrowCave(int initialCave) {
+        int finalCave = initialCave;
+        Random random = new Random();
+        Double chances = 0.95;
+        while (random.nextDouble() < chances) {
+            finalCave = graph.getRandomAdjacentCave(finalCave);
+            chances = chances / 2;
+        }
+        return finalCave;
+    }
 }
