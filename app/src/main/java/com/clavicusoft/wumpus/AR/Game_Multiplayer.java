@@ -49,6 +49,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
     private Map<String, Integer> score;
     private Boolean arrowPressed;
     private Random random;
+    private GameDataBase gameDataBase;
 
     /**
      * Sets the view once this activity starts.
@@ -116,6 +117,8 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
         score.put("visitedCaves",0);
         score.put("visitedBatCaves",0);
         score.put("usedArrows",0);
+
+        gameDataBase = new GameDataBase("1", "2");
     }
 
     @Override
