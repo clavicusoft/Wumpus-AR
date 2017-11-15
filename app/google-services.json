@@ -46,6 +46,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "717374322340-8du7lcpjrrd3ae33uvu5glbjkt3gae40.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.benja.canvas",
+            "certificate_hash": "0137eda4018d5000e266c17f6f8899db23531905"
+          }
+        },
+        {
           "client_id": "717374322340-7fp3327jv2qsbfjrlcf6mao8nerajsgi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
