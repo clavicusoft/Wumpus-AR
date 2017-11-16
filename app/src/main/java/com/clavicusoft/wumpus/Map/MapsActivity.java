@@ -101,10 +101,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             username = dateTime.toString();
 
-            btnListo.setOnClickListener(this);
-
             setContentView(R.layout.activity_multiplayer_maps);
             btnListo = (Button) findViewById(R.id.bListo);
+
+            btnListo.setOnClickListener(this);
+
             msj = getIntent().getStringExtra("data");
             //msj = laberinto+"%"+numberCaves+"%"+latitude+"%"+longitude+"%"+distance+"%"+cavesInf;
             //laberinto [relations,caves,name]

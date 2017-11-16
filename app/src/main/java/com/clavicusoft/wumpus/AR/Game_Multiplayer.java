@@ -58,7 +58,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        gameDataBase.changePlayerStatus("1"); //Player is alive in the DataBase as soon as app starts
+
 
         numArrows = 5;
         super.onCreate(savedInstanceState);
@@ -122,6 +122,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
         score.put("usedArrows",0);
 
         gameDataBase = new GameDataBase(b.getString("gameRoom"), b.getString("username"), this);
+        gameDataBase.changePlayerStatus("1"); //Player is alive in the DataBase as soon as app starts
     }
 
     @Override
