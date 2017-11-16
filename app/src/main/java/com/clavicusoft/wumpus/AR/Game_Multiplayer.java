@@ -118,7 +118,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
         score.put("visitedBatCaves",0);
         score.put("usedArrows",0);
 
-        gameDataBase = new GameDataBase("1", "2");
+        gameDataBase = new GameDataBase("1", "2", this);
     }
 
     @Override

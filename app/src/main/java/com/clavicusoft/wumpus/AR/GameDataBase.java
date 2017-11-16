@@ -9,9 +9,12 @@ public class GameDataBase extends Thread {
 
     private String room_id;
     private String player_id;
-    public GameDataBase(String room_id, String player_id) {
+    private Game_Multiplayer game_multiplayer;// Supongo que esto se puede usar para llamar a algun metodo al finalizar el juego
+    
+    public GameDataBase(String room_id, String player_id, Game_Multiplayer game_multiplayer) {
         this.room_id = room_id;
         this.player_id = player_id;
+        this.game_multiplayer = game_multiplayer;
     }
 
     //TODO Poner metodos, al morir, matar, actualizar cueva, etc
