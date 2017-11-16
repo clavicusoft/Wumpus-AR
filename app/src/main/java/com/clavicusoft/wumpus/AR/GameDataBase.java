@@ -1,6 +1,7 @@
 package com.clavicusoft.wumpus.AR;
 
 
+import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.games.Game;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,16 +25,15 @@ public class GameDataBase extends Thread {
         //Listener para oir datos ( status del jugador )
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference playerReference = database.getReference(this.player_id);
+        DatabaseReference playerReference = database.getReference(this.player_id + "/STATUS");
 
         playerReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                Map value = dataSnapshot.getValue(Map.class);
-                String statusP = value.get("STATUS").toString();
-                if (statusP.equals("0")) {
+                String value = dataSnapshot.getValue(String.class);
+                if (value.equals("0")) {
                     //TODO TERMINE JUEGO
                 }
             }
@@ -45,15 +45,14 @@ public class GameDataBase extends Thread {
         });
 
         //Listener para oir datos ( status del room )
-        DatabaseReference roomReference = database.getReference(this.room_id);
+        DatabaseReference roomReference = database.getReference(this.room_id+ "/STATUS");
         roomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                Map value = dataSnapshot.getValue(Map.class);
-                String statusR = value.get("STATUS").toString();
-                if (statusR.equals("0")) {
+                String value = dataSnapshot.getValue(String.class);
+                if (value.equals("0")) {
                     //TODO TERMINE JUEGO
                 }
             }
