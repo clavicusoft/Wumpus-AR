@@ -1,15 +1,12 @@
 package com.clavicusoft.wumpus.AR;
 
 
-import com.google.android.gms.fitness.data.Value;
-import com.google.android.gms.games.Game;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Map;
 
 public class GameDataBase extends Thread {
 

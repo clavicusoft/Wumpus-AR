@@ -58,8 +58,8 @@ public class BluetoothChat extends Activity {
     Boolean sending;
     Boolean multiplayer;
 
-    String numberCaves;
-    String game_id;
+    Integer numberCaves;
+    Integer game_id;
 
     /**
      * On create of the  Activity, creates the Bluetooth Chat.
@@ -88,8 +88,8 @@ public class BluetoothChat extends Activity {
             username = splitMessage[8];
             msj = msj + "-" + mBluetoothAdapter.getName();
             roomName = username + "-" + mBluetoothAdapter.getName();
-            game_id = getIntent().getStringExtra("gameID");
-            numberCaves = getIntent().getStringExtra("number_of_caves");
+            game_id = getIntent().getExtras().getInt("game_ID");
+            numberCaves = getIntent().getExtras().getInt("number_of_caves");
 
         }else{
             sending = false;
@@ -493,8 +493,8 @@ public class BluetoothChat extends Activity {
 
     public void startMultiplayer () {
         Intent i = new Intent(this, Game_Multiplayer.class);
-        i.putExtra("game_ID", game_id);
-        i.putExtra("number_of_caves", numberCaves);
+        i.putExtra("gameID", Integer.valueOf(game_id));
+        i.putExtra("number_of_caves", Integer.valueOf(numberCaves));
         i.putExtra("room", roomName);
         i.putExtra("username", username);
         ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,

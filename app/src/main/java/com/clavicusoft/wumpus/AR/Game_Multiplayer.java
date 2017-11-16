@@ -86,13 +86,12 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
 
         //Get the game parameters
         Bundle b = getIntent().getExtras();
-        game_ID = b.getInt("game_ID");
+        game_ID = b.getInt("gameID");
         number_of_caves = b.getInt("number_of_caves");
 
         data = new Game_Data(this, game_ID, 1);
         data.setCurrentCave(data.chooseStartingCave(number_of_caves));
         currentCave.setText(String.valueOf(data.getCurrentCave()));
-        gameDataBase.changePlayerCave(String.valueOf(data.getCurrentCave())); //Update new cave on database
 
         //Sets the fragment.
         currentBeyondARFragment = (BeyondarFragmentSupport) getSupportFragmentManager().findFragmentById(
@@ -121,14 +120,20 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
         score.put("visitedBatCaves",0);
         score.put("usedArrows",0);
 
-        gameDataBase = new GameDataBase(b.getString("gameRoom"), b.getString("username"), this);
-        gameDataBase.changePlayerStatus("1"); //Player is alive in the DataBase as soon as app starts
+        startDB(b);
     }
 
     @Override
     public void onStart () {
         super.onStart();
         showCurrentCave();
+    }
+
+    private void startDB(Bundle b)
+    {
+        gameDataBase = new GameDataBase(b.getString("gameRoom"), b.getString("username"), this);
+        gameDataBase.changePlayerStatus("1"); //Player is alive in the DataBase as soon as app starts
+        gameDataBase.changePlayerCave(String.valueOf(data.getCurrentCave())); //Update new cave on database
     }
 
     public void showCurrentCave() {
