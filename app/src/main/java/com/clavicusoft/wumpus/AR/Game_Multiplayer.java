@@ -250,8 +250,8 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      * @param cave_Number Current cave number.
      */
     public void updateGame (int cave_Number) {
-        currentCave.setText(String.valueOf(cave_Number));
         gameDataBase.changePlayerCave(String.valueOf(cave_Number));  //Update cave number in database
+        currentCave.setText(String.valueOf(cave_Number));
         checkCaveContent(cave_Number);
     }
 
