@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.clavicusoft.wumpus.AR.Game_Multiplayer;
 import com.clavicusoft.wumpus.AR.Game_World;
 import com.clavicusoft.wumpus.Bluetooth.BluetoothChat;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
@@ -69,6 +70,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     boolean creado;
 
+    Boolean multiplayer;
+
+    String gameRoom;
+    String username;
+
+    Long dateTime;
+
     String msj = "";
     String msjValues[] = null;
 
@@ -83,18 +91,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        dateTime = System.currentTimeMillis()/1000;
         Bundle b;
         b = getIntent().getExtras();
-        tipo = getIntent().getStringExtra("tipo").toString();
+        tipo = getIntent().getStringExtra("tipo");
 
         if (tipo.equals("multijugador")) {
+            multiplayer = true;
+
+            username = dateTime.toString();
+
+            btnListo.setOnClickListener(this);
 
             setContentView(R.layout.activity_multiplayer_maps);
             btnListo = (Button) findViewById(R.id.bListo);
-            btnListo.setOnClickListener(this);
-
-            msj = getIntent().getStringExtra("data").toString();
+            msj = getIntent().getStringExtra("data");
             //msj = laberinto+"%"+numberCaves+"%"+latitude+"%"+longitude+"%"+distance+"%"+cavesInf;
             //laberinto [relations,caves,name]
             //numberCaves = [int]
@@ -102,6 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //longitude = [double]
             //distance = [double]
             //cavesInf = numberCaves*6  -> [int, int, int, double, double, int]
+            //GameRoom = dateTime + BluetoothName
             msjValues = tokenizer(msj);
 
             graph_ID = createGraph(msjValues[2], msjValues[0], Integer.parseInt(msjValues[1]));
@@ -114,6 +126,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             selectedLongitude = longitude;
 
             distance = Double.parseDouble(msjValues[6]);
+
+            gameRoom = msjValues[8];
 
             meterToCoordinates = 0.0000095;
 
@@ -213,9 +227,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     for (int i = 1; i <= numberCaves; i++) {
                         cavesInf = cavesInf + "%" + caves[i - 1];
                     }
-                    msj = laberinto + "%" + numberCaves + "%" + latitude + "%" + longitude + "%" + distance + "%" + cavesInf;
+
+                    msj = laberinto + "%" + numberCaves + "%" + latitude + "%" + longitude + "%" + distance + "%" + cavesInf + "%" + dateTime.toString();
 
                     Intent i = new Intent(MapsActivity.this, BluetoothChat.class);
+                    i.putExtra("game_ID", game_id);
+                    i.putExtra("number_of_caves", numberCaves);
                     i.putExtra("funcion", "enviarEmplazamiento");
                     i.putExtra("data", msj);
                     ActivityOptions options = ActivityOptions.makeCustomAnimation(MapsActivity.this, R.anim.fade_in, R.anim.fade_out);
@@ -262,7 +279,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 int cave_number = Integer.parseInt(msjValues[i + 2]);
                 double lat = Double.parseDouble(msjValues[i + 3]);
                 double lon = Double.parseDouble(msjValues[i + 4]);
-                int contenido = Integer.parseInt(msjValues[i + 5].toString());
+                int contenido = Integer.parseInt(msjValues[i + 5]);
                 createCaveExp(cave_number, lat, lon, contenido);
             }
         } else {
@@ -829,7 +846,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * This method start the game.
      */
     public void startGame() {
-        Intent i = new Intent(this, Game_World.class);
+        Intent i;
+        if (multiplayer)
+        {
+            i = new Intent(this, Game_Multiplayer.class);
+            i.putExtra("gameRoom", gameRoom);
+            i.putExtra("username", username);
+        }
+        else
+        {
+            i = new Intent(this, Game_World.class);
+        }
         i.putExtra("game_ID", game_id);
         i.putExtra("number_of_caves", numberCaves);
         ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
