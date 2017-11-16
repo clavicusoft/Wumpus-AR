@@ -109,6 +109,7 @@ public class BluetoothChat extends Activity {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference myRef = db.getReference(roomName);
         myRef.setValue("ROOM");
+        myRef.child("STATUS").setValue("1");
     }
 
     /**
