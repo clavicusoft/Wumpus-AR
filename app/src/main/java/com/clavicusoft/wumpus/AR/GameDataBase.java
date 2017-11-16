@@ -80,6 +80,18 @@ public class GameDataBase extends Thread {
         return false;
     }
 
+    public void changePlayerCave(String cave){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(room_id);
+        myRef.child(player_id).child("CAVEID").setValue(cave);
+    }
+
+    public void changePlayerStatus(String status){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(room_id);
+        myRef.child(player_id).child("STATUS").setValue(status);
+    }
+
     @Override
     public void run() {
 

@@ -90,6 +90,8 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
         data = new Game_Data(this, game_ID, 1);
         data.setCurrentCave(data.chooseStartingCave(number_of_caves));
         currentCave.setText(String.valueOf(data.getCurrentCave()));
+        //Update new cave on database
+        gameDataBase.changePlayerCave(String.valueOf(data.getCurrentCave()));
 
         //Sets the fragment.
         currentBeyondARFragment = (BeyondarFragmentSupport) getSupportFragmentManager().findFragmentById(
@@ -249,6 +251,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      */
     public void updateGame (int cave_Number) {
         currentCave.setText(String.valueOf(cave_Number));
+        gameDataBase.changePlayerCave(String.valueOf(cave_Number));  //Update cave number in database
         checkCaveContent(cave_Number);
     }
 
@@ -379,6 +382,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      * If the player falls in the Wumpus' cave then the game ends.
      */
     public void manageWumpus() {
+        gameDataBase.changePlayerStatus("0"); //Update player dies in DB
         Intent i = new Intent(Game_Multiplayer.this, WumpusAnimation.class);
         i.putExtra("usedArrows", score.get("usedArrows").toString());
         i.putExtra("visitedBatCaves", score.get("visitedBatCaves").toString());
@@ -437,6 +441,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      * Manages if the player fall into a pit, plays a falling sound and allow the user to restart or exit the game
      */
     public void managePit () {
+        gameDataBase.changePlayerStatus("0"); //Update player dies in DB
         MediaPlayer mediaPlayer;
         mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
         mediaPlayer.start(); //Plays a falling sound
@@ -521,6 +526,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      * Manages if the player is hit by an arrow.
      */
     public void manageArrowShot(){
+        gameDataBase.changePlayerStatus("0"); //Update player dies in DB
         MediaPlayer mediaPlayer;
         mediaPlayer = MediaPlayer.create(this, R.raw.arrow_hit_blood);
         mediaPlayer.start();
@@ -548,6 +554,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
     }
 
     public void outOfArrows(){
+        gameDataBase.changePlayerStatus("0"); //Update player dies in DB
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
         newDialog.setTitle("Has perdido");
         newDialog.setMessage("Se te han acabado las flechas y no has logrado matar al Wumpus.");
