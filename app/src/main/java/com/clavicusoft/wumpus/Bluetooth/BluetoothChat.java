@@ -84,9 +84,10 @@ public class BluetoothChat extends Activity {
             multiplayer = true;
             setContentView(R.layout.layout_multiplayer_send);
             msj = getIntent().getStringExtra("data");
-            Long tsLong = System.currentTimeMillis()/1000;
-            roomName = mBluetoothAdapter.getName() + "-" + tsLong.toString();
-            username = tsLong.toString();
+            final String[] splitMessage = tokenizer(msj);
+            username = splitMessage[8];
+            msj = msj + "-" + mBluetoothAdapter.getName();
+            roomName = username + "-" + mBluetoothAdapter.getName();
             game_id = getIntent().getStringExtra("gameID");
             numberCaves = getIntent().getStringExtra("number_of_caves");
 

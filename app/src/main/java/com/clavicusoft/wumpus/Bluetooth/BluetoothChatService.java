@@ -311,7 +311,7 @@ public class BluetoothChatService {
         }
 
         public void run() {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[4096];
             int bytes;
             // Keep listening to the InputStream while connected
             while (true) {
