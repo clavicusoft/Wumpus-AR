@@ -58,6 +58,8 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        gameDataBase.changePlayerStatus("1"); //Player is alive in the DataBase as soon as app starts
+
         numArrows = 5;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ar_layout);
@@ -90,8 +92,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
         data = new Game_Data(this, game_ID, 1);
         data.setCurrentCave(data.chooseStartingCave(number_of_caves));
         currentCave.setText(String.valueOf(data.getCurrentCave()));
-        //Update new cave on database
-        gameDataBase.changePlayerCave(String.valueOf(data.getCurrentCave()));
+        gameDataBase.changePlayerCave(String.valueOf(data.getCurrentCave())); //Update new cave on database
 
         //Sets the fragment.
         currentBeyondARFragment = (BeyondarFragmentSupport) getSupportFragmentManager().findFragmentById(
