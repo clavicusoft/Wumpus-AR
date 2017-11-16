@@ -95,6 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Bundle b;
         b = getIntent().getExtras();
         tipo = getIntent().getStringExtra("tipo");
+        multiplayer = false;
 
         if (tipo.equals("multijugador")) {
             multiplayer = true;

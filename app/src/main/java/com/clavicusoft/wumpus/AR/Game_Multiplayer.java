@@ -131,7 +131,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
 
     private void startDB(Bundle b)
     {
-        gameDataBase = new GameDataBase(b.getString("gameRoom"), b.getString("username"), this);
+        gameDataBase = new GameDataBase(b.getString("room"), b.getString("username"), this);
         gameDataBase.changePlayerStatus("1"); //Player is alive in the DataBase as soon as app starts
         gameDataBase.changePlayerCave(String.valueOf(data.getCurrentCave())); //Update new cave on database
     }
@@ -585,5 +585,9 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
             arrowPressed = false;
             arrowButton.setBackgroundResource(R.drawable.arrow_icon);
         }
+    }
+
+    public void showMessage() {
+        Toast.makeText(this, "YouAreDead", Toast.LENGTH_LONG).show();
     }
 }

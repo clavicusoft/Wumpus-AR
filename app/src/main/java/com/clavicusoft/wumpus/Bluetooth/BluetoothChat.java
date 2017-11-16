@@ -25,6 +25,8 @@ import com.clavicusoft.wumpus.Database.AdminSQLite;
 import com.clavicusoft.wumpus.Map.MapsActivity;
 import com.clavicusoft.wumpus.R;
 import com.clavicusoft.wumpus.Select.SelectPolyActivity;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class BluetoothChat extends Activity {
 
@@ -85,12 +87,13 @@ public class BluetoothChat extends Activity {
             setContentView(R.layout.layout_multiplayer_send);
             msj = getIntent().getStringExtra("data");
             final String[] splitMessage = tokenizer(msj);
-            username = splitMessage[8];
+            username = splitMessage[splitMessage.length-1];
             msj = msj + "-" + mBluetoothAdapter.getName();
             roomName = username + "-" + mBluetoothAdapter.getName();
+            roomName = roomName.replace(" ", "");
             game_id = getIntent().getExtras().getInt("game_ID");
             numberCaves = getIntent().getExtras().getInt("number_of_caves");
-
+            startRoom();
         }else{
             sending = false;
             setContentView(R.layout.multiplayer_menu);
@@ -100,6 +103,12 @@ public class BluetoothChat extends Activity {
             Toast.makeText(this, "El dispositivo no soporta bluetooth", Toast.LENGTH_LONG).show();
         }
         startButtons();
+    }
+
+    private void startRoom(){
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = db.getReference(roomName);
+        myRef.setValue("ROOM");
     }
 
     /**
@@ -493,8 +502,8 @@ public class BluetoothChat extends Activity {
 
     public void startMultiplayer () {
         Intent i = new Intent(this, Game_Multiplayer.class);
-        i.putExtra("gameID", Integer.valueOf(game_id));
-        i.putExtra("number_of_caves", Integer.valueOf(numberCaves));
+        i.putExtra("gameID", game_id);
+        i.putExtra("number_of_caves", numberCaves);
         i.putExtra("room", roomName);
         i.putExtra("username", username);
         ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,

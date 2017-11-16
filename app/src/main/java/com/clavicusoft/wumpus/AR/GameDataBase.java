@@ -8,21 +8,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
-public class GameDataBase extends Thread {
+public class GameDataBase {
 
     private String room_id;
     private String player_id;
     private Game_Multiplayer game_multiplayer;// Supongo que esto se puede usar para llamar a algun metodo al finalizar el juego
+    private FirebaseDatabase db;
 
-    public GameDataBase(String room_id, String player_id, Game_Multiplayer game_multiplayer) {
+    public GameDataBase(String room_id, String player_id, final Game_Multiplayer game_multiplayer) {
         this.room_id = room_id;
         this.player_id = player_id;
         this.game_multiplayer = game_multiplayer;
+        this.db = FirebaseDatabase.getInstance();
+
+        insertPlayer();
 
         //Listener para oir datos ( status del jugador )
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference playerReference = database.getReference(this.player_id + "/STATUS");
+        DatabaseReference playerReference = db.getReference(this.room_id+ "/" + this.player_id + "/STATUS");
 
         playerReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -31,7 +34,7 @@ public class GameDataBase extends Thread {
                 // whenever data at this location is updated.
                 String value = dataSnapshot.getValue(String.class);
                 if (value.equals("0")) {
-                    //TODO TERMINE JUEGO
+                    game_multiplayer.showMessage();//TODO TERMINE JUEGO
                 }
             }
 
@@ -42,7 +45,7 @@ public class GameDataBase extends Thread {
         });
 
         //Listener para oir datos ( status del room )
-        DatabaseReference roomReference = database.getReference(this.room_id+ "/STATUS");
+        DatabaseReference roomReference = db.getReference(this.room_id+ "/STATUS");
         roomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -50,7 +53,7 @@ public class GameDataBase extends Thread {
                 // whenever data at this location is updated.
                 String value = dataSnapshot.getValue(String.class);
                 if (value.equals("0")) {
-                    //TODO TERMINE JUEGO
+                    game_multiplayer.showMessage();//TODO TERMINE JUEGO
                 }
             }
 
@@ -78,26 +81,20 @@ public class GameDataBase extends Thread {
     }
 
     public void changePlayerCave(String cave){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(room_id);
-        myRef.child(player_id).child("CAVEID").setValue(cave);
+        DatabaseReference myRef = db.getReference(this.room_id);
+        myRef.child(this.player_id).child("CAVE").setValue(cave);
     }
 
     public void changePlayerStatus(String status){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(room_id);
-        myRef.child(player_id).child("STATUS").setValue(status);
+        DatabaseReference myRef = db.getReference(this.room_id);
+        myRef.child(this.player_id).child("STATUS").setValue(status);
     }
 
-    @Override
-    public void run() {
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("DATETIME + BLUETOOTHNAME");
-        myRef.child("STATUS").setValue("1");//up
-        myRef.child("DATETIME").child("CAVEID").setValue("1");
-        myRef.child("DATETIME").child("STATUS").setValue("1");//ALIVE
-
-
+    private void insertPlayer(){
+        DatabaseReference myRef = db.getReference(room_id);
+        myRef.child(this.player_id).setValue("USERNAME");
+        myRef.child(this.player_id).child("STATUS").setValue("1");
+        myRef.child(this.player_id).child("CAVE").setValue("1");
     }
+
 }
