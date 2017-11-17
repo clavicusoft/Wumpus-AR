@@ -19,6 +19,7 @@ import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.beyondar.android.view.OnClickBeyondarObjectListener;
 import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
+import com.clavicusoft.wumpus.Database.Firebase_Helper;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
 import com.clavicusoft.wumpus.Select.SelectPolyActivity;
@@ -49,7 +50,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
     private Map<String, Integer> score;
     private Boolean arrowPressed;
     private Random random;
-    private GameDataBase gameDataBase;
+    private Firebase_Helper gameDataBase;
 
     /**
      * Sets the view once this activity starts.
@@ -131,7 +132,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
 
     private void startDB(Bundle b)
     {
-        gameDataBase = new GameDataBase(b.getString("room"), b.getString("username"), this);
+        gameDataBase = new Firebase_Helper(b.getString("room"), b.getString("username"), this);
         gameDataBase.changePlayerStatus("1"); //Player is alive in the DataBase as soon as app starts
         gameDataBase.changePlayerCave(String.valueOf(data.getCurrentCave())); //Update new cave on database
     }
@@ -544,6 +545,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      * Manages if the arrow kills the Wumpus
      */
     public void manageKillWumpus(){
+        gameDataBase.winGame();
         final MediaPlayer mediaPlayer;
         mediaPlayer = MediaPlayer.create(this, R.raw.kill_wumpus);
         mediaPlayer.start();
@@ -572,7 +574,6 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
             }
         });
         newDialog.show();
-
     }
 
     public void changeArrowState(){
@@ -587,7 +588,38 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
         }
     }
 
-    public void showMessage() {
-        Toast.makeText(this, "YouAreDead", Toast.LENGTH_LONG).show();
+    /**
+     * Manages getting killed by another player's arrow.
+     */
+    public void manageGettingKilled() {
+        final MediaPlayer mediaPlayer;
+        mediaPlayer = MediaPlayer.create(this, R.raw.kill_wumpus);
+        mediaPlayer.start();
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("Has sido eliminado");
+        newDialog.setMessage("La flecha de otro jugador ha acabado contigo.");
+        newDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                showScore(mediaPlayer);
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
+    }
+
+    /**
+     * Manages when another player has killed the wumpus.
+     */
+    public void finishGame () {
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("Ha finalizado el juego");
+        newDialog.setMessage("La flecha de otro cazador acabó con el Wumpus.");
+        newDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                showScore(null);
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
     }
 }

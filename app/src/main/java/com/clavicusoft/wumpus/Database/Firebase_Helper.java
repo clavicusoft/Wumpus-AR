@@ -1,4 +1,4 @@
-package com.clavicusoft.wumpus.AR;
+package com.clavicusoft.wumpus.Database;
 
 
 import com.android.volley.Request;
@@ -6,6 +6,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.clavicusoft.wumpus.AR.Game_Multiplayer;
 import com.clavicusoft.wumpus.Database.UserDetails;
 import com.firebase.client.Firebase;
 import com.google.firebase.database.DataSnapshot;
@@ -23,24 +24,35 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 
-public class GameDataBase {
+public class Firebase_Helper {
 
     private String room_id;
     private String player_id;
-    private Game_Multiplayer game_multiplayer;// Supongo que esto se puede usar para llamar a algun metodo al finalizar el juego
+    private Game_Multiplayer game_multiplayer;
     private FirebaseDatabase db;
+    private Boolean killed_By_Player;
+    private Boolean winner;
 
-
-    public GameDataBase(String room_id, String player_id, final Game_Multiplayer game_multiplayer) {
+    /**
+     * Starts a new Firebase DB for the game.
+     * @param room_id ID if the room in the DB.
+     * @param player_id ID of the player in the DB.
+     * @param game_multiplayer Current Game context.
+     */
+    public Firebase_Helper(String room_id, String player_id, final Game_Multiplayer game_multiplayer) {
         this.room_id = room_id;
         this.player_id = player_id;
         this.game_multiplayer = game_multiplayer;
         this.db = FirebaseDatabase.getInstance();
+        this.killed_By_Player = false;
+        this.winner = false;
 
         insertPlayer();
+        startPlayerListener();
+        startRoomListener();
+    }
 
-        //Listener para oir datos ( status del jugador )
-
+    public void startPlayerListener () {
         DatabaseReference playerReference = db.getReference(this.room_id+ "/" + this.player_id + "/STATUS");
 
         playerReference.addValueEventListener(new ValueEventListener() {
@@ -50,7 +62,9 @@ public class GameDataBase {
                 // whenever data at this location is updated.
                 String value = dataSnapshot.getValue(String.class);
                 if (value.equals("0")) {
-                    game_multiplayer.showMessage();//TODO TERMINE JUEGO
+                    if (killed_By_Player) {
+                        game_multiplayer.manageGettingKilled();
+                    }
                 }
             }
 
@@ -59,8 +73,9 @@ public class GameDataBase {
                 // Failed to read value
             }
         });
+    }
 
-        //Listener para oir datos ( status del room )
+    public void startRoomListener () {
         DatabaseReference roomReference = db.getReference(this.room_id+ "/STATUS");
         roomReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -69,7 +84,9 @@ public class GameDataBase {
                 // whenever data at this location is updated.
                 String value = dataSnapshot.getValue(String.class);
                 if (value.equals("0")) {
-                    game_multiplayer.showMessage();//TODO TERMINE JUEGO
+                    if (!winner) {
+                        game_multiplayer.finishGame();
+                    }
                 }
             }
 
@@ -78,29 +95,21 @@ public class GameDataBase {
                 // Failed to read value
             }
         });
-
-
-        /**Ambos listeners oyen todos los cambios en la tabla, entonces si hay cambios en alguna de
-         * las referencia, haga algo todo se mete a un mapa por que son varios datos, pero no estoy
-         * seguro de que sirva al 100% **/
     }
 
-    //TODO Poner metodos, al morir, matar, actualizar cueva, etc
-
-    public boolean roomState() {
-
-        return false;
-    }
-
-    public boolean playerState() {
-        return false;
-    }
-
+    /**
+     * Changes the DB player current cave.
+     * @param cave New current cave.
+     */
     public void changePlayerCave(String cave){
         DatabaseReference myRef = db.getReference(this.room_id);
         myRef.child(this.player_id).child("CAVE").setValue(cave);
     }
 
+    /**
+     * Changes the DB player status.
+     * @param status New status.
+     */
     public void changePlayerStatus(String status) {
         DatabaseReference myRef = db.getReference(this.room_id);
         myRef.child(this.player_id).child("STATUS").setValue(status);
@@ -110,12 +119,15 @@ public class GameDataBase {
         }
     }
 
+    /**
+     * Check if the player is the last one standing.
+     */
     private void checkLastActivePlayer () {
         String url = "https://wumpus-ar-7c538.firebaseio.com/" + room_id + ".json";
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
-            public void onResponse(String s) {
-                doOnSuccess(s);
+            public void onResponse(String request) {
+                doOnSuccess(request, false);
             }
         },new Response.ErrorListener(){
             @Override
@@ -125,22 +137,38 @@ public class GameDataBase {
 
     }
 
-    private  void doOnSuccess(String s) {
+    /**
+     * Gets all the users information.
+     * @param request StringRequest with the DB request information.
+     */
+    private  void doOnSuccess(String request, Boolean arrow_Request) {
         ArrayList<UserDetails> users = new ArrayList<>();
         try {
-            JSONObject obj = new JSONObject(s);
+            JSONObject obj = new JSONObject(request);
             Iterator i = obj.keys();
             String key = "";
             while (i.hasNext()) {
                 key = i.next().toString();
-                users.add(new UserDetails(key, obj.getJSONObject(key).getString("CAVE"), obj.getJSONObject(key).getString("STATUS")));
+                if (!key.equals("STATUS")) {
+                    users.add(new UserDetails(key, obj.getJSONObject(key).getString("CAVE"),
+                            obj.getJSONObject(key).getString("STATUS")));
+                }
             }
         }catch (JSONException e) {
-
+            //DO NOTHING
         }
-        checkPlayersStatus(users);
+        if (arrow_Request) {
+            //TODO: VARELA MANEJAR QUE MATÉ A OTRO JUGADOR
+        }
+        else {
+            checkPlayersStatus(users);
+        }
     }
 
+    /**
+     *
+     * @param users ArrayList with all the users.
+     */
     private void checkPlayersStatus(ArrayList<UserDetails> users) {
         boolean active = false;
         Integer i = 0;
@@ -150,14 +178,37 @@ public class GameDataBase {
             }
             ++i;
         }
-
+        if (!active){
+            finishGame();
+        }
     }
 
+    /**
+     * Sets the room status to 0.
+     */
+    private void finishGame() {
+        DatabaseReference myRef = db.getReference(room_id);
+        myRef.child("STATUS").setValue("0");
+        //TODO: STOP THE LISTENERS.
+        //TODO: REMOVE THE ROOM FROM THE DB.
+    }
+
+    /**
+     * Inserts a player into the database.
+     */
     private void insertPlayer(){
         DatabaseReference myRef = db.getReference(room_id);
         myRef.child(this.player_id).setValue("USERNAME");
         myRef.child(this.player_id).child("STATUS").setValue("1");
         myRef.child(this.player_id).child("CAVE").setValue("1");
+    }
+
+    /**
+     * Sets the room status to 0 and declares the player as the winner.
+     */
+    public void winGame () {
+        winner = true;
+        finishGame();
     }
 
 }
