@@ -31,7 +31,7 @@ public class Firebase_Helper {
     private Game_Multiplayer game_multiplayer;
     private FirebaseDatabase db;
     private Boolean killed_By_Player;
-    private Boolean winner;
+    private Boolean active;
 
     /**
      * Starts a new Firebase DB for the game.
@@ -45,7 +45,7 @@ public class Firebase_Helper {
         this.game_multiplayer = game_multiplayer;
         this.db = FirebaseDatabase.getInstance();
         this.killed_By_Player = false;
-        this.winner = false;
+        this.active = true;
 
         insertPlayer();
         startPlayerListener();
@@ -84,7 +84,7 @@ public class Firebase_Helper {
                 // whenever data at this location is updated.
                 String value = dataSnapshot.getValue(String.class);
                 if (value.equals("0")) {
-                    if (!winner) {
+                    if (active) {
                         game_multiplayer.finishGame();
                     }
                 }
@@ -115,6 +115,7 @@ public class Firebase_Helper {
         myRef.child(this.player_id).child("STATUS").setValue(status);
 
         if (status.equals("0")) {
+            this.active = false;
             checkLastActivePlayer();
         }
     }
@@ -134,7 +135,7 @@ public class Firebase_Helper {
             public void onErrorResponse(VolleyError volleyError){
             }
         });
-
+        Volley.newRequestQueue(game_multiplayer).add(request);
     }
 
     /**
@@ -207,7 +208,7 @@ public class Firebase_Helper {
      * Sets the room status to 0 and declares the player as the winner.
      */
     public void winGame () {
-        winner = true;
+        active = false;
         finishGame();
     }
 
