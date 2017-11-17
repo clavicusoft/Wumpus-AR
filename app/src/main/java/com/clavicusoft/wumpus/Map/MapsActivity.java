@@ -129,7 +129,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             distance = Double.parseDouble(msjValues[6]);
 
-            gameRoom = msjValues[8];
+            gameRoom = msjValues[msjValues.length-1];
 
             meterToCoordinates = 0.0000095;
 
@@ -852,7 +852,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (multiplayer)
         {
             i = new Intent(this, Game_Multiplayer.class);
-            i.putExtra("gameRoom", gameRoom);
+            i.putExtra("room", gameRoom);
             i.putExtra("username", username);
         }
         else

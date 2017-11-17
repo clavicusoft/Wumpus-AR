@@ -59,8 +59,6 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         numArrows = 5;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ar_layout);
@@ -87,7 +85,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
 
         //Get the game parameters
         Bundle b = getIntent().getExtras();
-        game_ID = b.getInt("gameID");
+        game_ID = b.getInt("game_ID");
         number_of_caves = b.getInt("number_of_caves");
 
         data = new Game_Data(this, game_ID, 1);

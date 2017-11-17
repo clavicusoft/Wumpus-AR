@@ -88,9 +88,10 @@ public class BluetoothChat extends Activity {
             msj = getIntent().getStringExtra("data");
             final String[] splitMessage = tokenizer(msj);
             username = splitMessage[splitMessage.length-1];
-            msj = msj + "-" + mBluetoothAdapter.getName();
-            roomName = username + "-" + mBluetoothAdapter.getName();
-            roomName = roomName.replace(" ", "");
+            String bluetoothName = mBluetoothAdapter.getName();
+            bluetoothName = bluetoothName.replace(" ", "");
+            msj = msj + "-" + bluetoothName;
+            roomName = username + "-" + bluetoothName;
             game_id = getIntent().getExtras().getInt("game_ID");
             numberCaves = getIntent().getExtras().getInt("number_of_caves");
             startRoom();
@@ -506,7 +507,7 @@ public class BluetoothChat extends Activity {
 
     public void startMultiplayer () {
         Intent i = new Intent(this, Game_Multiplayer.class);
-        i.putExtra("gameID", game_id);
+        i.putExtra("game_ID", game_id);
         i.putExtra("number_of_caves", numberCaves);
         i.putExtra("room", roomName);
         i.putExtra("username", username);
