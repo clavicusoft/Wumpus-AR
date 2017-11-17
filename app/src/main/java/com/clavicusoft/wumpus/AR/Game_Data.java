@@ -170,7 +170,7 @@ public class Game_Data {
                 result = CaveContent.PIT;
                 break;
             case "BAT":
-                result = CaveContent.BAT;
+                result = CaveContent.PIT;
                 break;
             default:
                 result = CaveContent.EMPTY;

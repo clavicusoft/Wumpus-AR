@@ -105,6 +105,9 @@ public class BluetoothChat extends Activity {
         startButtons();
     }
 
+    /**
+     * Starts the Firebase room.
+     */
     private void startRoom(){
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference myRef = db.getReference(roomName);
