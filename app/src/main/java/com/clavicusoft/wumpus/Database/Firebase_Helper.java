@@ -1,6 +1,9 @@
 package com.clavicusoft.wumpus.Database;
 
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -32,6 +35,7 @@ public class Firebase_Helper {
     private FirebaseDatabase db;
     private Boolean killed_By_Player;
     private Boolean active;
+    private Context context;
 
     /**
      * Starts a new Firebase DB for the game.
@@ -128,7 +132,25 @@ public class Firebase_Helper {
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String request) {
-                doOnSuccess(request, false);
+                doOnSuccess(request, false, 0);
+            }
+        },new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError volleyError){
+            }
+        });
+        Volley.newRequestQueue(game_multiplayer).add(request);
+    }
+
+    /**
+     * Check if the player is the last one standing.
+     */
+    public void shootArrowMultiplayer(final int finalCave) {
+        String url = "https://wumpus-ar-7c538.firebaseio.com/" + room_id + ".json";
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String request) {
+                doOnSuccess(request, true, finalCave);
             }
         },new Response.ErrorListener(){
             @Override
@@ -142,7 +164,7 @@ public class Firebase_Helper {
      * Gets all the users information.
      * @param request StringRequest with the DB request information.
      */
-    private  void doOnSuccess(String request, Boolean arrow_Request) {
+    private  void doOnSuccess(String request, Boolean arrow_Request, int caveArrow) {
         ArrayList<UserDetails> users = new ArrayList<>();
         try {
             JSONObject obj = new JSONObject(request);
@@ -159,7 +181,20 @@ public class Firebase_Helper {
             //DO NOTHING
         }
         if (arrow_Request) {
-            //TODO: VARELA MANEJAR QUE MATÉ A OTRO JUGADOR
+            //Si el jugador tira una flecha, manejar el evento por si mata a algun jugador.
+            UserDetails user;
+            //TODO: VARELA MANEJAR QUE MATE A OTRO JUGADOR
+            DatabaseReference myRef = db.getReference(room_id);
+            Iterator<UserDetails> usersIterator = users.iterator();
+            while(usersIterator.hasNext()){
+                user = usersIterator.next();
+                int cave = Integer.parseInt(user.getCave());
+                String targetPlayerId = user.getUserName();
+                if(cave == caveArrow){
+                    myRef.child(targetPlayerId).child("STATUS").setValue("0");
+                    Toast.makeText(context, "La flecha ha matado al jugador " + targetPlayerId, Toast.LENGTH_LONG).show();
+                }
+            }
         }
         else {
             checkPlayersStatus(users);

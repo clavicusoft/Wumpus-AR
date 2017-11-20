@@ -19,6 +19,7 @@ import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.beyondar.android.view.OnClickBeyondarObjectListener;
 import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
+import com.clavicusoft.wumpus.Database.Firebase_Helper;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
 import com.clavicusoft.wumpus.Select.SelectPolyActivity;
@@ -49,6 +50,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     private Map<String, Integer> score;
     private Boolean arrowPressed;
     private Random random;
+    private Firebase_Helper firebaseHelper;
 
     /**
      * Sets the view once this activity starts.
@@ -494,6 +496,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             manageArrowShot();
         }
         else {
+            firebaseHelper.shootArrowMultiplayer(finalArrowCave);
             switch (data.getCaveContent(finalArrowCave)){
                 case BAT:
                     Toast.makeText(this, "La flecha ha agitado a los murciélagos", Toast.LENGTH_LONG).show();
@@ -506,6 +509,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                     break;
                 case EMPTY:
                     Toast.makeText(this, "La flecha chocó en la pared de una cueva", Toast.LENGTH_LONG).show();
+                    break;
+                default:
                     break;
             }
         }
