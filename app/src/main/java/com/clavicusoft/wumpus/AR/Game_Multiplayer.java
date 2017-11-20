@@ -508,7 +508,6 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
             manageArrowShot();
         }
         else {
-            gameDataBase.shootArrowMultiplayer(finalArrowCave);
             switch (data.getCaveContent(finalArrowCave)){
                 case BAT:
                     Toast.makeText(this, "La flecha ha agitado a los murciélagos", Toast.LENGTH_LONG).show();
@@ -520,7 +519,8 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
                     manageKillWumpus();
                     break;
                 case EMPTY:
-                    Toast.makeText(this, "La flecha chocó en la pared de una cueva", Toast.LENGTH_LONG).show();
+                    gameDataBase.shootArrowMultiplayer(finalArrowCave+1);
+                    Toast.makeText(this, "La flecha chocó en la pared de una cueva " + (finalArrowCave + 1), Toast.LENGTH_LONG).show();
                     break;
             }
         }
@@ -604,6 +604,10 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
             }
         });
         newDialog.show();
+    }
+
+    public void manageKillPlayer(){
+        Toast.makeText(this, "Has matado a un jugador.", Toast.LENGTH_LONG).show();
     }
 
     /**

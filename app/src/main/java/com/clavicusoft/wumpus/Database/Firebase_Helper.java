@@ -45,7 +45,7 @@ public class Firebase_Helper {
         this.player_id = player_id;
         this.game_multiplayer = game_multiplayer;
         this.db = FirebaseDatabase.getInstance();
-        this.killed_By_Player = false;
+        this.killed_By_Player = true;
         this.active = true;
 
         insertPlayer();
@@ -116,6 +116,7 @@ public class Firebase_Helper {
         myRef.child(this.player_id).child("STATUS").setValue(status);
 
         if (status.equals("0")) {
+            this.killed_By_Player = false;
             this.active = false;
             checkLastActivePlayer();
         }
@@ -197,6 +198,7 @@ public class Firebase_Helper {
             String targetPlayerId = user.getUserName();
             if(cave == caveArrow){
                 myRef.child(targetPlayerId).child("STATUS").setValue("0");
+                game_multiplayer.manageKillPlayer();
             }
         }
     }
@@ -207,12 +209,21 @@ public class Firebase_Helper {
      */
     private void checkPlayersStatus(ArrayList<UserDetails> users) {
         boolean active = false;
-        Integer i = 0;
+        /*Integer i = 0;
         while (!active && i < users.size() - 1){
             if (users.get(i).getStatus().equals("1")) {
                 active = true;
             }
             ++i;
+        }*/
+        UserDetails user;
+        Iterator<UserDetails> usersIterator = users.iterator();
+        while(usersIterator.hasNext()){
+            user = usersIterator.next();
+            String playerStatus = user.getStatus();
+            if(playerStatus.equals("1")){
+                active = true;
+            }
         }
         if (!active){
             finishGame();
