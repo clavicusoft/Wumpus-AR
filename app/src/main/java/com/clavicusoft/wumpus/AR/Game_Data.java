@@ -164,13 +164,13 @@ public class Game_Data {
         CaveContent result;
         switch (content){
             case "WUMPUS":
-                result = CaveContent.EMPTY;
+                result = CaveContent.WUMPUS;
                 break;
             case "PIT":
-                result = CaveContent.EMPTY;
+                result = CaveContent.PIT;
                 break;
             case "BAT":
-                result = CaveContent.EMPTY;
+                result = CaveContent.BAT;
                 break;
             default:
                 result = CaveContent.EMPTY;

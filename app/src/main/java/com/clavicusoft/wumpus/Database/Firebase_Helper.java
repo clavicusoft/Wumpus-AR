@@ -188,7 +188,6 @@ public class Firebase_Helper {
 
 
     private void killPlayers(ArrayList<UserDetails> users, int caveArrow) {
-        //Si el jugador tira una flecha, manejar el evento por si mata a algun jugador.
         UserDetails user;
         DatabaseReference myRef = db.getReference(room_id);
         Iterator<UserDetails> usersIterator = users.iterator();
@@ -196,7 +195,7 @@ public class Firebase_Helper {
             user = usersIterator.next();
             int cave = Integer.parseInt(user.getCave());
             String targetPlayerId = user.getUserName();
-            if(cave == caveArrow){
+            if(cave == caveArrow && user.getStatus().equals("1")){
                 myRef.child(targetPlayerId).child("STATUS").setValue("0");
                 game_multiplayer.manageKillPlayer();
             }

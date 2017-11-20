@@ -520,7 +520,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
                     break;
                 case EMPTY:
                     gameDataBase.shootArrowMultiplayer(finalArrowCave+1);
-                    Toast.makeText(this, "La flecha chocó en la pared de una cueva " + (finalArrowCave + 1), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "La flecha chocó en la pared de una cueva", Toast.LENGTH_LONG).show();
                     break;
             }
         }
@@ -592,7 +592,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
      */
     public void manageGettingKilled() {
         final MediaPlayer mediaPlayer;
-        mediaPlayer = MediaPlayer.create(this, R.raw.kill_wumpus);
+        mediaPlayer = MediaPlayer.create(this, R.raw.arrow_hit_blood);
         mediaPlayer.start();
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
         newDialog.setTitle("Has sido eliminado");
