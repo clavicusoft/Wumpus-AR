@@ -508,6 +508,7 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
             manageArrowShot();
         }
         else {
+            gameDataBase.shootArrowMultiplayer(finalArrowCave);
             switch (data.getCaveContent(finalArrowCave)){
                 case BAT:
                     Toast.makeText(this, "La flecha ha agitado a los murciélagos", Toast.LENGTH_LONG).show();

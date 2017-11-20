@@ -1,8 +1,6 @@
 package com.clavicusoft.wumpus.Database;
 
 
-import android.content.Context;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -33,9 +31,8 @@ public class Firebase_Helper {
     private String player_id;
     private Game_Multiplayer game_multiplayer;
     private FirebaseDatabase db;
+    Boolean active;
     private Boolean killed_By_Player;
-    private Boolean active;
-    private Context context;
 
     /**
      * Starts a new Firebase DB for the game.
@@ -181,23 +178,26 @@ public class Firebase_Helper {
             //DO NOTHING
         }
         if (arrow_Request) {
-            //Si el jugador tira una flecha, manejar el evento por si mata a algun jugador.
-            UserDetails user;
-            //TODO: VARELA MANEJAR QUE MATE A OTRO JUGADOR
-            DatabaseReference myRef = db.getReference(room_id);
-            Iterator<UserDetails> usersIterator = users.iterator();
-            while(usersIterator.hasNext()){
-                user = usersIterator.next();
-                int cave = Integer.parseInt(user.getCave());
-                String targetPlayerId = user.getUserName();
-                if(cave == caveArrow){
-                    myRef.child(targetPlayerId).child("STATUS").setValue("0");
-                    Toast.makeText(context, "La flecha ha matado al jugador " + targetPlayerId, Toast.LENGTH_LONG).show();
-                }
-            }
+            killPlayers(users, caveArrow);
         }
         else {
             checkPlayersStatus(users);
+        }
+    }
+
+
+    private void killPlayers(ArrayList<UserDetails> users, int caveArrow) {
+        //Si el jugador tira una flecha, manejar el evento por si mata a algun jugador.
+        UserDetails user;
+        DatabaseReference myRef = db.getReference(room_id);
+        Iterator<UserDetails> usersIterator = users.iterator();
+        while(usersIterator.hasNext()){
+            user = usersIterator.next();
+            int cave = Integer.parseInt(user.getCave());
+            String targetPlayerId = user.getUserName();
+            if(cave == caveArrow){
+                myRef.child(targetPlayerId).child("STATUS").setValue("0");
+            }
         }
     }
 
