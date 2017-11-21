@@ -3,15 +3,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center"
-    android:background="#ff000000">
+    android:background="@color/background">
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/gifImageView2"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:adjustViewBounds="true"
-        android:src="@drawable/intrologogif"
-        android:scaleType="fitXY"
+        android:src="@drawable/start_gif"
+
         />
 
 </RelativeLayout>

@@ -23,6 +23,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-database:11.0.4'
+    implementation 'com.google.firebase:firebase-auth:11.0.4'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -34,7 +36,12 @@ dependencies {
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
     compile 'com.google.android.gms:play-services-maps:11.0.4'
     compile 'com.google.android.gms:play-services:11.0.4'
-
+    compile 'com.firebase:firebase-client-android:2.5.2+'
+    compile 'com.android.volley:volley:1.0.0'
 
     testCompile 'junit:junit:4.12'
 }
+
+
+
+apply plugin: 'com.google.gms.google-services'

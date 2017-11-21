@@ -26,13 +26,13 @@ public class IntroAnimation extends Activity {
         Thread timer = new Thread(){
             public void run(){
                 try{
-                    sleep(7500);   // set the duration of splash screen
+                    sleep(2200);   // set the duration of splash screen
                 }
                 catch(InterruptedException e){
                     e.printStackTrace();
                 }
                 finally {
-                    Intent intent = new Intent(IntroAnimation.this, MainActivity.class);
+                    Intent intent = new Intent(IntroAnimation.this, SelectPolyActivity.class);
                     ActivityOptions options = ActivityOptions.makeCustomAnimation(IntroAnimation.this, R.anim.fade_in,
                             R.anim.fade_out);
                     startActivity(intent,options.toBundle());

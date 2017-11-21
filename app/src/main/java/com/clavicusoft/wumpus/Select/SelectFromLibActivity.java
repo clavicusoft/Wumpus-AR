@@ -90,7 +90,7 @@ public class SelectFromLibActivity extends Activity {
         //Fills the ArrayList with the cursor's information.
         if (cursor.moveToFirst()) {
             do{
-                String dato = "Nombre: " + cursor.getString(0) + "\nNúmero de cuevas: " +
+                String dato = "    Nombre: " + cursor.getString(0) + "\n    Número de cuevas: " +
                         cursor.getString(1);
                 datos.add(dato);
                 names.add(cursor.getString(0));

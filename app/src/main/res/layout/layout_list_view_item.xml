@@ -5,4 +5,5 @@
     android:textSize="17sp"
     android:padding="5sp"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"/>
+    android:layout_height="wrap_content"
+    android:background="@drawable/capsule_medium"/>

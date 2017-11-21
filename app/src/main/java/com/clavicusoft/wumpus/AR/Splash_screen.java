@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.clavicusoft.wumpus.R;
-import com.clavicusoft.wumpus.Select.MainActivity;
+import com.clavicusoft.wumpus.Select.SelectPolyActivity;
 
 public class Splash_screen extends Activity {
 
@@ -55,7 +55,7 @@ public class Splash_screen extends Activity {
         btn1.setOnClickListener(new View.OnClickListener(){     //To restart the game
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(v.getContext(),MainActivity.class);   //To return to the main activity
+                Intent i = new Intent(v.getContext(),SelectPolyActivity.class);   //To return to the main activity
                 ActivityOptions options = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fade_out,R.anim.fade_out);
                 startActivity(i, options.toBundle());
                 dialog.dismiss();

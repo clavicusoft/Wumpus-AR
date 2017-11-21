@@ -15,18 +15,18 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.clavicusoft.wumpus.AR.Game_Multiplayer;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
-import com.clavicusoft.wumpus.Map.Coordinates;
 import com.clavicusoft.wumpus.Map.MapsActivity;
-import com.clavicusoft.wumpus.Select.MainActivity;
-import com.clavicusoft.wumpus.Select.Multiplayer;
 import com.clavicusoft.wumpus.R;
-import com.clavicusoft.wumpus.Select.SelectFromLibActivity;
+import com.clavicusoft.wumpus.Select.SelectPolyActivity;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class BluetoothChat extends Activity {
 
@@ -46,10 +46,22 @@ public class BluetoothChat extends Activity {
     private Button mSendButton;
     private String mConnectedDeviceName = null;
     private StringBuffer mOutStringBuffer;
+
+    private String roomName = "";
+    private String username = "";
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
-    public int counter = 0;
     String readMessage="";
+
+    Button btnSend;
+    Button btnVisibility;
+    Button btnFinish;
+
+    Boolean sending;
+    Boolean multiplayer;
+
+    Integer numberCaves;
+    Integer game_id;
 
     /**
      * On create of the  Activity, creates the Bluetooth Chat.
@@ -60,24 +72,131 @@ public class BluetoothChat extends Activity {
 
         super.onCreate(savedInstanceState);
 
-        funcion = getIntent().getStringExtra("funcion").toString();
+        funcion = getIntent().getStringExtra("funcion");
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if(funcion.equals("enviar")){
-            setContentView(R.layout.send_labs);
+            sending = true;
+            multiplayer = false;
+            setContentView(R.layout.multiplayer_send_menu);
             laberinto = getIntent().getStringExtra("laberinto");
             nombreLaberinto = getIntent().getStringExtra("nombreLaberinto");
         }else if(funcion.equals("enviarEmplazamiento")){
-            setContentView(R.layout.send_emplacement);
+            sending = true;
+            multiplayer = true;
+            setContentView(R.layout.layout_multiplayer_send);
             msj = getIntent().getStringExtra("data");
-        }else if(funcion.equals("buscarEmplazamiento")){
-            setContentView(R.layout.searching_emplacements);
+            final String[] splitMessage = tokenizer(msj);
+            username = splitMessage[splitMessage.length-1];
+            String bluetoothName = mBluetoothAdapter.getName();
+            bluetoothName = bluetoothName.replace(" ", "");
+            msj = msj + "-" + bluetoothName;
+            roomName = username + "-" + bluetoothName;
+            game_id = getIntent().getExtras().getInt("game_ID");
+            numberCaves = getIntent().getExtras().getInt("number_of_caves");
+            startRoom();
         }else{
-            setContentView(R.layout.searching_labs);
+            sending = false;
+            setContentView(R.layout.multiplayer_menu);
         }
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
         if (mBluetoothAdapter == null) {
             Toast.makeText(this, "El dispositivo no soporta bluetooth", Toast.LENGTH_LONG).show();
         }
+        startButtons();
+    }
+
+    /**
+     * Starts the Firebase room.
+     */
+    private void startRoom(){
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = db.getReference(roomName);
+        myRef.setValue("ROOM");
+        myRef.child("STATUS").setValue("1");
+    }
+
+    /**
+     * Starts the buttons listeners depending on the function you are using.
+     */
+    public void startButtons () {
+
+        if (sending) {
+            if (multiplayer) {
+                btnSend = (Button) findViewById(R.id.btSendData);
+                btnVisibility = (Button) findViewById(R.id.btSelectDevice);
+                btnFinish = (Button) findViewById(R.id.btStart);
+                btnSend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        setupChat(view);
+                    }
+                });
+                btnVisibility.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        connect(view);
+                    }
+                });
+                btnFinish.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startMultiplayer();
+                    }
+                });
+            }
+            else {
+                btnSend = (Button) findViewById(R.id.btSend);
+                btnVisibility = (Button) findViewById(R.id.btDevice);
+                btnFinish = (Button) findViewById(R.id.btFinish);
+                btnSend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        setupChat(view);
+                    }
+                });
+                btnVisibility.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        connect(view);
+                    }
+                });
+                btnFinish.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onBackPressed();
+                    }
+                });
+            }
+        }
+        else {
+            btnSend = (Button) findViewById(R.id.btLabs);
+            btnVisibility = (Button) findViewById(R.id.btVisibility);
+            btnSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    send(view);
+                }
+            });
+            btnVisibility.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    discoverable(view);
+                }
+            });
+        }
+    }
+
+    /**
+     * Starts the send activity, and sets the animation for the transition.
+     *
+     * @param view current view.
+     */
+    public void send(View view){
+        Intent i = new Intent(this, SelectLabToShare.class);
+        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                R.anim.fade_out);
+        startActivity(i, options.toBundle());
     }
 
     /**
@@ -91,7 +210,8 @@ public class BluetoothChat extends Activity {
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         } else {
             if (mChatService == null){
-                setupChat();
+                mChatService = new BluetoothChatService(this, mHandler);
+                mOutStringBuffer = new StringBuffer("");
             }
         }
     }
@@ -112,27 +232,15 @@ public class BluetoothChat extends Activity {
     /**
      * Recognize if the button send is pressed and send the lab.
      */
-    private void setupChat() {
+    public void setupChat(View view) {
         if(funcion.equals("enviar")){
-            mSendButton = (Button) findViewById(R.id.button_send);
-            mSendButton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    String message = laberinto;
-                    sendMessage(message);
-                }
-            });
+            String message = laberinto;
+            sendMessage(message);
         }
         if(funcion.equals("enviarEmplazamiento")){
-            mSendButton = (Button) findViewById(R.id.button_send);
-            mSendButton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    String message = msj;
-                    sendMessage(message);
-                }
-            });
+            String message = msj;
+            sendMessage(message);
         }
-        mChatService = new BluetoothChatService(this, mHandler);
-        mOutStringBuffer = new StringBuffer("");
     }
 
     /**
@@ -254,15 +362,12 @@ public class BluetoothChat extends Activity {
                                 newDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        Intent i = new Intent(BluetoothChat.this, Multiplayer.class);
-                                        ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.fade_in, R.anim.fade_out);
-                                        startActivity(i, options.toBundle());
                                     }
                                 });
                                 newDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        Intent i = new Intent(BluetoothChat.this, MainActivity.class);
+                                        Intent i = new Intent(BluetoothChat.this, SelectPolyActivity.class);
                                         ActivityOptions options = ActivityOptions.makeCustomAnimation(BluetoothChat.this, R.anim.slide_in_up, R.anim.slide_out_up);
                                         startActivity(i, options.toBundle());
                                     }
@@ -331,7 +436,8 @@ public class BluetoothChat extends Activity {
                 break;
             case REQUEST_ENABLE_BT:
                 if (resultCode == Activity.RESULT_OK) {
-                    setupChat();
+                    mChatService = new BluetoothChatService(this, mHandler);
+                    mOutStringBuffer = new StringBuffer("");
                 } else {
                     Toast.makeText(this, R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
                 }
@@ -348,8 +454,7 @@ public class BluetoothChat extends Activity {
     }
 
     /**
-     *
-     * call to ensureDiscoverable method.
+     * Call to ensureDiscoverable method.
      * @param v View to be shown.
      */
     public void discoverable(View v) {
@@ -400,5 +505,15 @@ public class BluetoothChat extends Activity {
         return graphID;
     }
 
+    public void startMultiplayer () {
+        Intent i = new Intent(this, Game_Multiplayer.class);
+        i.putExtra("game_ID", game_id);
+        i.putExtra("number_of_caves", numberCaves);
+        i.putExtra("room", roomName);
+        i.putExtra("username", username);
+        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                R.anim.fade_out);
+        startActivity(i, options.toBundle());
+    }
 
 }
