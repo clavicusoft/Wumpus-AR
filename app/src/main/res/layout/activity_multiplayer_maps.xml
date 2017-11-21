@@ -5,30 +5,8 @@ android:id="@+id/mapLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/other_background">
-
-    <LinearLayout
-
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Iniciar"
-            android:id="@+id/bListo"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:textSize="17sp"
-            android:textColor="@color/white"
-            android:background="@color/white_button"/>
-
-
-
-    </LinearLayout>
+    android:background="@color/background"
+    android:weightSum="1">
 
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -37,7 +15,27 @@ android:id="@+id/mapLayout"
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.clavicusoft.wumpus.Map.MapsActivity" />
+    tools:context="com.clavicusoft.wumpus.Map.MapsActivity"
+    android:layout_weight="0.90"/>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.1">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Iniciar"
+            android:id="@+id/bListo"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:background="@drawable/capsule_darkest"/>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -6,56 +6,87 @@
     android:layout_height="match_parent"
     android:orientation = "vertical"
     tools:context="com.clavicusoft.wumpus.Select.SelectPolyActivity"
-    android:weightSum="1"
-    android:background="@drawable/other_background_purple">
+    android:weightSum="4"
+    android:background="@color/background">
 
     <TextView
-        android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="20sp"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/white"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/dark"
         android:text="Deslice para escoger un laberinto" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/ImageSlider"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="172dp"
-        android:layout_weight="0.92"
-        />
+        android:layout_height="325dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/rounded_corner_light">
+        <android.support.v4.view.ViewPager
+            android:id="@+id/ImageSlider"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.92"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            />
+    </LinearLayout>
+
+
 
     <Button
         android:id="@+id/bttnStartGame"
         android:layout_gravity="center"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:onClick="startGame"
         android:textColor="@color/white"
-        android:background="@color/white_button"
+        android:background="@drawable/capsule_darkest"
         android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
         android:text="Iniciar el juego" />
 
     <Button
         android:id="@+id/bttnDrawLab"
         android:layout_gravity="center"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:onClick="drawLabyrinthView"
         android:textColor="@color/white"
-        android:background="@color/white_button"
+        android:background="@drawable/capsule_darkest"
         android:layout_marginBottom="10dp"
         android:text="Dibujar un laberinto" />
 
     <Button
         android:id="@+id/bttnChooseLib"
         android:layout_gravity="center"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:onClick="selectFromLibView"
         android:textColor="@color/white"
-        android:background="@color/white_button"
+        android:background="@drawable/capsule_darkest"
+        android:layout_marginBottom="10dp"
         android:text="Biblioteca de laberintos" />
+
+    <Button
+        android:id="@+id/btnMultiplayer"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:onClick="multiplayerView"
+        android:textColor="@color/white"
+        android:background="@drawable/capsule_darkest"
+        android:text="Multijugador"
+        android:layout_marginBottom="15dp"/>
 </LinearLayout>

@@ -1,25 +1,63 @@
 package com.clavicusoft.wumpus.Select;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.clavicusoft.wumpus.Bluetooth.BluetoothChat;
 import com.clavicusoft.wumpus.Database.AdminSQLite;
 import com.clavicusoft.wumpus.Draw.DrawMazeActivity;
 import com.clavicusoft.wumpus.Map.Coordinates;
 import com.clavicusoft.wumpus.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SelectPolyActivity extends Activity {
 
     ViewPager viewPager;
     CustomSwip  customSwip;
     int currentPage;
+    AlertDialog.Builder alert; //Alert
+    int whichActivity=0; //start game, draw, library, multiplayer
+
+    /**
+     * Requests the number of permissions pending, if none are pending returns true
+     * @return False if there are still pending permissions and true if there are none
+     */
+    private boolean checkAndRequestPermissions() { //requests the number of permissions pending: 2, 1 or none.
+        int permissionCAMERA = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA); //camera permissions
+        int locationPermission = ContextCompat.checkSelfPermission(this,
+
+                Manifest.permission.ACCESS_FINE_LOCATION); //ubication permissions
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (locationPermission != PackageManager.PERMISSION_GRANTED) { //adds permissions to list
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (permissionCAMERA != PackageManager.PERMISSION_GRANTED) { //adds permissions to list
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (!listPermissionsNeeded.isEmpty()) { //if there are permissions to be requested, it does
+            ActivityCompat.requestPermissions(this,
+                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Sets the view once this activity starts. Fills the slider with the images.
@@ -28,6 +66,7 @@ public class SelectPolyActivity extends Activity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        alert = new AlertDialog.Builder(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_poly);
         currentPage = 1;
@@ -42,6 +81,62 @@ public class SelectPolyActivity extends Activity {
                 currentPage = position + 1;
             }
         });
+        checkAndRequestPermissions();
+    }
+
+    /**
+     * Requests the user to accept permissions for camera and ubication services if they
+     * were not previously accepted on installation.
+     *
+     * @param requestCode Application specific request code to match with a result
+     *                    reported to onRequestPermissionsResult(int, String[], int[])
+     * @param permissions The requested permissions.
+     * @param grantResults The grant results for the corresponding permissions.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 1) {
+            if(grantResults.length == 1 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) { //if only one permission was pending it must start the activity
+                //Permission accepted
+                if(whichActivity == 1) { //start activity
+                    this.imageClicked(currentPage);
+                }
+                if(whichActivity == 2){ //draw activity
+                    Intent i = new Intent(this, DrawMazeActivity.class);
+                    ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                            R.anim.fade_out);
+                    startActivity(i, options.toBundle());
+                }
+                if(whichActivity == 3) { //library activity
+                    Intent i = new Intent(this, SelectFromLibActivity.class);
+                    ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                            R.anim.fade_out);
+                    startActivity(i, options.toBundle());
+                }
+                if(whichActivity == 4){ //multiplayer activity
+                    Intent i = new Intent(this, BluetoothChat.class);
+                    i.putExtra("funcion", "inicio");
+                    ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                            R.anim.fade_out);
+                    startActivity(i, options.toBundle());
+                }
+            }
+            else if(grantResults.length == 2 && (grantResults[0] == PackageManager.PERMISSION_GRANTED) && (grantResults[1] == PackageManager.PERMISSION_GRANTED)){
+                //Permission accepted
+                //if both permissions are granted, does nothing since checkAndResquestPermissions returns true and button opens activity
+            }
+            else {
+                //Permissions denied
+                alert.setTitle("Error");
+                alert.setMessage("Para poder continuar con el juego debe permitir a Wumpus acceder a la cámara y a su ubicación");
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
+            }
+        }
     }
 
     /**
@@ -105,10 +200,30 @@ public class SelectPolyActivity extends Activity {
      */
     public void drawLabyrinthView(View view)
     {
-        Intent i = new Intent(this,DrawMazeActivity.class);
-        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
-                R.anim.fade_out);
-        startActivity(i, options.toBundle());
+        whichActivity =2;
+        if(checkAndRequestPermissions()) {
+            Intent i = new Intent(this, DrawMazeActivity.class);
+            ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                    R.anim.fade_out);
+            startActivity(i, options.toBundle());
+        }
+    }
+
+    /**
+     * Starts the multiplayer activity, and sets the animation for the transition.
+     *
+     * @param view Current view.
+     */
+    public void multiplayerView(View view)
+    {
+        whichActivity =4;
+        if(checkAndRequestPermissions()) {
+            Intent i = new Intent(this, BluetoothChat.class);
+            i.putExtra("funcion", "inicio");
+            ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                    R.anim.fade_out);
+            startActivity(i, options.toBundle());
+        }
     }
 
     /**
@@ -118,10 +233,13 @@ public class SelectPolyActivity extends Activity {
      */
     public void selectFromLibView(View view)
     {
-        Intent i = new Intent(this,SelectFromLibActivity.class);
-        ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
-                R.anim.fade_out);
-        startActivity(i, options.toBundle());
+        whichActivity =3;
+        if(checkAndRequestPermissions()) {
+            Intent i = new Intent(this, SelectFromLibActivity.class);
+            ActivityOptions options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in,
+                    R.anim.fade_out);
+            startActivity(i, options.toBundle());
+        }
     }
 
     /**
@@ -139,7 +257,11 @@ public class SelectPolyActivity extends Activity {
      * @param view Current view.
      */
     public void startGame(View view) {
-        this.imageClicked(currentPage);
+        whichActivity =1;
+        if(checkAndRequestPermissions()){
+            this.imageClicked(currentPage);
+        }
+
     }
 
 }

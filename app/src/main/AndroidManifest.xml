@@ -14,9 +14,9 @@
     <application
         android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
-        android:icon="@drawable/wumpus_icon"
+        android:icon="@drawable/logo_icon"
         android:label="Wumpus"
-        android:roundIcon="@drawable/wumpus_icon"
+        android:roundIcon="@drawable/logo_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -32,9 +32,6 @@
 
         <activity
             android:name=".Select.SelectPolyActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Select.Multiplayer"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Select.SelectFromLibActivity"
@@ -58,14 +55,15 @@
             android:name=".Map.MapsActivity"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait" />
-        <activity 
-            android:name=".Map.ActualCoordinate" 
-            android:screenOrientation="portrait" />
 
         <activity
             android:name=".AR.Game_World"
             android:screenOrientation="landscape" />
-      
+
+        <activity
+            android:name=".AR.Game_Multiplayer"
+            android:screenOrientation="landscape" />
+
         <activity
             android:name=".AR.Splash_screen"
             android:screenOrientation="landscape" />
@@ -73,10 +71,6 @@
         <activity
             android:name=".AR.WumpusAnimation"
             android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".Select.MainActivity"
-        android:screenOrientation="portrait"/>
 
 
         <!--

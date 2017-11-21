@@ -10,4 +10,23 @@
     <color name="transparent">#80000000</color>
     <color name="black">#000000</color>
     <color name="purple">#800080</color>
+
+    <color name="light_blue">#aad1da</color>
+    <color name="pinkish">#fe9a9a</color>
+    <color name="blueish">#6c99a3</color>
+    <color name="beige">#f7f7e5</color>
+
+    <color name="oceanblue">#0b486b</color>
+    <color name="greenish_blue">#3b8686</color>
+    <color name="greenish">#79bd9a</color>
+    <color name="light_greenish">#a8dba8</color>
+    <color name="light_green">#cff09e</color>
+
+    <color name="darkest">#0b486b</color>
+    <color name="dark">#3b8686</color>
+    <color name="medium">#79bd9a</color>
+    <color name="light">#a8dba8</color>
+    <color name="lightest">#cff09e</color>
+    <color name="background">#f7f7e5</color>
+
 </resources>

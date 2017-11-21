@@ -16,13 +16,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.clavicusoft.wumpus.R;
 
@@ -32,14 +26,10 @@ public class Coordinates extends Activity {
     LocationListenerGPS locationListenerGPS; //Listener that gets the location changes for the game start.
     LocationListenerCurrent locationListenerCurrent; //Listener that gets the location changes periodically for multiplayer game.
     ProgressBar loading; //Loading bar while searching for location updates.
-    SpinnerActivity sp; //Displays the available distances between caves.
     double latitudeGPS; //Current latitude.
     double longitudeGPS; //Current longitude.
-    double distance; //Selected distance between caves.
-    TextView tv_dist; //Sets distance on screen.
-    Button btnGetLocation; //Requests current distance.
+    double distance = 5; //Selected distance between caves.
     boolean flag; //Checks if location services are enabled.
-    Spinner spn_distances; //Allows to select available distances.
     int graph_id; //ID of the selected maze.
     AlertDialog.Builder alert; //Alert
 
@@ -54,27 +44,12 @@ public class Coordinates extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordenadas);
 
-        //Display distance.
-        tv_dist = (TextView) findViewById(R.id.tv_dist);
-
-        //Get location.
-        btnGetLocation =(Button)findViewById(R.id.buttonMyLocation);
-
         //Location services.
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListenerGPS = new LocationListenerGPS();
         longitudeGPS = 0.0;
         latitudeGPS = 0.0;
         flag = false;
-
-        //Spinner options.
-        spn_distances = (Spinner) findViewById(R.id.spn_distancias);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.distances, R.layout.spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spn_distances.setAdapter(adapter);
-        sp = new SpinnerActivity();
-        spn_distances.setOnItemSelectedListener(sp);
-        spn_distances.setVisibility(View.VISIBLE);
 
         //Loading bar.
         loading = (ProgressBar) findViewById(R.id.progressBar);
@@ -87,6 +62,13 @@ public class Coordinates extends Activity {
         graph_id = Integer.parseInt(graphID);
 
         alert = new AlertDialog.Builder(this);
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        getCurrentLocation();
     }
 
     /**
@@ -119,37 +101,27 @@ public class Coordinates extends Activity {
 
     /**
      * Requests single location update to start the game with the player's location.
-     *
-     * @param v Current view.
      */
-    public void getCurrentLocation(View v) {
+    public void getCurrentLocation() {
         //Checks status of location services.
         flag = displayGpsStatus();
         if (flag) {
             //Services are enabled.
-            if (sp.selected) {
-                //A distance is selected from the spinner list.
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    //Permissions not granted.
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            //A distance is selected from the spinner list.
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                //Permissions not granted.
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            }
+            else {
+                //Permissions granted.
+                loading.setVisibility(View.VISIBLE);
+                if (displayNetworkGPSStatus()) {
+                    //Location by network provider is on.
+                    locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListenerGPS, Looper.getMainLooper());
+                } else {
+                    //Location by network provider is off.
+                    locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListenerGPS, Looper.getMainLooper());
                 }
-                else {
-                    //Permissions granted.
-                    tv_dist.setVisibility(View.GONE);
-                    btnGetLocation.setVisibility(View.GONE);
-                    spn_distances.setVisibility(View.GONE);
-                    loading.setVisibility(View.VISIBLE);
-                    if (displayNetworkGPSStatus()) {
-                        //Location by network provider is on.
-                        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListenerGPS, Looper.getMainLooper());
-                    } else {
-                        //Location by network provider is off.
-                        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListenerGPS, Looper.getMainLooper());
-                    }
-                }
-            } else {
-                //No option selected on spinner.
-                Toast.makeText(this, "Por favor indique la distancia deseada.", Toast.LENGTH_LONG).show();
             }
         } else {
             //Services are disabled.
@@ -282,9 +254,6 @@ public class Coordinates extends Activity {
             if (longitudeGPS != 0 && latitudeGPS != 0) {
                 //Succesfully gets the coordinates.
                 loading.setVisibility(View.GONE);
-                tv_dist.setVisibility(View.VISIBLE);
-                btnGetLocation.setVisibility(View.VISIBLE);
-                spn_distances.setVisibility(View.VISIBLE);
                 Intent i = new Intent(Coordinates.this, MapsActivity.class);
                 //Sets atributes for the next activity like coordinates, distance and the maze ID.
                 i.putExtra("tipo","individual");
@@ -372,59 +341,4 @@ public class Coordinates extends Activity {
         }
     };
 
-    /**
-     * Spinner class
-     */
-    public class SpinnerActivity extends Activity implements AdapterView.OnItemSelectedListener {
-
-        boolean selected; //Option selected status.
-
-        /**
-         * Invoked when an item in this view has been selected.
-         *
-         * @param parent AdapterView where the selection happened
-         * @param view View within the AdapterView that was clicked
-         * @param pos Position of the view in the adapter
-         * @param id Iow id of the item that is selected
-         */
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            selected = true;
-            switch(pos){
-                //Sets the distance between caves depending on ehich item was selected.
-                case 0:
-                    //Sets distance to 5 meters.
-                    distance = 5;
-                    break;
-                case 1:
-                    //Sets distance to 10 meters.
-                    distance = 10;
-                    break;
-                case 2:
-                    //Sets distance to 25 meters.
-                    distance = 25;
-                    break;
-                case 3:
-                    //Sets distance to 50 meters.
-                    distance = 50;
-                    break;
-                case 4:
-                    //Sets distance to 100 meters.
-                    distance = 100;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        /**
-         * Invoked when an item in this view has not been selected.
-         *
-         * @param parent AdapterView where the selection is missing.
-         */
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-            selected = false;
-        }
-    }
 }

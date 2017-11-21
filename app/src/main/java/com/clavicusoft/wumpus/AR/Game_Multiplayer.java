@@ -19,6 +19,7 @@ import com.beyondar.android.util.location.BeyondarLocationManager;
 import com.beyondar.android.view.OnClickBeyondarObjectListener;
 import com.beyondar.android.world.BeyondarObject;
 import com.beyondar.android.world.World;
+import com.clavicusoft.wumpus.Database.Firebase_Helper;
 import com.clavicusoft.wumpus.Maze.CaveContent;
 import com.clavicusoft.wumpus.R;
 import com.clavicusoft.wumpus.Select.SelectPolyActivity;
@@ -34,7 +35,7 @@ import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Game_World extends FragmentActivity implements OnClickBeyondarObjectListener {
+public class Game_Multiplayer extends FragmentActivity implements OnClickBeyondarObjectListener {
 
     private BeyondarFragmentSupport currentBeyondARFragment;
     private AR_Helper worldHelper;
@@ -49,6 +50,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
     private Map<String, Integer> score;
     private Boolean arrowPressed;
     private Random random;
+    private Firebase_Helper gameDataBase;
 
     /**
      * Sets the view once this activity starts.
@@ -116,12 +118,21 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
         score.put("visitedCaves",0);
         score.put("visitedBatCaves",0);
         score.put("usedArrows",0);
+
+        startDB(b);
     }
 
     @Override
     public void onStart () {
         super.onStart();
         showCurrentCave();
+    }
+
+    private void startDB(Bundle b)
+    {
+        gameDataBase = new Firebase_Helper(b.getString("room"), b.getString("username"), this);
+        gameDataBase.changePlayerStatus("1"); //Player is alive in the DataBase as soon as app starts
+        gameDataBase.changePlayerCave(String.valueOf(data.getCurrentCave())); //Update new cave on database
     }
 
     public void showCurrentCave() {
@@ -245,6 +256,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * @param cave_Number Current cave number.
      */
     public void updateGame (int cave_Number) {
+        gameDataBase.changePlayerCave(String.valueOf(cave_Number));  //Update cave number in database
         currentCave.setText(String.valueOf(cave_Number));
         checkCaveContent(cave_Number);
     }
@@ -376,7 +388,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * If the player falls in the Wumpus' cave then the game ends.
      */
     public void manageWumpus() {
-        Intent i = new Intent(Game_World.this, WumpusAnimation.class);
+        gameDataBase.changePlayerStatus("0"); //Update player dies in DB
+        Intent i = new Intent(Game_Multiplayer.this, WumpusAnimation.class);
         i.putExtra("usedArrows", score.get("usedArrows").toString());
         i.putExtra("visitedBatCaves", score.get("visitedBatCaves").toString());
         i.putExtra("visitedCaves", score.get("visitedCaves").toString());
@@ -434,6 +447,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * Manages if the player fall into a pit, plays a falling sound and allow the user to restart or exit the game
      */
     public void managePit () {
+        gameDataBase.changePlayerStatus("0"); //Update player dies in DB
         MediaPlayer mediaPlayer;
         mediaPlayer = MediaPlayer.create(this, R.raw.hombre_cayendo);
         mediaPlayer.start(); //Plays a falling sound
@@ -505,9 +519,8 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
                     manageKillWumpus();
                     break;
                 case EMPTY:
+                    gameDataBase.shootArrowMultiplayer(finalArrowCave+1);
                     Toast.makeText(this, "La flecha chocó en la pared de una cueva", Toast.LENGTH_LONG).show();
-                    break;
-                default:
                     break;
             }
         }
@@ -520,6 +533,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * Manages if the player is hit by an arrow.
      */
     public void manageArrowShot(){
+        gameDataBase.changePlayerStatus("0"); //Update player dies in DB
         MediaPlayer mediaPlayer;
         mediaPlayer = MediaPlayer.create(this, R.raw.arrow_hit_blood);
         mediaPlayer.start();
@@ -530,6 +544,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * Manages if the arrow kills the Wumpus
      */
     public void manageKillWumpus(){
+        gameDataBase.winGame();
         final MediaPlayer mediaPlayer;
         mediaPlayer = MediaPlayer.create(this, R.raw.kill_wumpus);
         mediaPlayer.start();
@@ -550,6 +565,7 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
      * Finishes the game if the player is out of arrows.
      */
     public void outOfArrows(){
+        gameDataBase.changePlayerStatus("0"); //Update player dies in DB
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
         newDialog.setTitle("Has perdido");
         newDialog.setMessage("Se te han acabado las flechas y no has logrado matar al Wumpus.");
@@ -560,7 +576,6 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             }
         });
         newDialog.show();
-
     }
 
     /**
@@ -576,5 +591,47 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
             arrowPressed = false;
             arrowButton.setBackgroundResource(R.drawable.arrow_icon);
         }
+    }
+
+    /**
+     * Manages getting killed by another player's arrow.
+     */
+    public void manageGettingKilled() {
+        final MediaPlayer mediaPlayer;
+        mediaPlayer = MediaPlayer.create(this, R.raw.arrow_hit_blood);
+        mediaPlayer.start();
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("Has sido eliminado");
+        newDialog.setMessage("La flecha de otro jugador ha acabado contigo.");
+        newDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                showScore(mediaPlayer);
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
+    }
+
+    /**
+     * Sendsa message to the player once they kill another one.
+     */
+    public void manageKillPlayer(){
+        Toast.makeText(this, "Has matado a un jugador.", Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Manages when another player has killed the wumpus.
+     */
+    public void finishGame () {
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setTitle("Ha finalizado el juego");
+        newDialog.setMessage("La flecha de otro cazador acabó con el Wumpus.");
+        newDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                showScore(null);
+                dialog.dismiss();
+            }
+        });
+        newDialog.show();
     }
 }
