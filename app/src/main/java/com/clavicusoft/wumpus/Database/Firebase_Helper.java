@@ -53,6 +53,9 @@ public class Firebase_Helper {
         startRoomListener();
     }
 
+    /**
+     * Starts a listener for the STATUS of the player.
+     */
     public void startPlayerListener () {
         DatabaseReference playerReference = db.getReference(this.room_id+ "/" + this.player_id + "/STATUS");
 
@@ -76,6 +79,9 @@ public class Firebase_Helper {
         });
     }
 
+    /**
+     * Starts a listener for the STATUS of the room
+     */
     public void startRoomListener () {
         DatabaseReference roomReference = db.getReference(this.room_id+ "/STATUS");
         roomReference.addValueEventListener(new ValueEventListener() {
@@ -187,6 +193,11 @@ public class Firebase_Helper {
     }
 
 
+    /**
+     * Kills tha players that are in the final cave of the arrow.
+     * @param users ArrayList with all the users.
+     * @param caveArrow Cave number of the arrow.
+     */
     private void killPlayers(ArrayList<UserDetails> users, int caveArrow) {
         UserDetails user;
         DatabaseReference myRef = db.getReference(room_id);
@@ -208,13 +219,6 @@ public class Firebase_Helper {
      */
     private void checkPlayersStatus(ArrayList<UserDetails> users) {
         boolean active = false;
-        /*Integer i = 0;
-        while (!active && i < users.size() - 1){
-            if (users.get(i).getStatus().equals("1")) {
-                active = true;
-            }
-            ++i;
-        }*/
         UserDetails user;
         Iterator<UserDetails> usersIterator = users.iterator();
         while(usersIterator.hasNext()){

@@ -546,6 +546,9 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
 
     }
 
+    /**
+     * Finishes the game if the player is out of arrows.
+     */
     public void outOfArrows(){
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
         newDialog.setTitle("Has perdido");
@@ -560,6 +563,9 @@ public class Game_World extends FragmentActivity implements OnClickBeyondarObjec
 
     }
 
+    /**
+     * Changes the state of the arrow button.
+     */
     public void changeArrowState(){
         if(arrowPressed == false){
             arrowPressed = true;

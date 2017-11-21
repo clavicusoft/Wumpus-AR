@@ -561,6 +561,9 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
 
     }
 
+    /**
+     * Finishes the game if the player is out of arrows.
+     */
     public void outOfArrows(){
         gameDataBase.changePlayerStatus("0"); //Update player dies in DB
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
@@ -575,6 +578,9 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
         newDialog.show();
     }
 
+    /**
+     * Changes the state of the arrow button.
+     */
     public void changeArrowState(){
         if(arrowPressed == false){
             arrowPressed = true;
@@ -606,6 +612,9 @@ public class Game_Multiplayer extends FragmentActivity implements OnClickBeyonda
         newDialog.show();
     }
 
+    /**
+     * Sendsa message to the player once they kill another one.
+     */
     public void manageKillPlayer(){
         Toast.makeText(this, "Has matado a un jugador.", Toast.LENGTH_LONG).show();
     }
